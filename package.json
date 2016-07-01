@@ -1,0 +1,23 @@
+{
+  "name": "forge-nodejs-sdk",
+  "version": "0.1.0",
+  "description": "Deltatre Forge Node.js SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Deltatre Webplu",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/deltatrespa/forge-nodejs-sdk.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.4.0",
+    "azure": "^0.10.6",
+    "debug": "^2.2.0",
+    "node-uuid": "^1.4.7",
+    "request": "^2.67.0",
+    "url-join": "0.0.1"
+  }
+}

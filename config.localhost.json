@@ -1,0 +1,16 @@
+{
+  "managementApi":{
+    "authKey": "f083d945-a644-41f1-9d2f-ff9b7fd5cd01",
+    "url": "http://localhost:60191/"
+  },
+  "serviceBus":{
+    "url": "amqp://guest:guest@localhost:5672"
+  },
+  "distributionApi":{
+    "url": "http://localhost:60192/"
+  },
+  "frontEnd":{
+    "url": "http://localhost:54787/",
+    "authKey": "00174056-D0E4-4983-9202-114F1339F6C9"
+  }
+}
