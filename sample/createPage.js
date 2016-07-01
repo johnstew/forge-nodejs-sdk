@@ -1,8 +1,9 @@
 "use strict";
 
-const ForgeManagementApi = require("./../src/ForgeManagementApi.js");
-const ForgeNotificationBus = require("./../src/ForgeNotificationBus.js");
-const ForgeCommands = require("./../src/ForgeCommands.js");
+const sdk = require("./../index.js");
+const ForgeManagementApi = sdk.ForgeManagementApi;
+const ForgeNotificationBus = sdk.ForgeNotificationBus;
+const ForgeCommands = sdk.ForgeCommands;
 const uuid = require("node-uuid");
 
 const config = require("./../config.js");
