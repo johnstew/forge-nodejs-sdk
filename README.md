@@ -2,7 +2,7 @@
 
 ## Install
 
-    npm install forge-node-sdk --save
+    npm install forge-nodejs-sdk --save
 
 ## Samples
 

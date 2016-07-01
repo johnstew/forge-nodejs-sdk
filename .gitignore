@@ -7,3 +7,5 @@ obj
 .ntvs_analysis.dat
 
 .tags
+
+npm-debug.log
