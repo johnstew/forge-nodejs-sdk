@@ -11,6 +11,8 @@ class CommandBase{
 	}
 }
 
+// WCM
+
 class CreateStory extends CommandBase {
 	// {storyId, translationId, translationInfo}
 	constructor(cmd){
@@ -186,62 +188,6 @@ class SetStoryPartExtendedFields extends CommandBase {
 	}
 }
 
-class AddSitePage extends CommandBase {
-	// cmd: {path}
-	constructor(cmd){
-		super("AddSitePageCommand", cmd);
-	}
-}
-
-class ChangePageTemplate extends CommandBase {
-	// cmd: {pageId, template{ id, namespace } }
-	constructor(cmd){
-		super("ChangePageTemplateCommand", cmd);
-	}
-}
-
-class RemoveSitePage extends CommandBase {
-	// cmd: {pageId, template{ id, namespace } }
-	constructor(cmd){
-		super("RemoveSitePageCommand", cmd);
-	}
-}
-
-class GenerateDiff extends CommandBase {
-	// cmd: {aggregateId, aggregateType, leftRevision, rightRevision? }
-	constructor(cmd){
-		super("GenerateDiffCommand", cmd);
-	}
-}
-
-class Rollback extends CommandBase {
-	// cmd: {aggregateId, aggregateType, aggregateRevision }
-	constructor(cmd){
-		super("RollbackCommand", cmd);
-	}
-}
-
-class CreateCheckpoint extends CommandBase {
-	// cmd: { checkpointId, label, bucketId }
-	constructor(cmd){
-		super("CreateCheckpointCommand", cmd);
-	}
-}
-
-class DeleteCheckpoint extends CommandBase {
-	// cmd: { checkpointId }
-	constructor(cmd){
-		super("DeleteCheckpointCommand", cmd);
-	}
-}
-
-class RestoreCheckpoint extends CommandBase {
-	// cmd: { checkpointId }
-	constructor(cmd){
-		super("RestoreCheckpointCommand", cmd);
-	}
-}
-
 class AddEntityRelation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId } }
 	constructor(cmd){
@@ -281,8 +227,107 @@ class AddTranslation extends CommandBase {
 	}
 }
 
+
+// VSM
+
+class AddSitePage extends CommandBase {
+	// cmd: {path}
+	constructor(cmd){
+		super("AddSitePageCommand", cmd);
+	}
+}
+
+class ChangePageTemplate extends CommandBase {
+	// cmd: {pageId, template{ id, namespace } }
+	//  notification: PageTemplateChanged {instanceId}
+	constructor(cmd){
+		super("ChangePageTemplateCommand", cmd);
+	}
+}
+
+class RemoveSitePage extends CommandBase {
+	// cmd: {pageId, template{ id, namespace } }
+	constructor(cmd){
+		super("RemoveSitePageCommand", cmd);
+	}
+}
+
+class AddLayoutToSlot extends CommandBase {
+	// cmd: {pageId, parentInstanceId, slot, layoutKey {id, namespace} }
+	//  notification: ModuleAddedToSlot {instanceId}
+	constructor(cmd){
+		super("AddLayoutToSlotCommand", cmd);
+	}
+}
+
+class AddModuleToSlot extends CommandBase {
+	// cmd: {pageId, parentInstanceId, slot, moduleKey {id, namespace} }
+	//  notification: ModuleAddedToSlot {instanceId}
+	constructor(cmd){
+		super("AddModuleToSlotCommand", cmd);
+	}
+}
+
+class AddVariablesToPage extends CommandBase {
+	// cmd: {commandId, itemId, variables [{key, variableType(KeyValue/DataItem/DataList/Script/StyleSheet), jsonBody}] }
+	constructor(cmd){
+		super("AddVariablesToPageCommand", cmd);
+	}
+}
+
+class SetLayoutProperties extends CommandBase {
+	// cmd: {commandId, pageId, layoutInstanceId, layoutKey?, properties {key, value}}
+	constructor(cmd){
+		super("SetLayoutPropertiesCommand", cmd);
+	}
+}
+
+class SetModuleProperties extends CommandBase {
+	// cmd: {commandId, pageId, moduleInstanceId, properties {key, value}}
+	constructor(cmd){
+		super("SetModulePropertiesCommand", cmd);
+	}
+}
+
+class GenerateDiff extends CommandBase {
+	// cmd: {aggregateId, aggregateType, leftRevision, rightRevision? }
+	constructor(cmd){
+		super("GenerateDiffCommand", cmd);
+	}
+}
+
+class Rollback extends CommandBase {
+	// cmd: {aggregateId, aggregateType, aggregateRevision }
+	constructor(cmd){
+		super("RollbackCommand", cmd);
+	}
+}
+
+class CreateCheckpoint extends CommandBase {
+	// cmd: { checkpointId, label, bucketId }
+	constructor(cmd){
+		super("CreateCheckpointCommand", cmd);
+	}
+}
+
+class DeleteCheckpoint extends CommandBase {
+	// cmd: { checkpointId }
+	constructor(cmd){
+		super("DeleteCheckpointCommand", cmd);
+	}
+}
+
+class RestoreCheckpoint extends CommandBase {
+	// cmd: { checkpointId }
+	constructor(cmd){
+		super("RestoreCheckpointCommand", cmd);
+	}
+}
+
+
 module.exports = {
 	CommandBase : CommandBase,
+	// WCM
 	CreateStory : CreateStory,
 	CreatePhoto : CreatePhoto,
 	CreateAlbum : CreateAlbum,
@@ -302,19 +347,25 @@ module.exports = {
 	AddStoryPart : AddStoryPart,
 	SetExtendedFields : SetExtendedFields,
 	SetStoryPartExtendedFields : SetStoryPartExtendedFields,
-	AddSitePage : AddSitePage,
-	ChangePageTemplate : ChangePageTemplate,
-	RemoveSitePage : RemoveSitePage,
-	GenerateDiff : GenerateDiff,
-	Rollback : Rollback,
-	CreateCheckpoint : CreateCheckpoint,
-	RestoreCheckpoint : RestoreCheckpoint,
-	DeleteCheckpoint : DeleteCheckpoint,
 	AddEntityRelation : AddEntityRelation,
 	SetPhotoCropArea : SetPhotoCropArea,
 	UnsetPhotoCropArea : UnsetPhotoCropArea,
 	ExtractPhotoMetadata : ExtractPhotoMetadata,
 	SetFile : SetFile,
 	SetFeatured : SetFeatured,
-	AddTranslation : AddTranslation
+	AddTranslation : AddTranslation,
+	// VSM
+	AddSitePage : AddSitePage,
+	ChangePageTemplate : ChangePageTemplate,
+	AddModuleToSlot : AddModuleToSlot,
+	AddLayoutToSlot : AddLayoutToSlot,
+	AddVariablesToPage : AddVariablesToPage,
+	RemoveSitePage : RemoveSitePage,
+	SetLayoutProperties : SetLayoutProperties,
+	SetModuleProperties : SetModuleProperties,
+	GenerateDiff : GenerateDiff,
+	Rollback : Rollback,
+	CreateCheckpoint : CreateCheckpoint,
+	RestoreCheckpoint : RestoreCheckpoint,
+	DeleteCheckpoint : DeleteCheckpoint
 };
