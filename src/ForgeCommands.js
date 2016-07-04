@@ -236,6 +236,7 @@ class AddTranslation extends CommandBase {
 
 class AddSitePage extends CommandBase {
 	// cmd: {path}
+	//  notification: SitePageAddedNotification {itemId}
 	constructor(cmd){
 		super("AddSitePageCommand", cmd);
 	}
