@@ -9,6 +9,10 @@ class CommandBase{
 		this.name = name;
 		this.bodyObject = cmd;
 	}
+
+	id(){
+		return this.bodyObject.commandId;
+	}
 }
 
 // WCM

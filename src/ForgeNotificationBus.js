@@ -30,21 +30,21 @@ class ForgeNotificationBus {
 		return this.bus.waitOnce(predicate);
 	}
 
-	waitCommand(cmd, successNotificationName, failedNotification){
+	waitCommand(cmdId, successNotificationName, failedNotification){
 		successNotificationName = successNotificationName || "CommandSuccessNotification";
 		failedNotification = failedNotification || "CommandFailedNotification";
 
-		if (!cmd.commandId) throw new Error("cmd.commandId not defined");
+		if (!cmdId) throw new Error("cmdId not defined");
 
-		debug(`Waiting for command ${cmd.commandId}...`);
+		debug(`Waiting for command ${cmdId}...`);
 
 		let isSuccessCommand = (name, msg) => {
 			if (name !== successNotificationName) return false;
 
-			if (msg.commandId === cmd.commandId && !msg.sagaInfo) return true;
+			if (msg.commandId === cmdId && !msg.sagaInfo) return true;
 
 			if (msg.sagaInfo &&
-				msg.sagaInfo.originatorId === cmd.commandId &&
+				msg.sagaInfo.originatorId === cmdId &&
 				msg.sagaInfo.status === 2) return true;
 
 			return false;
@@ -52,10 +52,10 @@ class ForgeNotificationBus {
 		let isFailedCommand = (name, msg) => {
 			if (name !== failedNotification) return false;
 
-			if (msg.commandId === cmd.commandId) return true;
+			if (msg.commandId === cmdId) return true;
 
 			if (msg.sagaInfo &&
-				msg.sagaInfo.originatorId === cmd.commandId) return true;
+				msg.sagaInfo.originatorId === cmdId) return true;
 
 			return false;
 		};
@@ -63,12 +63,12 @@ class ForgeNotificationBus {
 		return new Promise((resolve, reject) => {
 			this.waitOnce(isSuccessCommand)
 			.then((msg) => {
-				debug(`Command ${cmd.commandId} success.`);
+				debug(`Command ${cmdId} success.`);
 				resolve(msg);
 			});
 			this.waitOnce(isFailedCommand)
 			.then((msg) => {
-				debug(`Command ${cmd.commandId} failed, ${msg.reason}.`);
+				debug(`Command ${cmdId} failed, ${msg.reason}.`);
 				reject(msg.reason);
 			});
 		});

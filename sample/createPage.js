@@ -4,16 +4,25 @@ const sdk = require("./../index.js");
 const ForgeManagementApi = sdk.ForgeManagementApi;
 const ForgeNotificationBus = sdk.ForgeNotificationBus;
 const ForgeCommands = sdk.ForgeCommands;
-const uuid = require("node-uuid");
 
 const config = require("./../config.js");
 
+let api = new ForgeManagementApi(config.managementApi);
+let notificationBus = new ForgeNotificationBus(config.serviceBus);
+api.autoWaitCommandNotification(notificationBus);
+
+function connect(){
+	return notificationBus.startReceiving();
+}
+function disconnect(){
+	return notificationBus.stopReceiving();
+}
+
 function addSitePage(pagePath){
 	let cmd = new ForgeCommands.AddSitePage({
-		commandId: uuid.v4(),
 		path: pagePath
 	});
-	let waitAdded = notificationBus.waitCommand(cmd.bodyObject, "SitePageAddedNotification");
+	let waitAdded = notificationBus.waitCommand(cmd.id(), "SitePageAddedNotification");
 
 	return api.post(cmd)
 	.then(() => waitAdded)
@@ -27,11 +36,7 @@ function changeTemplate(pageId, template){
 	return api.post(cmd);
 }
 
-let api = new ForgeManagementApi(config.managementApi);
-let notificationBus = new ForgeNotificationBus(config.serviceBus);
-api.autoWaitCommandNotification(notificationBus);
-
-notificationBus.startReceiving()
+connect()
 .then(() => {
 
 	return addSitePage("~/sdksample/page_" + (new Date().getTime()))
@@ -42,6 +47,4 @@ notificationBus.startReceiving()
 	});
 
 })
-.then(() => {
-	notificationBus.stopReceiving();
-});
+.then(disconnect, disconnect);

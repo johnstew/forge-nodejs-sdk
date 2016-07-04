@@ -31,7 +31,7 @@
 			};
 
 			let waiterPromise;
-			if (this.notificationBus) waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject);
+			if (this.notificationBus) waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId);
 			else waiterPromise = Promise.resolve(true);
 
 			var postPromise = new Promise((resolve, reject) => {
