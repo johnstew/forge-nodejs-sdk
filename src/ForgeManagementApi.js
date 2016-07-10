@@ -3,8 +3,6 @@
 	const debug = require("debug")("ForgeManagementApi");
 	const request = require("request");
 	const uuid = require("node-uuid");
-	const ForgeCommands = require("./ForgeCommands.js");
-	const CommandBase = ForgeCommands.CommandBase;
 
 	class ForgeManagementApi {
 		constructor(options){
@@ -87,12 +85,20 @@
 			return this.get(`deltatre.forge.wcm/api/stories/${version}/${translationId}`);
 		}
 
+		getStoryByCultureSlug (version, culture, slug){
+			return this.get(`deltatre.forge.wcm/api/stories/${version}/culture/${culture}/slug/${slug}`);
+		}
+
 		getPhotos (version, terms){
 			return this.get(`deltatre.forge.wcm/api/photos/${version}?terms=` + terms);
 		}
 
 		getPhoto (version, translationId){
 			return this.get(`deltatre.forge.wcm/api/photos/${version}/${translationId}`);
+		}
+
+		getPhotoByCultureSlug (version, culture, slug){
+			return this.get(`deltatre.forge.wcm/api/photos/${version}/culture/${culture}/slug/${slug}`);
 		}
 
 		getPhotoTranslations (version, entityId){
@@ -152,6 +158,10 @@
 			return this.get(`deltatre.forge.wcm/api/albums/${version}/${translationId}`);
 		}
 
+		getAlbumByCultureSlug (version, culture, slug){
+			return this.get(`deltatre.forge.wcm/api/albums/${version}/culture/${culture}/slug/${slug}`);
+		}
+
 		getAlbumTranslations (version, entityId){
 			return this.get(`deltatre.forge.wcm/api/albums/${version}/entity/${entityId}`);
 		}
@@ -168,12 +178,6 @@
 
 		getCheckpoints (bucketId){
 			return this.get(`api/checkpoints/list/${bucketId}`);
-		}
-
-		// TODO Da spostare in ForgeCommands
-		// cmd: {storyId, translationId, headline}
-		setStoryHeadline (cmd) {
-			return this.post(new CommandBase("SetStoryHeadlineCommand", cmd));
 		}
 
 		getPage (pageId){

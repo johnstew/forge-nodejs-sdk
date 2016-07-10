@@ -164,6 +164,13 @@ class AddStoryPart extends CommandBase {
 	}
 }
 
+class SetStoryHeadline extends CommandBase {
+	// cmd: {storyId, translationId, headline}
+	constructor(cmd){
+		super("SetStoryHeadlineCommand", cmd);
+	}
+}
+
 class SetExtendedFields extends CommandBase {
 	// cmd: {aggregateId, aggregateType, translationId, values}
 	constructor(cmd){
@@ -340,6 +347,7 @@ module.exports = {
 	CreateSelection : CreateSelection,
 	CreateCustomEntity : CreateCustomEntity,
 	CreateDocument : CreateDocument,
+	SetStoryHeadline : SetStoryHeadline,
 	SetTitle : SetTitle,
 	SetSlug : SetSlug,
 	SetDescription : SetDescription,
