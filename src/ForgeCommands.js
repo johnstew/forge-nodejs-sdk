@@ -110,6 +110,27 @@ class SetDescription extends CommandBase {
 	}
 }
 
+class SetContentDate extends CommandBase {
+	// {aggregateId, aggregateType, translationId, contentDate (string as json date)}
+	constructor(cmd){
+		super("SetContentDateCommand", cmd);
+	}
+}
+
+class SetThumbnail extends CommandBase {
+	// {aggregateId, aggregateType, photoId}
+	constructor(cmd){
+		super("SetThumbnailCommand", cmd);
+	}
+}
+
+class UnsetThumbnail extends CommandBase {
+	// {aggregateId, aggregateType}
+	constructor(cmd){
+		super("UnsetThumbnailCommand", cmd);
+	}
+}
+
 class AddAlbumItems extends CommandBase {
 	//{albumId, items {id, elementType, element { entityId } } , position}
 	constructor(cmd){
@@ -144,6 +165,13 @@ class Publish extends CommandBase {
 	//{aggregateId, aggregateType, translationId}
 	constructor(cmd){
 		super("PublishCommand", cmd);
+	}
+}
+
+class Unpublish extends CommandBase {
+	//{aggregateId, aggregateType, translationId}
+	constructor(cmd){
+		super("UnpublishCommand", cmd);
 	}
 }
 
@@ -351,12 +379,16 @@ module.exports = {
 	SetTitle : SetTitle,
 	SetSlug : SetSlug,
 	SetDescription : SetDescription,
+	SetContentDate : SetContentDate,
+	SetThumbnail : SetThumbnail,
+	UnsetThumbnail : UnsetThumbnail,
 	AddAlbumItems : AddAlbumItems,
 	AddSelectionItems : AddSelectionItems,
 	DeleteAlbumItems : DeleteAlbumItems,
 	MoveAlbumItem : MoveAlbumItem,
 	Archive : Archive,
 	Publish : Publish,
+	Unpublish : Unpublish,
 	AddStoryPart : AddStoryPart,
 	SetExtendedFields : SetExtendedFields,
 	SetStoryPartExtendedFields : SetStoryPartExtendedFields,
