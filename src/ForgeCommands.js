@@ -131,6 +131,20 @@ class UnsetThumbnail extends CommandBase {
 	}
 }
 
+class SetContext extends CommandBase {
+	// {aggregateId, aggregateType, relatedItem}
+	constructor(cmd){
+		super("SetContextCommand", cmd);
+	}
+}
+
+class UnsetContext extends CommandBase {
+	// {aggregateId, aggregateType}
+	constructor(cmd){
+		super("UnsetContextCommand", cmd);
+	}
+}
+
 class AddAlbumItems extends CommandBase {
 	//{albumId, items {id, elementType, element { entityId } } , position}
 	constructor(cmd){
@@ -382,6 +396,8 @@ module.exports = {
 	SetContentDate : SetContentDate,
 	SetThumbnail : SetThumbnail,
 	UnsetThumbnail : UnsetThumbnail,
+	SetContext : SetContext,
+	UnsetContext : UnsetContext,
 	AddAlbumItems : AddAlbumItems,
 	AddSelectionItems : AddSelectionItems,
 	DeleteAlbumItems : DeleteAlbumItems,
