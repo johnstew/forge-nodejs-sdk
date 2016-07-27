@@ -7,3 +7,11 @@
 ## Samples
 
 See `./sample/` directory.
+
+## How to publish new version
+
+    git commit -a -m "message"
+
+    npm version major|minor|patch
+    git push
+    npm publish
