@@ -329,6 +329,13 @@ class AddVariablesToPage extends CommandBase {
 	}
 }
 
+class AddVariablesToDirectory extends CommandBase {
+	// cmd: {commandId, itemId, variables [{key, variableType(KeyValue/DataItem/DataList/Script/StyleSheet), jsonBody}] }
+	constructor(cmd){
+		super("AddVariablesToDirectoryCommand", cmd);
+	}
+}
+
 class SetLayoutProperties extends CommandBase {
 	// cmd: {commandId, pageId, layoutInstanceId, layoutKey?, properties {key, value}}
 	constructor(cmd){
@@ -421,6 +428,7 @@ module.exports = {
 	AddModuleToSlot : AddModuleToSlot,
 	AddLayoutToSlot : AddLayoutToSlot,
 	AddVariablesToPage : AddVariablesToPage,
+	AddVariablesToDirectory : AddVariablesToDirectory,
 	RemoveSitePage : RemoveSitePage,
 	SetLayoutProperties : SetLayoutProperties,
 	SetModuleProperties : SetModuleProperties,
