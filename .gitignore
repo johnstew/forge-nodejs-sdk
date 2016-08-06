@@ -9,3 +9,6 @@ obj
 .tags
 
 npm-debug.log
+
+config.*.json
+!config.localhost.json
