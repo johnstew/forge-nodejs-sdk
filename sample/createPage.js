@@ -1,6 +1,6 @@
 "use strict";
 
-const sdk = require("./../index.js");
+const sdk = require("./../index.js"); // forge-nodejs-sdk
 const ForgeManagementApi = sdk.ForgeManagementApi;
 const ForgeNotificationBus = sdk.ForgeNotificationBus;
 const ForgeCommands = sdk.ForgeCommands;
