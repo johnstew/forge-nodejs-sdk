@@ -46,6 +46,25 @@
     })
     .then(disconnect, disconnect);
 
+### How to subscribe to notification
+
+    let notificationBus = new ForgeNotificationBus(config.serviceBus);
+
+    function connect(){
+    	return notificationBus.startReceiving();
+    }
+    // function disconnect(){
+    // 	return notificationBus.stopReceiving();
+    // }
+
+    connect()
+    .then(() => {
+    	notificationBus.on("EntityDistributionNotification", (e) => {
+        // TODO your code
+    	});
+    });
+
+
 ### Configuration
 
 Forge node.js SDK expects a configuration defined like this:
