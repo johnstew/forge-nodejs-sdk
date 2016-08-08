@@ -15,6 +15,9 @@
     const ForgeDistributionApi = sdk.ForgeDistributionApi;
     const ForgeFrontEndApi = sdk.ForgeFrontEndApi;
 
+Consider that most methods returns Es6 `Promise`,
+write the correct implementation code to catch errors and handle continuation.
+
 ### How to call a management API
 
     let api = new ForgeManagementApi(config.managementApi);
@@ -97,6 +100,14 @@ See `./sample/` directory.
     set FORGE_TARGET=yourtarget
     # ensure to have a valid configuration file "config.yourtarget.json"
     node ./sample/waitForNotifications.js
+
+By default samples load configuration from `config.localhost.json`. You can read
+another configuration file by changing the `FORGE_TARGET` environment variable.
+For example:
+
+    set FORGE_TARGET=webplu-test
+
+will load the configuration file `config.webplu-test.json`.
 
 ## How to publish new version of the SDK
 

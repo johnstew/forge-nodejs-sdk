@@ -2,6 +2,7 @@
 
 const debug = require("debug")("ForgeDistributionApi");
 const request = require("request");
+const urlJoin = require("url-join");
 
 class ForgeDistributionApi {
 	constructor(options){
@@ -10,7 +11,7 @@ class ForgeDistributionApi {
 
 	get (path, queryStringObject){
 		const options = {
-			url: this.URL + path,
+			url: urlJoin(this.URL, path),
 			headers: {
 				"Accept":"application/json"
 			},

@@ -1,5 +1,10 @@
 "use strict";
 
+/*
+	This sample wait for new notifications (entity published) and process it using
+	the service bus subscription.
+*/
+
 const sdk = require("./../index.js"); // forge-nodejs-sdk
 const ForgeNotificationBus = sdk.ForgeNotificationBus;
 
@@ -26,4 +31,5 @@ connect()
 			console.log(`Entity ${e.record.slug} unpublished`);
 	});
 
-});
+})
+.catch(console.log.bind(console));  // just catch everything here

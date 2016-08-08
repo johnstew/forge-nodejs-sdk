@@ -47,4 +47,8 @@ connect()
 	});
 
 })
-.then(disconnect, disconnect);
+.then(disconnect)
+.catch((error) => {  // just catch everything here
+	console.log(error);
+	disconnect();
+});
