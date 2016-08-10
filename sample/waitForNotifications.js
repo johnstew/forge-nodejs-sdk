@@ -1,8 +1,8 @@
 "use strict";
 
 /*
-	This sample wait for new notifications (entity published) and process it using
-	the service bus subscription.
+	This sample connect to the service bus and
+	wait for new publish notifications for story
 */
 
 const sdk = require("./../index.js"); // forge-nodejs-sdk
@@ -24,11 +24,13 @@ connect()
 
 	console.log("Waiting for an entity to be published/unpublished:");
 	notificationBus.on("EntityDistributionNotification", (e) => {
+		if (e.entityType !== "story") return;
+
 		if (e.action === "publish")
-			console.log(`Entity ${e.record.slug} published`);
+			console.log(`Story ${e.slug} published`);
 
 		if (e.action === "unpublish")
-			console.log(`Entity ${e.record.slug} unpublished`);
+			console.log(`Story ${e.slug} unpublished`);
 	});
 
 })
