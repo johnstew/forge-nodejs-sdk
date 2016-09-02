@@ -78,7 +78,7 @@ class ForgeNotificationBus {
 		return this.waitOnce((name, msg) => {
 			return name === "EntityDistributionNotification" &&
 				msg.action === "publish" &&
-				msg.record.id === entityTranslationId;
+				msg.translationId === entityTranslationId;
 		});
 	}
 
@@ -86,8 +86,8 @@ class ForgeNotificationBus {
 		return this.waitOnce((name, msg) => {
 			return name === "EntityDistributionNotification" &&
 				msg.action === "publish" &&
-				msg.record.entityId === entityId &&
-				msg.record.translationInfo.culture === culture;
+				msg.entityId === entityId &&
+				msg.translationInfo.culture === culture;
 		});
 	}
 }
