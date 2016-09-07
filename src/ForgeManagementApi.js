@@ -91,78 +91,84 @@ class ForgeManagementApi {
 		return this.get(`api/eventstore/events/${bucketId}/${aggregateId}`, options);
 	}
 
-	getStories (version, terms){
-		return this.get(`deltatre.forge.wcm/api/stories/${version}`, {terms:terms});
-	}
+	getStories (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
 
+		return this.get(`deltatre.forge.wcm/api/stories/${version}`, options);
+	}
 	getStory (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/stories/${version}/${translationId}`);
 	}
-
 	getStoryByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/stories/${version}/culture/${culture}/slug/${slug}`);
 	}
 
-	getPhotos (version, terms){
-		return this.get(`deltatre.forge.wcm/api/photos/${version}`, {terms:terms});
-	}
+	getPhotos (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
 
+		return this.get(`deltatre.forge.wcm/api/photos/${version}`, options);
+	}
 	getPhoto (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/${translationId}`);
 	}
-
 	getPhotoByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/culture/${culture}/slug/${slug}`);
 	}
-
 	getPhotoTranslations (version, entityId){
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/entity/${entityId}`);
 	}
 
-	getTags (version, terms){
-		return this.get(`deltatre.forge.wcm/api/tags/${version}`, {terms:terms});
-	}
+	getTags (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
 
+		return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
+	}
 	getTag (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
-
 	getTagByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`);
 	}
-
 	getTagTranslations (version, entityId){
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
 	}
 
-	getDocuments (version, terms){
-		return this.get(`deltatre.forge.wcm/api/documents/${version}`, {terms:terms});
-	}
+	getDocuments (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
 
+		return this.get(`deltatre.forge.wcm/api/documents/${version}`, options);
+	}
 	getDocument (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/${translationId}`);
 	}
-
 	getDocumentByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/culture/${culture}/slug/${slug}`);
 	}
-
 	getDocumentTranslations (version, entityId){
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/entity/${entityId}`);
 	}
 
-	getSelections (version, terms){
-		return this.get(`deltatre.forge.wcm/api/selections/${version}`, {terms:terms});
-	}
+	getSelections (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
 
+		return this.get(`deltatre.forge.wcm/api/selections/${version}`, options);
+	}
 	getSelection (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/${translationId}`);
 	}
-
 	getSelectionByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/culture/${culture}/slug/${slug}`);
 	}
-
 	getSelectionTranslations (version, entityId){
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/entity/${entityId}`);
 	}
@@ -171,14 +177,20 @@ class ForgeManagementApi {
 	getAlbum (version, translationId){
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/${translationId}`);
 	}
-
 	getAlbumByCultureSlug (version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/culture/${culture}/slug/${slug}`);
 	}
-
 	getAlbumTranslations (version, entityId){
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/entity/${entityId}`);
 	}
+	getAlbums (version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
+
+		return this.get(`deltatre.forge.wcm/api/albums/${version}`, options);
+	}
+
 
 	getCustomEntity (entityCode, version, translationId){
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/${translationId}`);
@@ -189,6 +201,14 @@ class ForgeManagementApi {
 	getCustomEntityBySlug (entityCode, version, culture, slug){
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/culture/${culture}/slug/${slug}`);
 	}
+	getCustomEntities (entityCode, version, options){
+		// for compatibility with old version
+		if (typeof options === "string")
+			options = {terms:options};
+
+		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}`, options);
+	}
+
 
 	getCheckpoints (bucketId){
 		return this.get(`api/checkpoints/list/${bucketId}`);
