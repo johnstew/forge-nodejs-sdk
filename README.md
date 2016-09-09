@@ -18,6 +18,8 @@
 Consider that most methods returns Es6 `Promise`,
 write the correct implementation code to catch errors and handle continuation.
 
+**IMPORTANT**: If you start receiving notification from `ForgeNotificationBus` it is important to keep just one active connection for your entire application process, because each new connection will create a new service bus subscription.
+
 ### How to call a management API
 
     let api = new ForgeManagementApi(config.managementApi);
