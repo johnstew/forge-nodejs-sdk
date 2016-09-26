@@ -288,12 +288,18 @@ class ImportFeeds extends CommandBase {
 }
 
 class UploadPhoto extends CommandBase {
-	// cmd: { aggregateId, translationId, sourceUrl, [title], [slug] }
+	// cmd: { photoId, translationId, sourceUrl, [title], [slug] }
 	constructor(cmd) {
 		super("UploadPhotoCommand", cmd);
 	}
 }
 
+class UploadDocument extends CommandBase {
+	// cmd: { documentId, translationId, sourceUrl, [title], [slug] }
+	constructor(cmd) {
+		super("UploadDocumentCommand", cmd);
+	}
+}
 
 // VSM
 
@@ -438,6 +444,7 @@ module.exports = {
 	AddTranslation : AddTranslation,
 	ImportFeeds : ImportFeeds,
 	UploadPhoto : UploadPhoto,
+	UploadDocument : UploadDocument,
 	// VSM
 	AddSitePage : AddSitePage,
 	ChangePageTemplate : ChangePageTemplate,
