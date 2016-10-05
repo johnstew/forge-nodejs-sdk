@@ -15,6 +15,15 @@ class CommandBase{
 	}
 }
 
+class Batch extends CommandBase {
+	// {commands}
+	constructor(cmd){
+		if (!cmd.commands) throw new Error("Invalid commands");
+
+		super("BatchCommand", cmd);
+	}
+}
+
 // WCM
 
 class CreateStory extends CommandBase {
@@ -408,6 +417,7 @@ class RestoreCheckpoint extends CommandBase {
 
 module.exports = {
 	CommandBase : CommandBase,
+	Batch : Batch,
 	// WCM
 	CreateStory : CreateStory,
 	CreatePhoto : CreatePhoto,

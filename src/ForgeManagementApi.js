@@ -4,6 +4,7 @@ const debug = require("debug")("ForgeManagementApi");
 const request = require("request");
 const uuid = require("node-uuid");
 const urlJoin = require("url-join");
+const ForgeCommands = require("./ForgeCommands");
 
 class ForgeManagementApi {
 	constructor(options){
@@ -13,6 +14,10 @@ class ForgeManagementApi {
 	}
 
 	post(cmd) {
+		if (Array.isArray(cmd))	{
+			return this.post(new ForgeCommands.Batch({commands: cmd}));
+		}
+		
 		debug("Sending command...", cmd);
 
 		if (!cmd.bodyObject) throw new Error("cmd.bodyObject not defined");
