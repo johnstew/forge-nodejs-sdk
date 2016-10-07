@@ -17,7 +17,7 @@ class ForgeManagementApi {
 		if (Array.isArray(cmd))	{
 			return this.post(new ForgeCommands.Batch({commands: cmd}));
 		}
-		
+
 		debug("Sending command...", cmd);
 
 		if (!cmd.bodyObject) throw new Error("cmd.bodyObject not defined");
@@ -86,7 +86,41 @@ class ForgeManagementApi {
 	//  and skip or limit returned events
 	//  options: {from, skip, limit}
 	getEvents(bucketId, options){
-		return this.get(`api/eventstore/events/${bucketId}`, options);
+		console.warn("Calling deprecated function! This function is not supported" +
+			"and will be removed in one of next release, please use getCommits(bucketId, options)");
+		var safeFromCheckpoint = parseInt(options.from);
+		var safeToCheckpoint;
+
+		if (!!options.from){
+			safeFromCheckpoint += parseInt(options.skip) || 0;
+		}
+		else{
+			safeFromCheckpoint = 1;
+		}
+
+		if (!!options.limit){
+			safeToCheckpoint = safeFromCheckpoint + parseInt(options.limit);
+		}
+		else{
+			safeToCheckpoint = null;
+		}
+
+		options = {};
+		options.fromCheckpoint = safeFromCheckpoint;
+
+		if (!!safeToCheckpoint){
+			options.toCheckpoint = safeToCheckpoint;
+		}
+		
+		return this.getCommits(bucketId, options);
+	}
+
+	// get all events inside a bucket (vsm, wcm)
+	//  you can give all events from a given checkpoint (optional)
+	//  to a given checkpoint (optional)
+	//  options: {fromCheckpoint, toCheckpoint}
+	getCommits(bucketId, options){
+		return this.get(`api/eventstore/commits/${bucketId}`, options);
 	}
 
 	// get all events for a given aggregate inside a bucket (vsm, wcm)
