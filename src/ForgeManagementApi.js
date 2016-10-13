@@ -81,38 +81,31 @@ class ForgeManagementApi {
 		return promise;
 	}
 
+	// DEPRECATED use getCommits
 	// get all events inside a bucket (vsm, wcm)
 	//  you can give all events from a given checkpoint (optional)
 	//  and skip or limit returned events
 	//  options: {from, skip, limit}
 	getEvents(bucketId, options){
-		console.warn("Calling deprecated function! This function is not supported" +
-			"and will be removed in one of next release, please use getCommits(bucketId, options)");
-		var safeFromCheckpoint = parseInt(options.from);
-		var safeToCheckpoint;
+		let safeFromCheckpoint = parseInt(options.from);
+		let safeToCheckpoint;
 
-		if (!!options.from){
-			safeFromCheckpoint += parseInt(options.skip) || 0;
-		}
-		else{
-			safeFromCheckpoint = 1;
+		if (options.skip){
+			safeFromCheckpoint += parseInt(options.skip);
 		}
 
-		if (!!options.limit){
+		if (options.limit){
 			safeToCheckpoint = safeFromCheckpoint + parseInt(options.limit);
 		}
-		else{
-			safeToCheckpoint = null;
+
+		let newOptions = {};
+		newOptions.fromCheckpoint = safeFromCheckpoint;
+
+		if (safeToCheckpoint){
+			newOptions.toCheckpoint = safeToCheckpoint;
 		}
 
-		options = {};
-		options.fromCheckpoint = safeFromCheckpoint;
-
-		if (!!safeToCheckpoint){
-			options.toCheckpoint = safeToCheckpoint;
-		}
-		
-		return this.getCommits(bucketId, options);
+		return this.getCommits(bucketId, newOptions);
 	}
 
 	// get all events inside a bucket (vsm, wcm)

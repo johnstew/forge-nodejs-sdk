@@ -10,9 +10,10 @@ class ForgeFrontEndApi {
 		this.KEY = options.authKey;
 	}
 
-	get (dataPath){
+	get (path, questyStringObject){
 		const options = {
-			url: urlJoin(this.URL, "/cms/api/data/getallraw?format=json&url=" + dataPath),
+			url: urlJoin(this.URL, "/cms/api/data/getallraw"),
+			qs: questyStringObject,
 			headers: {
 				"Authorization": "CMS key=" + this.KEY,
 				"Accept":"application/json"
@@ -32,12 +33,20 @@ class ForgeFrontEndApi {
 		return promise;
 	}
 
-	getStories (){
-		return this.get("/wcm/stories");
+	getData (dataPath){
+		return this.get("/cms/api/data/getallraw",
+			{
+				format: "json",
+				url: dataPath
+			});
 	}
 
-	getStory (slug){
-		return this.get(`/wcm/stories/${slug}`);
+	getDataStories (){
+		return this.getData("/wcm/stories");
+	}
+
+	getDataStory (slug){
+		return this.getData(`/wcm/stories/${slug}`);
 	}
 }
 

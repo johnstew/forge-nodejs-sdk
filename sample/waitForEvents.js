@@ -13,7 +13,7 @@ const config = require("./../config.js");
 let api = new ForgeManagementApi(config.managementApi);
 
 function getWcmEvents(fromCheckpoint){
-	return api.getEvents("wcm", { from: fromCheckpoint });
+	return api.getCommits("wcm", { fromCheckpoint: fromCheckpoint });
 }
 
 const PUBLISH_PHOTO_EVENT = "Deltatre.Forge.WCM.Shared.Events.EntityPublished`1[[Deltatre.Forge.WCM.Shared.Photos.Photo, Deltatre.Forge.WCM.Shared]], Deltatre.Forge.WCM.Shared";
@@ -29,9 +29,9 @@ function delay(interval) {
 	});
 }
 
-function processNextEvents(startCheckpoint){
-	let currentCheckpoint = startCheckpoint;
-	return getWcmEvents(startCheckpoint)
+function processNextEvents(lastCheckpoint){
+	let currentCheckpoint = lastCheckpoint;
+	return getWcmEvents(parseInt(lastCheckpoint) + 1)
 	.then((commits) => {
 		for (let commit of commits) {
 			currentCheckpoint = commit.Checkpoint;
@@ -49,20 +49,19 @@ function processNextEvents(startCheckpoint){
 function waitForNewEvents(fromCheckpoint){
 	fromCheckpoint = fromCheckpoint || 0;
 
-	console.log("Reading from checkpoint", fromCheckpoint);
+	console.log("Reading from checkpoint >", fromCheckpoint);
 	return processNextEvents(fromCheckpoint)
-	.then((nextCheckpoint) => {
-		if (nextCheckpoint == fromCheckpoint) {
+	.then((lastCheckpoint) => {
+		if (lastCheckpoint == fromCheckpoint) {
 			console.log("No new events found, waiting...");
 			return delay(5000)
-			.then(() => waitForNewEvents(nextCheckpoint));
+			.then(() => waitForNewEvents(lastCheckpoint));
 		}
 		else {
-			return waitForNewEvents(nextCheckpoint);
+			return waitForNewEvents(lastCheckpoint);
 		}
 	});
 }
 
-const startCheckpoint = 0; // consider to store this value to create a persistent event processor
-waitForNewEvents(startCheckpoint)
+waitForNewEvents(0)
 .catch(console.log.bind(console));  // just catch everything here
