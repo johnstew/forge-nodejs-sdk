@@ -271,6 +271,20 @@ class UnsetPhotoCropArea extends CommandBase {
 	}
 }
 
+class SetPhotoGravity extends CommandBase {
+	// cmd: { photoId, crop { x, y, height, width } }
+	constructor(cmd) {
+		super("SetPhotoGravityCommand", cmd);
+	}
+}
+
+class UnsetPhotoGravity extends CommandBase {
+	// cmd: { aggregateId }
+	constructor(cmd) {
+		super("UnsetPhotoGravityCommand", cmd);
+	}
+}
+
 class ExtractPhotoMetadata extends CommandBase {
 	// cmd: { aggregateId }
 	constructor(cmd) {
