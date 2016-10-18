@@ -462,6 +462,8 @@ module.exports = {
 	AddEntityRelation : AddEntityRelation,
 	SetPhotoCropArea : SetPhotoCropArea,
 	UnsetPhotoCropArea : UnsetPhotoCropArea,
+	SetPhotoGravity: SetPhotoGravity,
+	UnsetPhotoGravity : UnsetPhotoGravity,
 	ExtractPhotoMetadata : ExtractPhotoMetadata,
 	SetFile : SetFile,
 	SetFeatured : SetFeatured,
