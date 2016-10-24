@@ -303,6 +303,15 @@ class AddTranslation extends CommandBase {
 	}
 }
 
+class SetTranslationVisibility extends CommandBase {
+	// cmd: { aggregateId, aggregateType, translationId, visibility }
+	constructor(cmd) {
+		if (!cmd.visibility) throw new Error("Invalid visibility");
+
+		super("SetTranslationVisibilityCommand", cmd);
+	}
+}
+
 class ImportFeeds extends CommandBase {
 	// cmd: { items : [ {id, sourceName}, {id, sourceName}, ... ] }
 	constructor(cmd) {
@@ -468,6 +477,7 @@ module.exports = {
 	SetFile : SetFile,
 	SetFeatured : SetFeatured,
 	AddTranslation : AddTranslation,
+	SetTranslationVisibility : SetTranslationVisibility,
 	ImportFeeds : ImportFeeds,
 	UploadPhoto : UploadPhoto,
 	UploadDocument : UploadDocument,
