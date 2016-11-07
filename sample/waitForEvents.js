@@ -13,7 +13,7 @@ const config = require("./../config.js");
 let api = new ForgeManagementApi(config.managementApi);
 
 function getWcmEvents(fromCheckpoint){
-	return api.getCommits("wcm", { fromCheckpoint: fromCheckpoint });
+	return api.getCommits("wcm", { fromCheckpoint: fromCheckpoint, toCheckpoint: fromCheckpoint + 1000 });
 }
 
 const PUBLISH_PHOTO_EVENT = "Deltatre.Forge.WCM.Shared.Events.EntityPublished`1[[Deltatre.Forge.WCM.Shared.Photos.Photo, Deltatre.Forge.WCM.Shared]], Deltatre.Forge.WCM.Shared";
