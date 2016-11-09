@@ -343,6 +343,35 @@ class AddSitePage extends CommandBase {
 	}
 }
 
+class AddSiteMenu extends CommandBase {
+	// cmd: {path}
+	//  notification: SiteMenuAddedNotification {itemId, fullPath}
+	constructor(cmd){
+		super("AddSiteMenuCommand", cmd);
+	}
+}
+
+class AddMenuItem extends CommandBase {
+	// cmd: {menuId, itemId, [properties, parentId, position]}
+	constructor(cmd){
+		super("AddMenuItemCommand", cmd);
+	}
+}
+
+class AddVariablesToMenu extends CommandBase {
+	// cmd: {itemId, variables}
+	constructor(cmd){
+		super("AddVariablesToMenuCommand", cmd);
+	}
+}
+
+class PublishMenu extends CommandBase {
+	// cmd: {itemId}
+	constructor(cmd){
+		super("PublishMenuCommand", cmd);
+	}
+}
+
 class ChangePageTemplate extends CommandBase {
 	// cmd: {pageId, template{ id, namespace } }
 	//  notification: PageTemplateChanged {instanceId}
@@ -491,6 +520,10 @@ module.exports = {
 	RemoveSitePage : RemoveSitePage,
 	SetLayoutProperties : SetLayoutProperties,
 	SetModuleProperties : SetModuleProperties,
+	AddSiteMenu : AddSiteMenu,
+	AddMenuItem : AddMenuItem,
+	AddVariablesToMenu : AddVariablesToMenu,
+	PublishMenu : PublishMenu,
 	GenerateDiff : GenerateDiff,
 	Rollback : Rollback,
 	CreateCheckpoint : CreateCheckpoint,
