@@ -343,6 +343,35 @@ class AddSitePage extends CommandBase {
 	}
 }
 
+class AddSiteMenu extends CommandBase {
+	// cmd: {path}
+	//  notification: SiteMenuAddedNotification {itemId, fullPath}
+	constructor(cmd){
+		super("AddSiteMenuCommand", cmd);
+	}
+}
+
+class AddMenuItem extends CommandBase {
+	// cmd: {menuId, itemId, [properties, parentId, position]}
+	constructor(cmd){
+		super("AddMenuItemCommand", cmd);
+	}
+}
+
+class AddVariablesToMenu extends CommandBase {
+	// cmd: {itemId, variables}
+	constructor(cmd){
+		super("AddVariablesToMenuCommand", cmd);
+	}
+}
+
+class PublishMenu extends CommandBase {
+	// cmd: {itemId}
+	constructor(cmd){
+		super("PublishMenuCommand", cmd);
+	}
+}
+
 class ChangePageTemplate extends CommandBase {
 	// cmd: {pageId, template{ id, namespace } }
 	//  notification: PageTemplateChanged {instanceId}
@@ -352,9 +381,23 @@ class ChangePageTemplate extends CommandBase {
 }
 
 class RemoveSitePage extends CommandBase {
-	// cmd: {pageId, template{ id, namespace } }
+	// cmd: {pageId }
 	constructor(cmd){
 		super("RemoveSitePageCommand", cmd);
+	}
+}
+
+class RemoveSiteMenu extends CommandBase {
+	// cmd: {menuId }
+	constructor(cmd){
+		super("RemoveSiteMenuCommand", cmd);
+	}
+}
+
+class RemoveSiteDirectory extends CommandBase {
+	// cmd: {directoryId }
+	constructor(cmd){
+		super("RemoveSiteDirectoryCommand", cmd);
 	}
 }
 
@@ -385,6 +428,27 @@ class AddVariablesToDirectory extends CommandBase {
 	// cmd: {commandId, itemId, variables [{key, variableType(KeyValue/DataItem/DataList/Script/StyleSheet), jsonBody}] }
 	constructor(cmd){
 		super("AddVariablesToDirectoryCommand", cmd);
+	}
+}
+
+class DeletePageVariables extends CommandBase {
+	// cmd: {commandId, itemId, variableKeys[] }
+	constructor(cmd){
+		super("DeletePageVariablesCommand", cmd);
+	}
+}
+
+class DeleteDirectoryVariables extends CommandBase {
+	// cmd: {commandId, itemId, variableKeys[] }
+	constructor(cmd){
+		super("DeleteDirectoryVariablesCommand", cmd);
+	}
+}
+
+class DeleteMenuVariables extends CommandBase {
+	// cmd: {commandId, itemId, variableKeys[] }
+	constructor(cmd){
+		super("DeleteMenuVariablesCommand", cmd);
 	}
 }
 
@@ -489,8 +553,17 @@ module.exports = {
 	AddVariablesToPage : AddVariablesToPage,
 	AddVariablesToDirectory : AddVariablesToDirectory,
 	RemoveSitePage : RemoveSitePage,
+	RemoveSiteMenu : RemoveSiteMenu,
+	RemoveSiteDirectory : RemoveSiteDirectory,
 	SetLayoutProperties : SetLayoutProperties,
 	SetModuleProperties : SetModuleProperties,
+	AddSiteMenu : AddSiteMenu,
+	AddMenuItem : AddMenuItem,
+	AddVariablesToMenu : AddVariablesToMenu,
+	PublishMenu : PublishMenu,
+	DeletePageVariables : DeletePageVariables,
+	DeleteDirectoryVariables : DeleteDirectoryVariables,
+	DeleteMenuVariables : DeleteMenuVariables,
 	GenerateDiff : GenerateDiff,
 	Rollback : Rollback,
 	CreateCheckpoint : CreateCheckpoint,
