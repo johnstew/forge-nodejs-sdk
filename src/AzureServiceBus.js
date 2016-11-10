@@ -38,12 +38,12 @@ class AzureSubscription {
 	receiveMessage(callback){
 		this.serviceBusService
 		.receiveSubscriptionMessage(this.topic, this.subscription, (error, receivedMessage) => {
-			if(error) return callback(null, null);
-
-			debug(receivedMessage);
+			if (error) return callback(error);
 
 			// Parse body
 			//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+			// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+			//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
 			let matches = receivedMessage.body.match(/({.*})/);
 			if (matches || matches.length >= 1) receivedMessage.body = JSON.parse(matches[0]);
 
@@ -118,6 +118,7 @@ class AzureSubscription {
 			if (!this.receiving) return;
 
 			if (!error && msg) {
+				debug(msg);
 				this._emit(msg.brokerProperties.Label, msg.body);
 			}
 

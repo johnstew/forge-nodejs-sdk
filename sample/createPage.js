@@ -39,7 +39,7 @@ function changeTemplate(pageId, template){
 connect()
 .then(() => {
 
-	return addSitePage("~/sdksample/page_" + (new Date().getTime()))
+	return addSitePage("~/test/sdksample/page_" + (new Date().getTime()))
 	.then((pageId) => {
 		console.log("New page id: " + pageId);
 		return changeTemplate(pageId, { id:"homePage", namespace:"urn:mynamespace"})
