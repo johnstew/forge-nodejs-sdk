@@ -372,6 +372,20 @@ class PublishMenu extends CommandBase {
 	}
 }
 
+class PublishPage extends CommandBase {
+	// cmd: {itemId}
+	constructor(cmd){
+		super("PublishPageCommand", cmd);
+	}
+}
+
+class PublishDirectory extends CommandBase {
+	// cmd: {itemId}
+	constructor(cmd){
+		super("PublishDirectoryCommand", cmd);
+	}
+}
+
 class ChangePageTemplate extends CommandBase {
 	// cmd: {pageId, template{ id, namespace } }
 	//  notification: PageTemplateChanged {instanceId}
@@ -463,6 +477,20 @@ class SetModuleProperties extends CommandBase {
 	// cmd: {commandId, pageId, moduleInstanceId, properties {key, value}}
 	constructor(cmd){
 		super("SetModulePropertiesCommand", cmd);
+	}
+}
+
+class RemoveLinkRuleFromPage extends CommandBase {
+	// cmd: {commandId, linkRuleId}
+	constructor(cmd){
+		super("RemoveLinkRuleFromPageCommand", cmd);
+	}
+}
+
+class CreateLinkRuleForPage extends CommandBase {
+	// cmd: {commandId, pageId, entityType, priority, properties {key, value}}
+	constructor(cmd){
+		super("CreateLinkRuleForPageCommand", cmd);
 	}
 }
 
@@ -561,6 +589,10 @@ module.exports = {
 	AddMenuItem : AddMenuItem,
 	AddVariablesToMenu : AddVariablesToMenu,
 	PublishMenu : PublishMenu,
+	PublishPage : PublishPage,
+	PublishDirectory : PublishDirectory,
+	RemoveLinkRuleFromPage : RemoveLinkRuleFromPage,
+	CreateLinkRuleForPage : CreateLinkRuleForPage,
 	DeletePageVariables : DeletePageVariables,
 	DeleteDirectoryVariables : DeleteDirectoryVariables,
 	DeleteMenuVariables : DeleteMenuVariables,
