@@ -35,10 +35,15 @@ class AzureSubscription {
 		.withFilter(retryOperations);
 	}
 
-	receiveMessage(callback){
+	_receiveMessage(receiveTimeout, callback){
+		receiveTimeout = receiveTimeout || 60000;
+		if (receiveTimeout < 1000) receiveTimeout = 1000;
+
 		this.serviceBusService
-		.receiveSubscriptionMessage(this.topic, this.subscription, (error, receivedMessage) => {
+		.receiveSubscriptionMessage(this.topic, this.subscription, { timeoutIntervalInS : receiveTimeout / 1000}, (error, receivedMessage) => {
 			if (error) return callback(error);
+
+			if (!receivedMessage) return callback(null, null);
 
 			// Parse body
 			//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
@@ -112,9 +117,10 @@ class AzureSubscription {
 		}
 	}
 
-	_receivingLoop(receiveInterval){
-		this.receiveMessage((error, msg) => {
+	_receivingLoop(receiveInterval, receiveTimeout){
+		this._receiveMessage(receiveTimeout, (error, msg) => {
 			if (error) debug(error);
+
 			if (!this.receiving) return;
 
 			if (!error && msg) {
@@ -122,19 +128,19 @@ class AzureSubscription {
 				this._emit(msg.brokerProperties.Label, msg.body);
 			}
 
-			setTimeout(() => this._receivingLoop(receiveInterval), receiveInterval);
+			setTimeout(() => this._receivingLoop(receiveInterval, receiveTimeout), receiveInterval);
 		});
 	}
 
-	startReceiving(receiveInterval){
-		receiveInterval = receiveInterval || 500;
+	startReceiving(receiveInterval, receiveTimeout){
+		receiveInterval = receiveInterval || 10;
 
 		if (this.receiving) return;
 
 		this.receiving = true;
-		debug("Start receiving messages...");
+		debug(`Start receiving messages... ${receiveInterval} ${receiveTimeout} `);
 
-		this._receivingLoop(receiveInterval);
+		this._receivingLoop(receiveInterval, receiveTimeout);
 	}
 
 	stopReceiving(){

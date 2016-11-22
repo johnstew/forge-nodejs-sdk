@@ -28,7 +28,7 @@ class AzureForgeNotificationBus {
 				.createIfNotExists(this.options.subscriptionOptions, (error) =>{
 					if (error) return reject(error);
 
-					this.azureSubscription.startReceiving(this.options.receiveInterval);
+					this.azureSubscription.startReceiving(this.options.receiveInterval, this.options.receiveTimeout);
 					return resolve(true);
 				});
 		});
