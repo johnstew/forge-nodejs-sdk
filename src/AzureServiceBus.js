@@ -2,7 +2,7 @@
 
 const debug = require("debug")("azureServiceBus");
 const events = require("events");
-const azure = require("azure");
+const azure = require("azure"); // doo: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 
 /*
 Class wrapper around Azure Service Bus Topic/Subscription API.
