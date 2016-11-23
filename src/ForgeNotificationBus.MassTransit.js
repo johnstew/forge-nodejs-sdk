@@ -4,6 +4,7 @@ const debug = require("debug")("ForgeNotificationBus.MassTransit");
 const rabbitMqServiceBus = require("./RabbitMqServiceBus.js");
 const events = require("events");
 
+// OBSOLETE!!! Use RabbitMq version...
 class MassTransitForgeNotificationBus {
 
 	constructor(options) {

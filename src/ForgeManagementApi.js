@@ -13,7 +13,7 @@ class ForgeManagementApi {
 		this.notificationBus = null;
 	}
 
-	post(cmd) {
+	post(cmd, waitTimeout) {
 		if (Array.isArray(cmd))	{
 			return this.post(new ForgeCommands.Batch({commands: cmd}));
 		}
@@ -35,8 +35,10 @@ class ForgeManagementApi {
 		};
 
 		let waiterPromise;
-		if (this.notificationBus) waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId);
-		else waiterPromise = Promise.resolve(true);
+		if (this.notificationBus)
+			waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId, null, null, waitTimeout);
+		else
+			waiterPromise = Promise.resolve(true);
 
 		var postPromise = new Promise((resolve, reject) => {
 			request(options, (error, response, body) => {

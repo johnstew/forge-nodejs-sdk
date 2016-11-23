@@ -35,15 +35,15 @@ class AzureForgeNotificationBus {
 	}
 
 	on(notificationName, listener){
-		this.azureSubscription.onMessage(notificationName, listener);
+		this.azureSubscription.on(notificationName, listener);
 	}
 
 	stopReceiving(){
 		this.azureSubscription.stopReceiving();
 	}
 
-	waitOnce(predicate){
-		return this.azureSubscription.waitOnce(predicate);
+	waitOnce(resolvePredicate, rejectPredicate){
+		return this.azureSubscription.waitOnce(resolvePredicate, rejectPredicate);
 	}
 }
 

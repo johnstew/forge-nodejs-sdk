@@ -11,7 +11,7 @@ Usage:
 let bus = require("./azureServiceBus.js");
 let subscription = new bus.AzureSubscription(SERVICEBUS_CONNECTION, TOPICNAME, SUBSCRIPTIONNAME);
 
-subscription.onMessage(YOURMSGLABEL, (msg) => {
+subscription.on(YOURMSGLABEL, (msg) => {
 	// Your code to handle the message
 });
 subscription.createIfNotExists({}, (error) =>{
@@ -24,12 +24,12 @@ class AzureSubscription {
 	constructor(azureBusUrl, topic, subscription) {
 		const retryOperations = new azure.ExponentialRetryPolicyFilter();
 
-		this.waitOnceListeners = new Set();
+		this._waitOnceListeners = new Set();
 
 		this.receiving = false;
 		this.topic = topic;
 		this.subscription = subscription;
-		this.eventEmitter = new events.EventEmitter();
+		this._eventEmitter = new events.EventEmitter();
 		this.serviceBusService = azure
 		.createServiceBusService(azureBusUrl)
 		.withFilter(retryOperations);
@@ -95,8 +95,8 @@ class AzureSubscription {
 		});
 	}
 
-	onMessage(msgLabel, listener){
-		this.eventEmitter.on(msgLabel, listener);
+	on(msgLabel, listener){
+		this._eventEmitter.on(msgLabel, listener);
 	}
 
 	_normalizeBody(body){
@@ -105,13 +105,21 @@ class AzureSubscription {
 	}
 
 	_emit(name, body){
-		body = this._normalizeBody(body);
-		this.eventEmitter.emit(name, body);
+		if (name != "error")
+			body = this._normalizeBody(body);
 
-		let listeners = this.waitOnceListeners;
+		debug(name, body);
+
+		this._eventEmitter.emit(name, body);
+
+		let listeners = this._waitOnceListeners;
 		for(let item of listeners){
-			if (item.predicate(name, body)){
+			if (item.resolvePredicate && item.resolvePredicate(name, body)){
 				item.resolve(body);
+				listeners.delete(item);
+			}
+			else if (item.rejectPredicate && item.rejectPredicate(name, body)){
+				item.reject(body);
 				listeners.delete(item);
 			}
 		}
@@ -119,13 +127,16 @@ class AzureSubscription {
 
 	_receivingLoop(receiveInterval, receiveTimeout){
 		this._receiveMessage(receiveTimeout, (error, msg) => {
-			if (error) debug(error);
-
 			if (!this.receiving) return;
 
-			if (!error && msg) {
-				debug(msg);
+			if (error){
+				this._emit("error", error);
+			}
+			else if (msg && msg.brokerProperties && msg.brokerProperties.Label) {
 				this._emit(msg.brokerProperties.Label, msg.body);
+			}
+			else {
+				debug("Invalid message format", msg);
 			}
 
 			setTimeout(() => this._receivingLoop(receiveInterval, receiveTimeout), receiveInterval);
@@ -148,9 +159,14 @@ class AzureSubscription {
 		debug("Stop receiving messages.");
 	}
 
-	waitOnce(predicate){
+	waitOnce(resolvePredicate, rejectPredicate){
 		return new Promise((resolve, reject) => {
-			this.waitOnceListeners.add({predicate: predicate, resolve: resolve, reject: reject});
+			this._waitOnceListeners.add({
+				resolvePredicate: resolvePredicate,
+				rejectPredicate: rejectPredicate,
+				resolve: resolve,
+				reject: reject
+			});
 		});
 	}
 }

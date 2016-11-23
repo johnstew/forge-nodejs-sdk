@@ -15,21 +15,22 @@ let notificationBus = new ForgeNotificationBus(config.serviceBus);
 function connect(){
 	return notificationBus.startReceiving();
 }
-// function disconnect(){
-// 	return notificationBus.stopReceiving();
-// }
+function disconnect(){
+	return notificationBus.stopReceiving();
+}
 
 connect()
 .then(() => {
 
 	console.log("Waiting for an entity to be published/unpublished:");
-	notificationBus.on("EntityDistributionNotification", (e) => {
-		if (e.action === "publish")
-			console.log(`${e.entityType} ${e.slug} published`);
-
-		if (e.action === "unpublish")
-			console.log(`${e.entityType} ${e.slug} unpublished`);
+	return notificationBus.waitOnce(
+		(name) => name == "EntityDistributionNotification",
+		(name) => name == "error"
+	)
+	.then((msg) => {
+		console.log("Message arrived: ", msg);
 	});
 
 })
+.then(disconnect, (e) => {disconnect(); throw e;})
 .catch(console.log.bind(console));  // just catch everything here

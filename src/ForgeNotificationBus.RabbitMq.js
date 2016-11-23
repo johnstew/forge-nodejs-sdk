@@ -8,11 +8,11 @@ class RabbitMqForgeNotificationBus {
 
 	constructor(options) {
 		this.options = options;
-		this.eventEmitter = new events.EventEmitter();
+		this._eventEmitter = new events.EventEmitter();
 		this.rabbitMqChannel =
 		new rabbitMqServiceBus.RabbitMqChannel(
 			this.options.url);
-		this.waitOnceListeners = new Set();
+		this._waitOnceListeners = new Set();
 	}
 
 	startReceiving(){
@@ -24,41 +24,56 @@ class RabbitMqForgeNotificationBus {
 	}
 
 	_dispatch(msg){
-		if (!msg.properties) return;
-		if (!msg.properties.headers) return;
-		let typeName = msg.properties.headers.TypeName;
-		if (!typeName) return;
-
-		debug(typeName);
-
-		let body = JSON.parse(msg.content.toString());
-		this._emit(typeName, toCamel(body));
+		try {
+			if (!msg.properties
+				|| !msg.properties.headers
+				|| !msg.properties.headers.TypeName){
+				throw new Error("Invalid message");
+			}
+			else {
+				let body = JSON.parse(msg.content.toString());
+				this._emit(msg.properties.headers.TypeName, toCamel(body));
+			}
+		} catch (e) {
+			this._emit("error", e);
+		}
 	}
 
 	_emit(name, body){
-		this.eventEmitter.emit(name, body);
 
-		let listeners = this.waitOnceListeners;
+		debug(name, body);
+
+		this._eventEmitter.emit(name, body);
+
+		let listeners = this._waitOnceListeners;
 		for(let item of listeners){
-			debug(item);
-			if (item.predicate(name, body)){
+			if (item.resolvePredicate && item.resolvePredicate(name, body)){
 				item.resolve(body);
+				listeners.delete(item);
+			}
+			else if (item.rejectPredicate && item.rejectPredicate(name, body)){
+				item.reject(body);
 				listeners.delete(item);
 			}
 		}
 	}
 
 	on(notificationName, listener){
-		this.eventEmitter.on(notificationName, listener);
+		this._eventEmitter.on(notificationName, listener);
 	}
 
 	stopReceiving(){
 		this.rabbitMqChannel.close();
 	}
 
-	waitOnce(predicate){
+	waitOnce(resolvePredicate, rejectPredicate){
 		return new Promise((resolve, reject) => {
-			this.waitOnceListeners.add({predicate: predicate, resolve: resolve, reject: reject});
+			this._waitOnceListeners.add({
+				resolvePredicate: resolvePredicate,
+				rejectPredicate: rejectPredicate,
+				resolve: resolve,
+				reject: reject
+			});
 		});
 	}
 }
