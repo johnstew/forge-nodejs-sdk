@@ -58,9 +58,9 @@ write the correct implementation code to catch errors and handle continuation.
     function connect(){
     	return notificationBus.startReceiving();
     }
-    // function disconnect(){
-    // 	return notificationBus.stopReceiving();
-    // }
+    function disconnect(){
+     	return notificationBus.stopReceiving();
+    }
 
     connect()
     .then(() => {
