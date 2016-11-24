@@ -1,8 +1,9 @@
 "use strict";
 
 const debug = require("debug")("azureServiceBus");
+const debugTracking = require("debug")("azureServiceBus.tracking");
 const events = require("events");
-const azure = require("azure"); // doo: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
+const azure = require("azure"); // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 
 /*
 Class wrapper around Azure Service Bus Topic/Subscription API.
@@ -29,30 +30,55 @@ class AzureSubscription {
 		this.receiving = false;
 		this.topic = topic;
 		this.subscription = subscription;
+		this.receiveWithPeekLock = false;
 		this._eventEmitter = new events.EventEmitter();
 		this.serviceBusService = azure
-		.createServiceBusService(azureBusUrl)
-		.withFilter(retryOperations);
+			.createServiceBusService(azureBusUrl)
+			.withFilter(retryOperations);
 	}
 
 	_receiveMessage(receiveTimeout, callback){
 		receiveTimeout = receiveTimeout || 60000;
 		if (receiveTimeout < 1000) receiveTimeout = 1000;
 
+		let receiveOptions = { isPeekLock: this.receiveWithPeekLock, timeoutIntervalInS : receiveTimeout / 1000};
+
 		this.serviceBusService
-		.receiveSubscriptionMessage(this.topic, this.subscription, { timeoutIntervalInS : receiveTimeout / 1000}, (error, receivedMessage) => {
-			if (error) return callback(error);
+		.receiveSubscriptionMessage(this.topic, this.subscription, receiveOptions, (error, receivedMessage) => {
+			if (error) {
+				if (error == "No messages to receive")
+					return callback(null, null);
+				else
+					return callback(error);
+			}
 
-			if (!receivedMessage) return callback(null, null);
+			if (!receivedMessage || !receivedMessage.body)
+				return callback(null, null);
 
-			// Parse body
-			//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-			// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-			//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-			let matches = receivedMessage.body.match(/({.*})/);
-			if (matches || matches.length >= 1) receivedMessage.body = JSON.parse(matches[0]);
+			try {
+				// Parse body
+				//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+				// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+				//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
+				let matches = receivedMessage.body.match(/({.*})/);
+				if (matches || matches.length >= 1) {
+					receivedMessage.body = JSON.parse(matches[0]);
+					receivedMessage.body = this._normalizeBody(receivedMessage.body);
+				}
+			} catch (e) {
+				return callback(e);
+			}
 
 			return callback(null, receivedMessage);
+		});
+	}
+
+	_deleteMessage(message, callback){
+		this.serviceBusService
+		.deleteMessage(message, (error) => {
+			if (error) return callback(error);
+
+			return callback(null, null);
 		});
 	}
 
@@ -105,15 +131,16 @@ class AzureSubscription {
 	}
 
 	_emit(name, body){
-		if (name != "error")
-			body = this._normalizeBody(body);
-
 		debug(name, body);
+		if (name == "CommandSuccessNotification")
+			debugTracking(`... ${body.commandId} OK`);
+		if (name == "CommandFailedNotification")
+			debugTracking(`... ${body.commandId} FAIL`);
 
 		this._eventEmitter.emit(name, body);
 
 		let listeners = this._waitOnceListeners;
-		for(let item of listeners){
+		for (let item of listeners) {
 			if (item.resolvePredicate && item.resolvePredicate(name, body)){
 				item.resolve(body);
 				listeners.delete(item);
@@ -129,13 +156,20 @@ class AzureSubscription {
 		this._receiveMessage(receiveTimeout, (error, msg) => {
 			if (!this.receiving) return;
 
-			if (error){
+			if (error) {
 				this._emit("error", error);
 			}
 			else if (msg && msg.brokerProperties && msg.brokerProperties.Label) {
 				this._emit(msg.brokerProperties.Label, msg.body);
+
+				if (this.receiveWithPeekLock) {
+					this._deleteMessage(msg, (deleteError) => {
+						if (deleteError)
+							this._emit("error", deleteError);
+					});
+				}
 			}
-			else {
+			else if (msg) {
 				debug("Invalid message format", msg);
 			}
 

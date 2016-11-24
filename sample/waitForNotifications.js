@@ -22,14 +22,18 @@ function connect(){
 connect()
 .then(() => {
 
-	console.log("Waiting for an entity to be published/unpublished:");
-	notificationBus.on("EntityDistributionNotification", (e) => {
-		if (e.action === "publish")
-			console.log(`${e.entityType} ${e.slug} published`);
+	// console.log("Waiting for an entity to be published/unpublished:");
+	// notificationBus.on("EntityDistributionNotification", (e) => {
+	// 	if (e.action === "publish")
+	// 		console.log(`${e.entityType} ${e.slug} published`);
+	//
+	// 	if (e.action === "unpublish")
+	// 		console.log(`${e.entityType} ${e.slug} unpublished`);
+	// });
 
-		if (e.action === "unpublish")
-			console.log(`${e.entityType} ${e.slug} unpublished`);
+	//notificationBus.on("error", console.error);
+	notificationBus.on("CommandSuccessNotification", (e) => {
+		console.log(`CommandSuccessNotification ${e.commandId}`);
 	});
-
 })
 .catch(console.log.bind(console));  // just catch everything here

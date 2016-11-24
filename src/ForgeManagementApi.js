@@ -1,8 +1,9 @@
 "use strict";
 
 const debug = require("debug")("ForgeManagementApi");
+const debugTracking = require("debug")("ForgeManagementApi.tracking");
 const request = require("request");
-const uuid = require("node-uuid");
+const uuid = require("uuid");
 const urlJoin = require("url-join");
 const ForgeCommands = require("./ForgeCommands");
 
@@ -19,6 +20,7 @@ class ForgeManagementApi {
 		}
 
 		debug("Sending command...", cmd);
+		debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
 
 		if (!cmd.bodyObject) throw new Error("cmd.bodyObject not defined");
 

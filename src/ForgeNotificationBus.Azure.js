@@ -2,7 +2,7 @@
 
 //const debug = require("debug")("ForgeNotificationBus.Azure");
 const azureServiceBus = require("./AzureServiceBus.js");
-const uuid = require("node-uuid");
+const uuid = require("uuid");
 
 class AzureForgeNotificationBus {
 
