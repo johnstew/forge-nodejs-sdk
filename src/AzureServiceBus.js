@@ -37,48 +37,54 @@ class AzureSubscription {
 			.withFilter(retryOperations);
 	}
 
-	_receiveMessage(receiveTimeout, callback){
+	_receiveMessage(receiveTimeout){
 		receiveTimeout = receiveTimeout || 60000;
 		if (receiveTimeout < 1000) receiveTimeout = 1000;
 
 		let receiveOptions = { isPeekLock: this.receiveWithPeekLock, timeoutIntervalInS : receiveTimeout / 1000};
 
-		this.serviceBusService
-		.receiveSubscriptionMessage(this.topic, this.subscription, receiveOptions, (error, receivedMessage) => {
-			if (error) {
-				if (error == "No messages to receive")
-					return callback(null, null);
-				else
-					return callback(error);
-			}
+		return new Promise((resolve, reject) => {
 
-			if (!receivedMessage || !receivedMessage.body)
-				return callback(null, null);
-
-			try {
-				// Parse body
-				//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-				// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-				//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-				let matches = receivedMessage.body.match(/({.*})/);
-				if (matches || matches.length >= 1) {
-					receivedMessage.body = JSON.parse(matches[0]);
-					receivedMessage.body = this._normalizeBody(receivedMessage.body);
+			this.serviceBusService
+			.receiveSubscriptionMessage(this.topic, this.subscription, receiveOptions, (error, receivedMessage) => {
+				if (error) {
+					if (error == "No messages to receive")
+						return resolve(null);
+					else
+						return reject(error);
 				}
-			} catch (e) {
-				return callback(e);
-			}
 
-			return callback(null, receivedMessage);
+				if (!receivedMessage || !receivedMessage.body)
+					return resolve(null);
+
+				try {
+					// Parse body
+					//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+					// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+					//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
+					let matches = receivedMessage.body.match(/({.*})/);
+					if (matches || matches.length >= 1) {
+						receivedMessage.body = JSON.parse(matches[0]);
+						receivedMessage.body = this._normalizeBody(receivedMessage.body);
+					}
+				} catch (e) {
+					return reject(e);
+				}
+
+				resolve(receivedMessage);
+			});
+
 		});
 	}
 
-	_deleteMessage(message, callback){
-		this.serviceBusService
-		.deleteMessage(message, (error) => {
-			if (error) return callback(error);
+	_deleteMessage(message){
+		return new Promise((resolve, reject) => {
+			this.serviceBusService
+			.deleteMessage(message, (error) => {
+				if (error) return reject(error);
 
-			return callback(null, null);
+				return resolve(null);
+			});
 		});
 	}
 
@@ -153,37 +159,37 @@ class AzureSubscription {
 	}
 
 	_receivingLoop(receiveInterval, receiveTimeout){
-		this._receiveMessage(receiveTimeout, (error, msg) => {
-			if (!this.receiving) return;
-
-			if (error) {
-				this._emit("error", error);
-			}
-			else if (msg && msg.brokerProperties && msg.brokerProperties.Label) {
+		this._receiveMessage(receiveTimeout)
+		.then((msg) => {
+			if (msg && msg.brokerProperties && msg.brokerProperties.Label) {
 				this._emit(msg.brokerProperties.Label, msg.body);
 
 				if (this.receiveWithPeekLock) {
-					this._deleteMessage(msg, (deleteError) => {
-						if (deleteError)
-							this._emit("error", deleteError);
-					});
+					this._deleteMessage(msg)
+					.catch((e) => this._emit("error", e));
 				}
 			}
 			else if (msg) {
 				debug("Invalid message format", msg);
 			}
+		})
+		.catch((e) => {
+			this._emit("error", e);
+		})
+		.then(() => {
+			if (!this.receiving) return;
 
 			setTimeout(() => this._receivingLoop(receiveInterval, receiveTimeout), receiveInterval);
 		});
 	}
 
 	startReceiving(receiveInterval, receiveTimeout){
-		receiveInterval = receiveInterval || 10;
+		receiveInterval = receiveInterval || 1;
 
 		if (this.receiving) return;
 
-		this.receiving = true;
 		debug(`Start receiving messages... ${receiveInterval} ${receiveTimeout} `);
+		this.receiving = true;
 
 		this._receivingLoop(receiveInterval, receiveTimeout);
 	}

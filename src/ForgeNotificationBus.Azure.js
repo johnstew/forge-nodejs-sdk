@@ -11,7 +11,7 @@ class AzureForgeNotificationBus {
 		this.options.topicName = this.options.topicName	|| "forgenotifications";
 		this.options.subscriptionName = this.options.subscriptionName	|| "forge-sdk-" + uuid.v4();
 		this.options.subscriptionOptions = this.options.subscriptionOptions	|| {
-			DefaultMessageTimeToLive : "PT10S",
+			DefaultMessageTimeToLive : "PT120S",
 			AutoDeleteOnIdle : "PT5M"
 		};
 

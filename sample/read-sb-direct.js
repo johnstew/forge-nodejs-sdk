@@ -3,11 +3,13 @@ var azure = require("azure");
 const URL = "Endpoint=sb://test-davide-forge.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=hSePQJmEL+y2V0XcH0utFj66Gv3JPw/m3gTIY8zawPM=";
 var serviceBusService = azure.createServiceBusService(URL);
 
+var count = 0;
 function checkMessages(){
-	serviceBusService.receiveSubscriptionMessage("forgenotifications", "AllMessages", function(error, receivedMessage){
+	serviceBusService.receiveSubscriptionMessage("testNotifications", "AllMessages", function(error, receivedMessage){
 		if(!error){
 			// Message received and deleted
-			console.log(receivedMessage);
+			count++;
+			console.log(count, receivedMessage);
 		}
 		else {
 			console.log(error, receivedMessage);
@@ -17,12 +19,17 @@ function checkMessages(){
 	});
 }
 
-serviceBusService.createSubscription("forgenotifications","AllMessages",function(error){
+serviceBusService.createSubscription("testNotifications","AllMessages",function(error){
 	if (!error){
 		// subscription created
-		checkMessages();
+	}
+	else if (error.statusCode == 409) {
+		// subscription already exists
 	}
 	else {
 		console.log(error);
+		return;
 	}
+
+	checkMessages();
 });

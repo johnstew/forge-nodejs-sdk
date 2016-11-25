@@ -32,8 +32,13 @@ connect()
 	// });
 
 	//notificationBus.on("error", console.error);
-	notificationBus.on("CommandSuccessNotification", (e) => {
-		console.log(`CommandSuccessNotification ${e.commandId}`);
+	// notificationBus.on("CommandSuccessNotification", (e) => {
+	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
+	// });
+
+	notificationBus.on("HeartbeatNotification", (e) => {
+		console.log(`HeartbeatNotification ${e.nodeId}`);
 	});
+
 })
 .catch(console.log.bind(console));  // just catch everything here
