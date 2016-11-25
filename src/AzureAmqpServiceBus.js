@@ -1,29 +1,13 @@
 "use strict";
 
-const debug = require("debug")("azureServiceBus");
-const debugTracking = require("debug")("azureServiceBus.tracking");
+const debug = require("debug")("azureAmqpServiceBus");
+const debugTracking = require("debug")("azureAmqpServiceBus.tracking");
 const events = require("events");
 const azure = require("azure"); // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
+const AMQPClient = require("amqp10").Client;
+const Policy = require("amqp10").Policy;
 
-/*
-Class wrapper around Azure Service Bus Topic/Subscription API.
-Usage:
-
-let bus = require("./azureServiceBus.js");
-let subscription = new bus.AzureSubscription(SERVICEBUS_CONNECTION, TOPICNAME, SUBSCRIPTIONNAME);
-
-subscription.on(YOURMSGLABEL, (msg) => {
-	// Your code to handle the message
-});
-subscription.createIfNotExists({}, (error) =>{
-	if (error) return console.log(error);
-
-	subscription.startReceiving();
-});
-*/
-
-// OBSOLETE!!! Use Amqp version...
-class AzureSubscription {
+class AzureAmqpSubscription {
 	constructor(azureBusUrl, topic, subscription) {
 		const retryOperations = new azure.ExponentialRetryPolicyFilter();
 
@@ -37,46 +21,45 @@ class AzureSubscription {
 		this.serviceBusService = azure
 			.createServiceBusService(azureBusUrl)
 			.withFilter(retryOperations);
+
+		this._amqpUrl = this._createAmqpUrl(azureBusUrl);
 	}
 
-	_receiveMessage(receiveTimeout){
-		receiveTimeout = receiveTimeout || 60000;
-		if (receiveTimeout < 1000) receiveTimeout = 1000;
+	_createAmqpUrl(azureBusUrl){
+		const hostNameRegEx = /sb\:\/\/(.*?)\;/;
+		const sasNameRegEx = /SharedAccessKeyName=(.*?)(\;|$)/;
+		const sasKeyRegEx = /SharedAccessKey=(.*?)(\;|$)/;
 
-		let receiveOptions = { isPeekLock: this.receiveWithPeekLock, timeoutIntervalInS : receiveTimeout / 1000};
+		try {
+			const sasName = azureBusUrl.match(sasNameRegEx)[1];
+			const sasKey = azureBusUrl.match(sasKeyRegEx)[1];
+			const serviceBusHost = azureBusUrl.match(hostNameRegEx)[1];
 
-		return new Promise((resolve, reject) => {
+			return `amqps://${encodeURIComponent(sasName)}:${encodeURIComponent(sasKey)}@${serviceBusHost}`;
+		}
+		catch (e) {
+			throw new Error("Invalid azure bus url");
+		}
+	}
 
-			this.serviceBusService
-			.receiveSubscriptionMessage(this.topic, this.subscription, receiveOptions, (error, receivedMessage) => {
-				if (error) {
-					if (error == "No messages to receive")
-						return resolve(null);
-					else
-						return reject(error);
-				}
+	_receiveMessage(msg){
+		if (!msg
+			|| !msg.body
+			|| !msg.properties
+			|| !msg.properties.subject)
+			return;
 
-				if (!receivedMessage || !receivedMessage.body)
-					return resolve(null);
+		// Parse body
+		//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+		// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+		//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
+		let matches = msg.body.match(/({.*})/);
+		if (matches || matches.length >= 1) {
+			msg.body = JSON.parse(matches[0]);
+			msg.body = this._normalizeBody(msg.body);
 
-				try {
-					// Parse body
-					//	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-					// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-					//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-					let matches = receivedMessage.body.match(/({.*})/);
-					if (matches || matches.length >= 1) {
-						receivedMessage.body = JSON.parse(matches[0]);
-						receivedMessage.body = this._normalizeBody(receivedMessage.body);
-					}
-				} catch (e) {
-					return reject(e);
-				}
-
-				resolve(receivedMessage);
-			});
-
-		});
+			this._emit(msg.properties.subject, msg.body);
+		}
 	}
 
 	_deleteMessage(message){
@@ -87,31 +70,6 @@ class AzureSubscription {
 
 				return resolve(null);
 			});
-		});
-	}
-
-	_receivingLoop(receiveInterval, receiveTimeout){
-		this._receiveMessage(receiveTimeout)
-		.then((msg) => {
-			if (msg && msg.brokerProperties && msg.brokerProperties.Label) {
-				this._emit(msg.brokerProperties.Label, msg.body);
-
-				if (this.receiveWithPeekLock) {
-					this._deleteMessage(msg)
-					.catch((e) => this._emit("error", e));
-				}
-			}
-			else if (msg) {
-				debug("Invalid message format", msg);
-			}
-		})
-		.catch((e) => {
-			this._emit("error", e);
-		})
-		.then(() => {
-			if (!this.receiving) return;
-
-			setTimeout(() => this._receivingLoop(receiveInterval, receiveTimeout), receiveInterval);
 		});
 	}
 
@@ -189,22 +147,35 @@ class AzureSubscription {
 		}
 	}
 
-	startReceiving(receiveInterval, receiveTimeout){
-		receiveInterval = receiveInterval || 1;
+	startReceiving(){
+		if (this.receiving) return Promise.resolve(true);
 
-		if (this.receiving) return;
-
-		debug(`Start receiving messages... ${receiveInterval} ${receiveTimeout} `);
+		debug("Start receiving messages with amqp protocol...");
 		this.receiving = true;
 
-		this._receivingLoop(receiveInterval, receiveTimeout);
-
-		return Promise.resolve(true);
+		this._amqpClient = new AMQPClient(Policy.ServiceBusTopic);
+		return this._amqpClient.connect(this._amqpUrl)
+		.then(() => {
+			return this._amqpClient.createReceiver(`${this.topic}/Subscriptions/${this.subscription}`);
+		})
+		.then((receiver) => {
+			receiver.on("message", (message) => {
+				this._receiveMessage(message);
+			});
+			receiver.on("errorReceived", (e) => this._emit("error", e));
+		});
 	}
 
 	stopReceiving(){
 		this.receiving = false;
 		debug("Stop receiving messages.");
+
+		if (this._amqpClient){
+			this._amqpClient.disconnect()
+			.catch((e) => this._emit("error", e));
+		}
+
+		this._amqpClient = null;
 	}
 
 	waitOnce(resolvePredicate, rejectPredicate){
@@ -249,4 +220,4 @@ function toCamel(o) {
 	return build;
 }
 
-module.exports.AzureSubscription = AzureSubscription;
+module.exports.AzureAmqpSubscription = AzureAmqpSubscription;

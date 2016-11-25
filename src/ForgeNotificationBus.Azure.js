@@ -2,6 +2,7 @@
 
 //const debug = require("debug")("ForgeNotificationBus.Azure");
 const azureServiceBus = require("./AzureServiceBus.js");
+const azureAmqpServiceBus = require("./AzureAmqpServiceBus.js");
 const uuid = require("uuid");
 
 class AzureForgeNotificationBus {
@@ -15,22 +16,32 @@ class AzureForgeNotificationBus {
 			AutoDeleteOnIdle : "PT5M"
 		};
 
-		this.azureSubscription =
-		new azureServiceBus.AzureSubscription(
-			this.options.url,
-			this.options.topicName,
-			this.options.subscriptionName);
+		this.options.useAmqp = this.options.hasOwnProperty("useAmqp")
+		? this.options.useAmqp
+		: true;
+
+		if (this.options.useAmqp){
+			this.azureSubscription =
+			new azureAmqpServiceBus.AzureAmqpSubscription(
+				this.options.url,
+				this.options.topicName,
+				this.options.subscriptionName);
+		}
+		else {
+			this.azureSubscription =
+			new azureServiceBus.AzureSubscription(
+				this.options.url,
+				this.options.topicName,
+				this.options.subscriptionName);
+		}
 	}
 
 	startReceiving(){
-		return new Promise((resolve, reject) => {
-			this.azureSubscription
-				.createIfNotExists(this.options.subscriptionOptions, (error) =>{
-					if (error) return reject(error);
-
-					this.azureSubscription.startReceiving(this.options.receiveInterval, this.options.receiveTimeout);
-					return resolve(true);
-				});
+		return this.azureSubscription
+		.createIfNotExists(this.options.subscriptionOptions)
+		.then(() => {
+			return this.azureSubscription
+			.startReceiving(this.options.receiveInterval, this.options.receiveTimeout);
 		});
 	}
 
