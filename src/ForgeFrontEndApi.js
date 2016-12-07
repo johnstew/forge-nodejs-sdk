@@ -13,6 +13,25 @@ class ForgeFrontEndApi {
 	get (path, questyStringObject){
 		const options = {
 			url: urlJoin(this.URL, path),
+			qs: questyStringObject
+		};
+
+		debug("Requesting " + options.url);
+
+		var promise = new Promise((resolve, reject) => {
+			request(options, (error, response, body) => {
+				if (error) return reject(error);
+				if (response.statusCode !== 200) return reject(new Error(response.statusCode));
+
+				resolve(body);
+			});
+		});
+		return promise;
+	}
+
+	getApi (path, questyStringObject){
+		const options = {
+			url: urlJoin(this.URL, path),
 			qs: questyStringObject,
 			headers: {
 				"Authorization": "CMS key=" + this.KEY,
@@ -34,7 +53,7 @@ class ForgeFrontEndApi {
 	}
 
 	getData (dataPath){
-		return this.get("/cms/api/data/getallraw",
+		return this.getApi("/cms/api/data/getallraw",
 			{
 				format: "json",
 				url: dataPath
