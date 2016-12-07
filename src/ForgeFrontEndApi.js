@@ -12,7 +12,7 @@ class ForgeFrontEndApi {
 
 	get (path, questyStringObject){
 		const options = {
-			url: urlJoin(this.URL, "/cms/api/data/getallraw"),
+			url: urlJoin(this.URL, path),
 			qs: questyStringObject,
 			headers: {
 				"Authorization": "CMS key=" + this.KEY,
