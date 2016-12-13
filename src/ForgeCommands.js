@@ -76,6 +76,24 @@ class CreateTag extends CommandBase {
 	}
 }
 
+class CreateExternalTag extends CommandBase {
+	// {tagId, translationId, title, [slug], dataSourceId, dataSourceName}
+	constructor(cmd){
+		cmd.tagId = cmd.tagId || uuid.v4();
+		cmd.translationId = cmd.translationId || uuid.v4();
+		super("CreateExternalTagCommand", cmd);
+	}
+}
+
+class CreateCustomEntityTag extends CommandBase {
+	// {tagId, translationId, title, [slug], entityTranslationId, entityCode}
+	constructor(cmd){
+		cmd.tagId = cmd.tagId || uuid.v4();
+		cmd.translationId = cmd.translationId || uuid.v4();
+		super("CreateCustomEntityTagCommand", cmd);
+	}
+}
+
 class CreateAlbum extends CommandBase {
 	// {albumId, translationId}
 	constructor(cmd){
@@ -538,6 +556,8 @@ module.exports = {
 	CreatePhoto : CreatePhoto,
 	CreateAlbum : CreateAlbum,
 	CreateTag : CreateTag,
+	CreateExternalTag : CreateExternalTag,
+	CreateCustomEntityTag : CreateCustomEntityTag,
 	CreateSelection : CreateSelection,
 	CreateCustomEntity : CreateCustomEntity,
 	CreateDocument : CreateDocument,
