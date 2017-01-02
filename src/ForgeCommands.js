@@ -547,6 +547,20 @@ class RestoreCheckpoint extends CommandBase {
 	}
 }
 
+class ImportNode extends CommandBase {
+	// cmd: { importId, targetPath, node { structureNode : SiteNodeTradeContract, memento : MementoContract, mode : ImportMode}, pagesWithLinkRules }
+	constructor(cmd){
+		super("ImportNodeCommand", cmd);
+	}
+}
+
+class ExportNode extends CommandBase {
+	// cmd: { path, exportId, description }
+	constructor(cmd){
+		super("ExportNodeCommand", cmd);
+	}
+}
+
 
 module.exports = {
 	CommandBase : CommandBase,
@@ -620,5 +634,7 @@ module.exports = {
 	Rollback : Rollback,
 	CreateCheckpoint : CreateCheckpoint,
 	RestoreCheckpoint : RestoreCheckpoint,
-	DeleteCheckpoint : DeleteCheckpoint
+	DeleteCheckpoint : DeleteCheckpoint,
+	ExportNode : ExportNode,
+	ImportNode : ImportNode
 };
