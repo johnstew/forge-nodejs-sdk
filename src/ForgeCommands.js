@@ -321,6 +321,13 @@ class AddTranslation extends CommandBase {
 	}
 }
 
+class RemoveTranslation extends CommandBase {
+	// cmd: { aggregateId, aggregateType, translationId }
+	constructor(cmd) {
+		super("RemoveTranslationCommand", cmd);
+	}
+}
+
 class SetTranslationVisibility extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, visibility }
 	constructor(cmd) {
@@ -603,6 +610,7 @@ module.exports = {
 	SetFile : SetFile,
 	SetFeatured : SetFeatured,
 	AddTranslation : AddTranslation,
+	RemoveTranslation : RemoveTranslation,
 	SetTranslationVisibility : SetTranslationVisibility,
 	ImportFeeds : ImportFeeds,
 	UploadPhoto : UploadPhoto,
