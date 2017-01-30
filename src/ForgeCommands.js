@@ -275,6 +275,13 @@ class AddEntityRelation extends CommandBase {
 	}
 }
 
+class MoveEntityRelation extends CommandBase {
+	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId }, position }
+	constructor(cmd){
+		super("MoveEntityRelationCommand", cmd);
+	}
+}
+
 class SetPhotoCropArea extends CommandBase {
 	// cmd: { photoId, format, formatProperty { crop { x, y, height, width } } }
 	constructor(cmd) {
@@ -602,6 +609,7 @@ module.exports = {
 	SetExtendedFields : SetExtendedFields,
 	SetStoryPartExtendedFields : SetStoryPartExtendedFields,
 	AddEntityRelation : AddEntityRelation,
+	MoveEntityRelation: MoveEntityRelation,
 	SetPhotoCropArea : SetPhotoCropArea,
 	UnsetPhotoCropArea : UnsetPhotoCropArea,
 	SetPhotoGravity: SetPhotoGravity,
