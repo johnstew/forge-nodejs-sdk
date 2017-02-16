@@ -24,8 +24,11 @@ subscription.createIfNotExists({}, (error) =>{
 
 // OBSOLETE!!! Use Amqp version...
 class AzureSubscription {
-	constructor(azureBusUrl, topic, subscription) {
+	constructor(azureBusUrl, topic, subscription, receiveInterval, receiveTimeout) {
 		const retryOperations = new azure.ExponentialRetryPolicyFilter();
+
+		this.receiveInterval = receiveInterval || 1;
+		this.receiveTimeout = receiveTimeout;
 
 		this._waitOnceListeners = new Set();
 
@@ -189,15 +192,13 @@ class AzureSubscription {
 		}
 	}
 
-	startReceiving(receiveInterval, receiveTimeout){
-		receiveInterval = receiveInterval || 1;
-
+	startReceiving(){
 		if (this.receiving) return;
 
-		debug(`Start receiving messages... ${receiveInterval} ${receiveTimeout} `);
+		debug(`Start receiving messages... ${this.receiveInterval} ${this.receiveTimeout} `);
 		this.receiving = true;
 
-		this._receivingLoop(receiveInterval, receiveTimeout);
+		this._receivingLoop(this.receiveInterval, this.receiveTimeout);
 
 		return Promise.resolve(true);
 	}

@@ -3,6 +3,7 @@
   "version": "1.7.0",
   "description": "Deltatre Forge Node.js SDK",
   "main": "index.js",
+  "typings": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,13 +14,20 @@
   },
   "license": "ISC",
   "dependencies": {
-    "amqp10": "^3.3.2",
-    "amqplib": "^0.4.0",
+    "@types/amqplib": "^0.5.1",
+    "@types/azure": "^0.9.18",
+    "@types/debug": "0.0.29",
+    "@types/node": "^7.0.5",
+    "@types/request": "0.0.40",
+    "@types/url-join": "^0.8.1",
+    "@types/uuid": "^2.0.29",
+    "amqp10": "^3.4.1",
+    "amqplib": "^0.4.2",
     "azure": "^0.10.6",
-    "debug": "^2.2.0",
-    "request": "^2.67.0",
+    "debug": "^2.6.1",
+    "request": "^2.79.0",
     "url-join": "0.0.1",
-    "uuid": "^3.0.0"
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "eslint": "^3.12.2"
