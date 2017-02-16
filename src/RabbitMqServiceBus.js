@@ -10,6 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const amqp = require("amqplib");
 const Debug = require("debug");
 const debug = Debug("forgesdk.rabbitMqServiceBus");
+// Code based on:
+// https://www.rabbitmq.com/tutorials/tutorial-three-javascript.html
+// https://github.com/squaremo/amqp.node/blob/master/examples/tutorials/receive_logs.js
 class RabbitMqChannel {
     constructor(url) {
         this.URL = url;

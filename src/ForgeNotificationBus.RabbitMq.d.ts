@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { RabbitMqChannel } from "./RabbitMqServiceBus.js";
 import { EventEmitter } from "events";
-import { INotificationBus, EventPredicate } from "./ForgeNotificationBusTypes";
+import { INotificationBus, EventPredicate } from "./notificationBusTypes";
 export declare class RabbitMqForgeNotificationBus implements INotificationBus {
     readonly options: any;
     readonly _eventEmitter: EventEmitter;

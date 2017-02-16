@@ -1,4 +1,5 @@
-import { INotificationBus, IAzureSubscription, EventPredicate } from "./ForgeNotificationBusTypes";
+import { INotificationBus, EventPredicate } from "./notificationBusTypes";
+import { IAzureSubscription } from "./azureNotificationBusTypes";
 export declare class AzureForgeNotificationBus implements INotificationBus {
     readonly options: any;
     readonly azureSubscription: IAzureSubscription;

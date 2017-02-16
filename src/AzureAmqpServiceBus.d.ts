@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
-import { IAzureSubscription, EventPredicate } from "./ForgeNotificationBusTypes";
+import { EventPredicate } from "./notificationBusTypes";
+import { IAzureSubscription } from "./azureNotificationBusTypes";
 export declare class AzureAmqpSubscription implements IAzureSubscription {
     readonly _waitOnceListeners: Set<any>;
     receiving: boolean;

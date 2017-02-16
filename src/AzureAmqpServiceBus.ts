@@ -5,7 +5,8 @@ const debugTracking = Debug("forgesdk.azureAmqpServiceBus.tracking");
 import {EventEmitter} from "events";
 import * as azure from "azure"; // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 
-import {IAzureSubscription, EventPredicate} from "./ForgeNotificationBusTypes";
+import {EventPredicate} from "./notificationBusTypes";
+import {IAzureSubscription} from "./azureNotificationBusTypes";
 
 const amqp10 = require("amqp10");
 const AMQPClient = amqp10.Client;

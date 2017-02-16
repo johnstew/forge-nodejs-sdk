@@ -3,7 +3,7 @@ const debug = Debug("forgesdk.ForgeNotificationBus");
 
 import {RabbitMqForgeNotificationBus} from "./ForgeNotificationBus.RabbitMq";
 import {AzureForgeNotificationBus} from "./ForgeNotificationBus.Azure";
-import {INotificationBus, EventPredicate} from "./ForgeNotificationBusTypes";
+import {INotificationBus, EventPredicate} from "./notificationBusTypes";
 
 export class ForgeNotificationBus {
 	readonly _options: any;

@@ -4,7 +4,8 @@ const debug = Debug("forgesdk.ForgeNotificationBus.RabbitMq");
 import {RabbitMqChannel} from "./RabbitMqServiceBus.js";
 import {EventEmitter} from "events";
 
-import {INotificationBus, EventPredicate} from "./ForgeNotificationBusTypes";
+import {INotificationBus, EventPredicate} from "./notificationBusTypes";
+import {IAzureSubscription} from "./azureNotificationBusTypes";
 
 export class RabbitMqForgeNotificationBus implements INotificationBus {
 	readonly options: any;

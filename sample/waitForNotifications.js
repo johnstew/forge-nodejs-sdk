@@ -36,8 +36,8 @@ connect()
 	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
 	// });
 
-	notificationBus.on("HeartbeatNotification", (e) => {
-		console.log(`HeartbeatNotification ${e.nodeId}`);
+	notificationBus.on("PublishedNotification", (e) => {
+		console.log(`PublishedNotification ${e}`);
 	});
 
 })

@@ -1,7 +1,8 @@
 import {AzureAmqpSubscription} from "./AzureAmqpServiceBus.js";
 import * as uuid from "uuid";
 
-import {INotificationBus, IAzureSubscription, EventPredicate} from "./ForgeNotificationBusTypes";
+import {INotificationBus, EventPredicate} from "./notificationBusTypes";
+import {IAzureSubscription} from "./azureNotificationBusTypes";
 
 const azureServiceBus = require("./AzureServiceBus.js");
 
@@ -19,8 +20,8 @@ export class AzureForgeNotificationBus implements INotificationBus {
 		};
 
 		this.options.useAmqp = this.options.hasOwnProperty("useAmqp")
-		? this.options.useAmqp
-		: true;
+			? this.options.useAmqp
+			: true;
 
 		if (this.options.useAmqp){
 			this.azureSubscription =

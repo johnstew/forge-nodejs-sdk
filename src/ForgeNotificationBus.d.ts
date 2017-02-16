@@ -1,4 +1,4 @@
-import { INotificationBus, EventPredicate } from "./ForgeNotificationBusTypes";
+import { INotificationBus, EventPredicate } from "./notificationBusTypes";
 export declare class ForgeNotificationBus {
     readonly _options: any;
     readonly bus: INotificationBus;

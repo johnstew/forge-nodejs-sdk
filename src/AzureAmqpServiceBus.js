@@ -11,7 +11,7 @@ const Debug = require("debug");
 const debug = Debug("forgesdk.azureAmqpServiceBus");
 const debugTracking = Debug("forgesdk.azureAmqpServiceBus.tracking");
 const events_1 = require("events");
-const azure = require("azure");
+const azure = require("azure"); // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 const amqp10 = require("amqp10");
 const AMQPClient = amqp10.Client;
 const Policy = amqp10.Policy;
@@ -50,6 +50,10 @@ class AzureAmqpSubscription {
             || !msg.properties
             || !msg.properties.subject)
             return;
+        // Parse body
+        //	try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+        // http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+        //  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
         let matches = msg.body.match(/({.*})/);
         if (matches || matches.length >= 1) {
             msg.body = JSON.parse(matches[0]);
@@ -67,6 +71,8 @@ class AzureAmqpSubscription {
             });
         });
     }
+    // options: {DefaultMessageTimeToLive : "PT10S",AutoDeleteOnIdle : "PT5M"}
+    //	note: PT10S=10seconds, PT5M=5minutes
     createIfNotExists(options) {
         return __awaiter(this, void 0, void 0, function* () {
             options = options || {};
@@ -107,6 +113,7 @@ class AzureAmqpSubscription {
         this._eventEmitter.on(eventName, listener);
     }
     _normalizeBody(body) {
+        // azure use PascalCase, I prefer camelCase
         return toCamel(body);
     }
     _emit(name, body) {
