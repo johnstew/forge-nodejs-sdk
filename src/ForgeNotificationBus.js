@@ -6,6 +6,7 @@ const AzureNotificationBus_1 = require("./serviceBus/azure/AzureNotificationBus"
 const utils_1 = require("./utils");
 class ForgeNotificationBus {
     constructor(options) {
+        options = Object.assign({}, options);
         options.notificationBusName = options.notificationBusName || "forgenotifications";
         this._options = options;
         if (options.url.startsWith("amqp")) {
@@ -75,21 +76,6 @@ class ForgeNotificationBus {
             debug(`Command ${cmdId} failed, ${errorMsg}.`, e);
             throw new Error(errorMsg);
         });
-    }
-    waitDistributionPublish(entityTranslationId, waitTimeout) {
-        return this.waitOnce((name, msg) => {
-            return name === "EntityDistributionNotification" &&
-                msg.action === "publish" &&
-                msg.translationId === entityTranslationId;
-        }, undefined, waitTimeout);
-    }
-    waitDistributionPublishByEntityId(entityId, culture, waitTimeout) {
-        return this.waitOnce((name, msg) => {
-            return name === "EntityDistributionNotification" &&
-                msg.action === "publish" &&
-                msg.entityId === entityId &&
-                msg.translationInfo.culture === culture;
-        }, undefined, waitTimeout);
     }
 }
 exports.ForgeNotificationBus = ForgeNotificationBus;

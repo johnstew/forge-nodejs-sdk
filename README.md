@@ -11,6 +11,7 @@
     // Available classes
     const ForgeManagementApi = sdk.ForgeManagementApi;
     const ForgeNotificationBus = sdk.ForgeNotificationBus;
+    const DistributionNotificationBus = sdk.DistributionNotificationBus;
     const ForgeCommands = sdk.ForgeCommands;
     const ForgeDistributionApi = sdk.ForgeDistributionApi;
     const ForgeFrontEndApi = sdk.ForgeFrontEndApi;
@@ -18,7 +19,7 @@
 Consider that most methods returns Es6 `Promise`,
 write the correct implementation code to catch errors and handle continuation.
 
-**IMPORTANT**: If you start receiving notification from `ForgeNotificationBus` it is important to keep just one active connection for your entire application process, because each new connection will create a new service bus subscription.
+**IMPORTANT**: If you start receiving notification from `ForgeNotificationBus` or `DistributionNotificationBus` it is important to keep just one active connection for your entire application process, because each new connection will create a new service bus subscription.
 
 ### How to call a management API
 
@@ -51,7 +52,25 @@ write the correct implementation code to catch errors and handle continuation.
     })
     .then(disconnect, disconnect);
 
-### How to subscribe to notification
+### How to subscribe to distribution notification
+
+    let notificationBus = new DistributionNotificationBus(config.serviceBus);
+
+    function connect(){
+    	return notificationBus.startReceiving();
+    }
+    function disconnect(){
+     	return notificationBus.stopReceiving();
+    }
+
+    connect()
+    .then(() => {
+    	notificationBus.on("EntityDistributionNotification", (e) => {
+        // TODO your code
+    	});
+    });
+
+### How to subscribe to forge notification
 
     let notificationBus = new ForgeNotificationBus(config.serviceBus);
 
@@ -64,7 +83,7 @@ write the correct implementation code to catch errors and handle continuation.
 
     connect()
     .then(() => {
-    	notificationBus.on("EntityDistributionNotification", (e) => {
+    	notificationBus.on("PublishedNotification", (e) => {
         // TODO your code
     	});
     });

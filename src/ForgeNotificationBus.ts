@@ -19,6 +19,7 @@ export class ForgeNotificationBus {
 	readonly defaultWaitOnceTimeout: number;
 
 	constructor(options: IForgeNotificationBusOptions) {
+		options = Object.assign({}, options);
 		options.notificationBusName = options.notificationBusName || "forgenotifications";
 
 		this._options = options;
@@ -106,22 +107,5 @@ export class ForgeNotificationBus {
 			debug(`Command ${cmdId} failed, ${errorMsg}.`, e);
 			throw new Error(errorMsg);
 		});
-	}
-
-	waitDistributionPublish(entityTranslationId, waitTimeout?: number) {
-		return this.waitOnce((name, msg) => {
-			return name === "EntityDistributionNotification" &&
-				msg.action === "publish" &&
-				msg.translationId === entityTranslationId;
-		}, undefined, waitTimeout);
-	}
-
-	waitDistributionPublishByEntityId(entityId, culture, waitTimeout?: number) {
-		return this.waitOnce((name, msg) => {
-			return name === "EntityDistributionNotification" &&
-				msg.action === "publish" &&
-				msg.entityId === entityId &&
-				msg.translationInfo.culture === culture;
-		}, undefined, waitTimeout);
 	}
 }
