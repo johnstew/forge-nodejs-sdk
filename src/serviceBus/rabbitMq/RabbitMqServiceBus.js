@@ -28,10 +28,10 @@ class RabbitMqChannel {
             yield this.connection.close();
         });
     }
-    subscribeToExchange(exchange, listener) {
+    subscribeToExchange(exchange, queueOptions, listener) {
         return __awaiter(this, void 0, void 0, function* () {
             const qok = yield this.channel
-                .assertQueue("", { exclusive: true });
+                .assertQueue("", queueOptions);
             yield this.channel.bindQueue(qok.queue, exchange, "");
             yield this.channel.consume(qok.queue, listener, { noAck: true });
             debug(` [*] Waiting for ${exchange}...`);

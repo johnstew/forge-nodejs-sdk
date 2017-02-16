@@ -1,14 +1,19 @@
-import { INotificationBus, EventPredicate } from "./notificationBusTypes";
+import { IRabbitMqNotificationBusOptions } from "./serviceBus/rabbitMq/RabbitMqNotificationBus";
+import { IAzureNotificationBusOptions } from "./serviceBus/azure/AzureNotificationBus";
+import { INotificationBus, EventPredicate, INotificationBusOptions } from "./serviceBus/notificationBusTypes";
+export interface IForgeNotificationBusOptions extends INotificationBusOptions, IRabbitMqNotificationBusOptions, IAzureNotificationBusOptions {
+    defaultWaitOnceTimeout?: number;
+}
 export declare class ForgeNotificationBus {
-    readonly _options: any;
+    readonly _options: IForgeNotificationBusOptions;
     readonly bus: INotificationBus;
-    constructor(options: any);
+    readonly defaultWaitOnceTimeout: number;
+    constructor(options: IForgeNotificationBusOptions);
     startReceiving(): Promise<any>;
     on(eventName: string, listener: Function): void;
-    stopReceiving(): void;
+    stopReceiving(): Promise<any>;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<any>;
     waitCommand(cmdId: string, successNotificationName: string, failedNotificationName: string, waitTimeout?: number): Promise<any>;
     waitDistributionPublish(entityTranslationId: any, waitTimeout?: number): Promise<any>;
     waitDistributionPublishByEntityId(entityId: any, culture: any, waitTimeout?: number): Promise<any>;
-    _withTimeout(p: any, ms: any): Promise<any>;
 }

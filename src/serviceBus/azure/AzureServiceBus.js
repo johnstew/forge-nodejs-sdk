@@ -206,6 +206,8 @@ class AzureSubscription {
 	stopReceiving(){
 		this.receiving = false;
 		debug("Stop receiving messages.");
+
+		return Promise.resolve(true);
 	}
 
 	waitOnce(resolvePredicate, rejectPredicate){

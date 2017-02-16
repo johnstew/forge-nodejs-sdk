@@ -24,11 +24,15 @@ export class RabbitMqChannel {
 		await this.connection.close();
 	}
 
-	async subscribeToExchange(exchange, listener): Promise<any> {
+	async subscribeToExchange(
+		exchange: string,
+		queueOptions: amqp.Options.AssertQueue,
+		listener: (msg: amqp.Message) => any): Promise<any> {
+
 		const qok = await this.channel
-			.assertQueue("", {exclusive: true});
+			.assertQueue("", queueOptions);
 		await this.channel.bindQueue(qok.queue, exchange, "");
-		await this.channel.consume(qok.queue, listener, {noAck: true});
+		await this.channel.consume(qok.queue, listener, { noAck: true });
 
 		debug(` [*] Waiting for ${exchange}...`);
 	}
