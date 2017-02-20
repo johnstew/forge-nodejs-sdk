@@ -44,7 +44,7 @@ class DistributionNotificationBus {
             return name === "EntityDistributionNotification" &&
                 msg.action === "publish" &&
                 msg.entityId === entityId &&
-                msg.translationInfo.culture === culture;
+                msg.TranslationCulture === culture;
         }, undefined, waitTimeout);
     }
 }
