@@ -7,7 +7,7 @@ const utils_1 = require("./utils");
 class DistributionNotificationBus {
     constructor(options) {
         options = Object.assign({}, options);
-        options.notificationBusName = options.notificationBusName || "distnotifications";
+        options.notificationBusName = options.notificationBusName || "distNotifications";
         this._options = options;
         if (options.url.startsWith("amqp")) {
             this.bus = new RabbitMqNotificationBus_1.RabbitMqNotificationBus(options);

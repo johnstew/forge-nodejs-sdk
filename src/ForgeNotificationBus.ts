@@ -20,7 +20,7 @@ export class ForgeNotificationBus {
 
 	constructor(options: IForgeNotificationBusOptions) {
 		options = Object.assign({}, options);
-		options.notificationBusName = options.notificationBusName || "forgenotifications";
+		options.notificationBusName = options.notificationBusName || "forgeNotifications";
 
 		this._options = options;
 

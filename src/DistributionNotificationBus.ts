@@ -20,7 +20,7 @@ export class DistributionNotificationBus {
 
 	constructor(options: IDistributionNotificationBusOptions) {
 		options = Object.assign({}, options);
-		options.notificationBusName = options.notificationBusName || "distnotifications";
+		options.notificationBusName = options.notificationBusName || "distNotifications";
 
 		this._options = options;
 
