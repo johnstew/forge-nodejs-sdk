@@ -42,14 +42,14 @@ connect()
 	// });
 
 	notificationBus.on("PublishedBatchNotification", (e) => {
-		console.log(`Forge PublishedBatchNotification ${e}`);
+		console.log(`Forge PublishedBatchNotification (Priority:${e.messagePriority})`);
 	});
 
 	notificationBus.on("PublishedNotification", (e) => {
-		console.log(`Forge PublishedNotification ${e.translationKeys[0].slug}`);
+		console.log(`Forge PublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
 	});
 	notificationBus.on("UnpublishedNotification", (e) => {
-		console.log(`Forge UnpublishedNotification ${e.translationKeys[0].slug}`);
+		console.log(`Forge UnpublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
 	});
 
 })
