@@ -41,6 +41,10 @@ connect()
 	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
 	// });
 
+	notificationBus.on("PublishedBatchNotification", (e) => {
+		console.log(`Forge PublishedBatchNotification ${e}`);
+	});
+
 	notificationBus.on("PublishedNotification", (e) => {
 		console.log(`Forge PublishedNotification ${e.translationKeys[0].slug}`);
 	});

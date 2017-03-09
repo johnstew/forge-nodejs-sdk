@@ -11,6 +11,7 @@ const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeNotificationBus.RabbitMq");
 const RabbitMqServiceBus_js_1 = require("./RabbitMqServiceBus.js");
 const events_1 = require("events");
+const notificationBusTypes_1 = require("./../notificationBusTypes");
 const utils_1 = require("../../utils");
 class RabbitMqNotificationBus {
     constructor(options) {
@@ -27,9 +28,13 @@ class RabbitMqNotificationBus {
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.rabbitMqChannel.connect();
-            yield this.rabbitMqChannel
-                .subscribeToExchange(this.options.notificationBusName, // exchange
-            this.options.queueOptions, (msg) => this._dispatch(msg));
+            for (const p of notificationBusTypes_1.MessagePriorities) {
+                var priority = notificationBusTypes_1.MessagePriority[p];
+                const routingKey = priority + ".*";
+                yield this.rabbitMqChannel
+                    .subscribeToExchange(this.options.notificationBusName, // exchange
+                this.options.queueOptions, (msg) => this._dispatch(msg), routingKey);
+            }
         });
     }
     on(eventName, listener) {

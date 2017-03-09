@@ -1,7 +1,7 @@
 import {AzureAmqpSubscription} from "./AzureAmqpServiceBus.js";
 import * as uuid from "uuid";
 
-import {INotificationBus, EventPredicate, INotificationBusOptions} from "./../notificationBusTypes";
+import { INotificationBus, EventPredicate, INotificationBusOptions, MessagePriority, MessagePriorities} from "./../notificationBusTypes";
 import {IAzureSubscription} from "./azureNotificationBusTypes";
 
 const azureServiceBus = require("./AzureServiceBus.js");
@@ -16,7 +16,7 @@ export interface IAzureNotificationBusOptions extends INotificationBusOptions {
 
 export class AzureNotificationBus implements INotificationBus {
 	readonly options: IAzureNotificationBusOptions;
-	readonly azureSubscription: IAzureSubscription;
+	private azureSubscriptions= new Map<MessagePriority,IAzureSubscription>();
 
 	constructor(options: IAzureNotificationBusOptions) {
 		this.options = options;
@@ -33,41 +33,73 @@ export class AzureNotificationBus implements INotificationBus {
 			? this.options.useAmqp
 			: true;
 
-		if (this.options.useAmqp) {
-			this.azureSubscription =
-				new AzureAmqpSubscription(
-					this.options.url,
-					topicName,
-					subscriptionName);
-		}	else { // legacy version
-			this.azureSubscription =
-			new azureServiceBus.AzureSubscription(
-				this.options.url,
-				topicName,
-				subscriptionName,
-				this.options.receiveInterval,
-				this.options.receiveTimeout);
+		for (const p of MessagePriorities) {
+			var priority = MessagePriority[p];
+			const topicPriorityName = priority + "_" + topicName;
+			let subscription;
+
+			if (this.options.useAmqp) {
+				subscription =
+					new AzureAmqpSubscription(
+						this.options.url,
+						topicPriorityName,
+						subscriptionName);
+			} else {// legacy version
+				subscription =
+					new azureServiceBus.AzureSubscription(
+						this.options.url,
+						topicPriorityName,
+						subscriptionName,
+						this.options.receiveInterval,
+						this.options.receiveTimeout);
+
+			}
+			this.azureSubscriptions.set(p, subscription);
 		}
 	}
 
-	startReceiving(): Promise<any> {
-		return this.azureSubscription
-		.createIfNotExists(this.options.subscriptionOptions)
-		.then(() => {
-			return this.azureSubscription
-			.startReceiving();
-		});
+	async startReceiving(): Promise<any> {
+		for (const p of MessagePriorities) {
+			var subscription = this.azureSubscriptions.get(p);
+
+			if (subscription) {
+				await subscription.createIfNotExists(this.options.subscriptionOptions);
+				await subscription.startReceiving();
+			}
+		}
 	}
 
 	on(eventName: string, listener: Function): void {
-		this.azureSubscription.on(eventName, listener);
+		for (const p of MessagePriorities) {
+			var subscription = this.azureSubscriptions.get(p);
+
+			if (subscription) {
+				subscription.on(eventName, listener);
+			}
+		}
 	}
 
 	async stopReceiving(): Promise<any> {
-		await this.azureSubscription.stopReceiving();
+		for (const p of MessagePriorities) {
+			var subscription = this.azureSubscriptions.get(p);
+
+			if (subscription) {
+				await subscription.stopReceiving();
+			}
+		}
 	}
 
-	waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any> {
-		return this.azureSubscription.waitOnce(resolvePredicate, rejectPredicate);
+	async waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any> {
+		const promises = new Array<Promise<any>>();
+
+		for (const p of MessagePriorities) {
+			var subscription = this.azureSubscriptions.get(p);
+
+			if (subscription) {
+				promises.push(subscription.waitOnce(resolvePredicate, rejectPredicate));
+			}
+		}
+		return Promise.race(promises);
 	}
+
 }

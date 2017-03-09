@@ -9,3 +9,8 @@ export interface INotificationBusOptions {
     url: string;
     notificationBusName: string;
 }
+export declare enum MessagePriority {
+    Background = 0,
+    Foreground = 1,
+}
+export declare const MessagePriorities: MessagePriority[];

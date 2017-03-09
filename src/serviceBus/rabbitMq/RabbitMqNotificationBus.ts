@@ -4,7 +4,7 @@ const debug = Debug("forgesdk.ForgeNotificationBus.RabbitMq");
 import {RabbitMqChannel} from "./RabbitMqServiceBus.js";
 import {EventEmitter} from "events";
 
-import {INotificationBus, EventPredicate, INotificationBusOptions} from "./../notificationBusTypes";
+import {INotificationBus, EventPredicate, INotificationBusOptions, MessagePriority, MessagePriorities} from "./../notificationBusTypes";
 import {toCamel} from "../../utils";
 
 export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions {
@@ -31,11 +31,19 @@ export class RabbitMqNotificationBus implements INotificationBus {
 
 	async startReceiving(): Promise<any> {
 		await this.rabbitMqChannel.connect();
-		await this.rabbitMqChannel
-			.subscribeToExchange(
+
+		for (const p of MessagePriorities) {
+			var priority = MessagePriority[p];
+			const routingKey = priority + ".*";
+
+			await this.rabbitMqChannel
+				.subscribeToExchange(
 				this.options.notificationBusName, // exchange
 				this.options.queueOptions,
-				(msg) => this._dispatch(msg));
+				(msg) => this._dispatch(msg),
+				routingKey);
+
+		}
 	}
 
 	on(eventName: string, listener: Function): void {

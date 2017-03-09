@@ -1,5 +1,4 @@
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";
-import { IAzureSubscription } from "./azureNotificationBusTypes";
 export interface IAzureNotificationBusOptions extends INotificationBusOptions {
     subscriptionName?: string;
     subscriptionOptions?: any;
@@ -9,7 +8,7 @@ export interface IAzureNotificationBusOptions extends INotificationBusOptions {
 }
 export declare class AzureNotificationBus implements INotificationBus {
     readonly options: IAzureNotificationBusOptions;
-    readonly azureSubscription: IAzureSubscription;
+    private azureSubscriptions;
     constructor(options: IAzureNotificationBusOptions);
     startReceiving(): Promise<any>;
     on(eventName: string, listener: Function): void;
