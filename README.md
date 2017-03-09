@@ -21,6 +21,10 @@ write the correct implementation code to catch errors and handle continuation.
 
 **IMPORTANT**: If you start receiving notification from `ForgeNotificationBus` or `DistributionNotificationBus` it is important to keep just one active connection for your entire application process, because each new connection will create a new service bus subscription.
 
+## Compatibility
+
+Version 4.1 of the SDK is compatible only with Forge >= 4.1.0.
+
 ### How to call a management API
 
     let api = new ForgeManagementApi(config.managementApi);
