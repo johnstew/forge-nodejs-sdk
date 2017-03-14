@@ -23,7 +23,8 @@ class RabbitMqNotificationBus {
         const secondaryConnections = this.options.secondaryConnectionStrings || [];
         const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
         for (const connectionString of allConnectionStrings) {
-            this.rabbitMqChannels.push(new RabbitMqServiceBus_js_1.RabbitMqChannel(connectionString));
+            const channel = new RabbitMqServiceBus_js_1.RabbitMqChannel(connectionString);
+            this.rabbitMqChannels.push(channel);
         }
         this.options.queueOptions = this.options.queueOptions || {
             exclusive: true,
@@ -38,8 +39,7 @@ class RabbitMqNotificationBus {
                 for (const p of notificationBusTypes_1.MessagePriorities.values) {
                     const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
                     const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
-                    yield channel
-                        .subscribeToExchange(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
+                    yield channel.consume(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
                 }
             }
         });

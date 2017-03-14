@@ -23,10 +23,13 @@ class RabbitMqChannel {
     }
     close() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!this.connection) {
+                return;
+            }
             yield this.connection.close();
         });
     }
-    subscribeToExchange(exchange, queueOptions, listener, queueRoutingKey = "", queueName = "") {
+    consume(exchange, queueOptions, listener, queueRoutingKey = "", queueName = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const qok = yield this.channel
                 .assertQueue(queueName, queueOptions);

@@ -26,7 +26,8 @@ export class RabbitMqNotificationBus implements INotificationBus {
 		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
 
 		for (const connectionString of allConnectionStrings) {
-			this.rabbitMqChannels.push(new RabbitMqChannel(connectionString));
+			const channel = new RabbitMqChannel(connectionString);
+			this.rabbitMqChannels.push(channel);
 		}
 
 		this.options.queueOptions = this.options.queueOptions || {
@@ -44,8 +45,7 @@ export class RabbitMqNotificationBus implements INotificationBus {
 				const routingKey = MessagePriorities.toShortString(p) + ".*";
 				const queueName = this.options.queueName + "-" + MessagePriorities.toShortString(p);
 
-				await channel
-					.subscribeToExchange(
+				await channel.consume(
 					this.options.notificationBusName, // exchange
 					this.options.queueOptions,
 					(msg) => this._dispatch(msg),
