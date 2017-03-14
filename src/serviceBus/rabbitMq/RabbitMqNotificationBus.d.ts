@@ -4,6 +4,7 @@ import { EventEmitter } from "events";
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";
 export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions {
     queueOptions?: any;
+    queueName: string;
 }
 export declare class RabbitMqNotificationBus implements INotificationBus {
     readonly options: IRabbitMqNotificationBusOptions;

@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeNotificationBus.RabbitMq");
 const RabbitMqServiceBus_js_1 = require("./RabbitMqServiceBus.js");
@@ -28,12 +29,11 @@ class RabbitMqNotificationBus {
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.rabbitMqChannel.connect();
-            for (const p of notificationBusTypes_1.MessagePriorities) {
-                var priority = notificationBusTypes_1.MessagePriority[p];
-                const routingKey = priority + ".*";
+            for (const p of notificationBusTypes_1.MessagePriorities.values) {
+                const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
+                const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
                 yield this.rabbitMqChannel
-                    .subscribeToExchange(this.options.notificationBusName, // exchange
-                this.options.queueOptions, (msg) => this._dispatch(msg), routingKey);
+                    .subscribeToExchange(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
             }
         });
     }

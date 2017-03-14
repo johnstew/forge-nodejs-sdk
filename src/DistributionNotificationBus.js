@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const shortid = require("shortid");
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeDistributionNotificationBus");
 const RabbitMqNotificationBus_1 = require("./serviceBus/rabbitMq/RabbitMqNotificationBus");
@@ -7,12 +9,14 @@ const utils_1 = require("./utils");
 class DistributionNotificationBus {
     constructor(options) {
         options = Object.assign({}, options);
-        options.notificationBusName = options.notificationBusName || "distNotifications";
+        options.notificationBusName = options.notificationBusName || "dist-ntf";
         this._options = options;
         if (options.url.startsWith("amqp")) {
+            options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
             this.bus = new RabbitMqNotificationBus_1.RabbitMqNotificationBus(options);
         }
         else {
+            options.subscriptionName = options.subscriptionName || "sdk-" + shortid.generate();
             this.bus = new AzureNotificationBus_1.AzureNotificationBus(options);
         }
     }

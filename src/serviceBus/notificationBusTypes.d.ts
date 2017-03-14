@@ -13,4 +13,7 @@ export declare enum MessagePriority {
     Background = 0,
     Foreground = 1,
 }
-export declare const MessagePriorities: MessagePriority[];
+export declare class MessagePriorities {
+    static values: MessagePriority[];
+    static toShortString(value: MessagePriority): "bg" | "fg";
+}

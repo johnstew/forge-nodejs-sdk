@@ -1,3 +1,4 @@
+import * as shortid from "shortid";
 import * as Debug from "debug";
 const debug = Debug("forgesdk.ForgeDistributionNotificationBus");
 
@@ -20,13 +21,15 @@ export class DistributionNotificationBus {
 
 	constructor(options: IDistributionNotificationBusOptions) {
 		options = Object.assign({}, options);
-		options.notificationBusName = options.notificationBusName || "distNotifications";
+		options.notificationBusName = options.notificationBusName || "dist-ntf";
 
 		this._options = options;
 
 		if (options.url.startsWith("amqp")) {
+			options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
 			this.bus = new RabbitMqNotificationBus(options);
 		} else {
+			options.subscriptionName = options.subscriptionName	|| "sdk-" + shortid.generate();
 			this.bus = new AzureNotificationBus(options);
 		}
 	}

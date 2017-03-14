@@ -18,5 +18,17 @@ export enum MessagePriority {
 	Foreground = 1
 }
 
-export const MessagePriorities = [MessagePriority.Background, MessagePriority.Foreground]; 
+export class MessagePriorities {
+	static values = [MessagePriority.Background, MessagePriority.Foreground];
 
+	static toShortString(value: MessagePriority) {
+		switch (value) {
+			case MessagePriority.Background:
+				return "bg";
+			case MessagePriority.Foreground:
+				return "fg";
+			default:
+				throw new Error("Invalid value");
+		}
+	}
+}

@@ -6,5 +6,5 @@ export declare class RabbitMqChannel {
     constructor(url: string);
     connect(): Promise<any>;
     close(): Promise<any>;
-    subscribeToExchange(exchange: string, queueOptions: amqp.Options.AssertQueue, listener: (msg: amqp.Message) => any, queueRoutingKey?: string): Promise<any>;
+    subscribeToExchange(exchange: string, queueOptions: amqp.Options.AssertQueue, listener: (msg: amqp.Message) => any, queueRoutingKey?: string, queueName?: string): Promise<any>;
 }

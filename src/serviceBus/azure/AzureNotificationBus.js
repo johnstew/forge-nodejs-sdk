@@ -7,16 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const AzureAmqpServiceBus_js_1 = require("./AzureAmqpServiceBus.js");
-const uuid = require("uuid");
 const notificationBusTypes_1 = require("./../notificationBusTypes");
 const azureServiceBus = require("./AzureServiceBus.js");
 class AzureNotificationBus {
     constructor(options) {
-        this.azureSubscriptions = new Map();
+        this.azureSubscriptions = new Array();
         this.options = options;
         const topicName = options.notificationBusName;
-        const subscriptionName = options.subscriptionName || "forge-sdk-" + uuid.v4();
         this.options.subscriptionOptions = this.options.subscriptionOptions || {
             DefaultMessageTimeToLive: "PT120S",
             AutoDeleteOnIdle: "PT5M"
@@ -24,58 +23,46 @@ class AzureNotificationBus {
         this.options.useAmqp = this.options.hasOwnProperty("useAmqp")
             ? this.options.useAmqp
             : true;
-        for (const p of notificationBusTypes_1.MessagePriorities) {
+        for (const p of notificationBusTypes_1.MessagePriorities.values) {
             var priority = notificationBusTypes_1.MessagePriority[p];
-            const topicPriorityName = priority + "_" + topicName;
+            const topicPriorityName = `${topicName}-${notificationBusTypes_1.MessagePriorities.toShortString(p)}`;
             let subscription;
             if (this.options.useAmqp) {
                 subscription =
-                    new AzureAmqpServiceBus_js_1.AzureAmqpSubscription(this.options.url, topicPriorityName, subscriptionName);
+                    new AzureAmqpServiceBus_js_1.AzureAmqpSubscription(this.options.url, topicPriorityName, options.subscriptionName);
             }
             else {
                 subscription =
-                    new azureServiceBus.AzureSubscription(this.options.url, topicPriorityName, subscriptionName, this.options.receiveInterval, this.options.receiveTimeout);
+                    new azureServiceBus.AzureSubscription(this.options.url, topicPriorityName, options.subscriptionName, this.options.receiveInterval, this.options.receiveTimeout);
             }
-            this.azureSubscriptions.set(p, subscription);
+            this.azureSubscriptions.push(subscription);
         }
     }
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (const p of notificationBusTypes_1.MessagePriorities) {
-                var subscription = this.azureSubscriptions.get(p);
-                if (subscription) {
-                    yield subscription.createIfNotExists(this.options.subscriptionOptions);
-                    yield subscription.startReceiving();
-                }
+            for (const subscription of this.azureSubscriptions) {
+                yield subscription.createIfNotExists(this.options.subscriptionOptions);
+                yield subscription.startReceiving();
             }
         });
     }
     on(eventName, listener) {
-        for (const p of notificationBusTypes_1.MessagePriorities) {
-            var subscription = this.azureSubscriptions.get(p);
-            if (subscription) {
-                subscription.on(eventName, listener);
-            }
+        for (const subscription of this.azureSubscriptions) {
+            subscription.on(eventName, listener);
         }
     }
     stopReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (const p of notificationBusTypes_1.MessagePriorities) {
-                var subscription = this.azureSubscriptions.get(p);
-                if (subscription) {
-                    yield subscription.stopReceiving();
-                }
+            for (const subscription of this.azureSubscriptions) {
+                yield subscription.stopReceiving();
             }
         });
     }
     waitOnce(resolvePredicate, rejectPredicate) {
         return __awaiter(this, void 0, void 0, function* () {
             const promises = new Array();
-            for (const p of notificationBusTypes_1.MessagePriorities) {
-                var subscription = this.azureSubscriptions.get(p);
-                if (subscription) {
-                    promises.push(subscription.waitOnce(resolvePredicate, rejectPredicate));
-                }
+            for (const subscription of this.azureSubscriptions) {
+                promises.push(subscription.waitOnce(resolvePredicate, rejectPredicate));
             }
             return Promise.race(promises);
         });

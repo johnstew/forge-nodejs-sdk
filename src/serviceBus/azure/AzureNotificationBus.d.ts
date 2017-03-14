@@ -1,6 +1,6 @@
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";
 export interface IAzureNotificationBusOptions extends INotificationBusOptions {
-    subscriptionName?: string;
+    subscriptionName: string;
     subscriptionOptions?: any;
     useAmqp?: boolean;
     receiveInterval?: number;

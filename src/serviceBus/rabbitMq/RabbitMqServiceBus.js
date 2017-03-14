@@ -7,12 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const amqp = require("amqplib");
 const Debug = require("debug");
 const debug = Debug("forgesdk.rabbitMqServiceBus");
-// Code based on:
-// https://www.rabbitmq.com/tutorials/tutorial-three-javascript.html
-// https://github.com/squaremo/amqp.node/blob/master/examples/tutorials/receive_logs.js
 class RabbitMqChannel {
     constructor(url) {
         this.URL = url;
@@ -28,10 +26,10 @@ class RabbitMqChannel {
             yield this.connection.close();
         });
     }
-    subscribeToExchange(exchange, queueOptions, listener, queueRoutingKey = "") {
+    subscribeToExchange(exchange, queueOptions, listener, queueRoutingKey = "", queueName = "") {
         return __awaiter(this, void 0, void 0, function* () {
             const qok = yield this.channel
-                .assertQueue("", queueOptions);
+                .assertQueue(queueName, queueOptions);
             yield this.channel.bindQueue(qok.queue, exchange, queueRoutingKey);
             yield this.channel.consume(qok.queue, listener, { noAck: true });
             debug(` [*] Waiting for ${exchange}...`);

@@ -9,6 +9,7 @@ import {toCamel} from "../../utils";
 
 export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions {
 	queueOptions?: any;
+	queueName: string;
 }
 
 export class RabbitMqNotificationBus implements INotificationBus {
@@ -32,17 +33,17 @@ export class RabbitMqNotificationBus implements INotificationBus {
 	async startReceiving(): Promise<any> {
 		await this.rabbitMqChannel.connect();
 
-		for (const p of MessagePriorities) {
-			var priority = MessagePriority[p];
-			const routingKey = priority + ".*";
+		for (const p of MessagePriorities.values) {
+			const routingKey = MessagePriorities.toShortString(p) + ".*";
+			const queueName = this.options.queueName + "-" + MessagePriorities.toShortString(p);
 
 			await this.rabbitMqChannel
 				.subscribeToExchange(
 				this.options.notificationBusName, // exchange
 				this.options.queueOptions,
 				(msg) => this._dispatch(msg),
-				routingKey);
-
+				routingKey,
+				queueName);
 		}
 	}
 
