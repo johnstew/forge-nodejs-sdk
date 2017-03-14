@@ -31,28 +31,18 @@ export class AzureNotificationBus implements INotificationBus {
 			? this.options.useAmqp
 			: true;
 
+		const secondaryConnections = this.options.secondaryConnectionStrings || [];
+		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
+
 		for (const p of MessagePriorities.values) {
 			var priority = MessagePriority[p];
 			const topicPriorityName = `${topicName}-${MessagePriorities.toShortString(p)}`;
-			let subscription;
 
-			if (this.options.useAmqp) {
-				subscription =
-					new AzureAmqpSubscription(
-						this.options.url,
-						topicPriorityName,
-						options.subscriptionName);
-			} else {// legacy version
-				subscription =
-					new azureServiceBus.AzureSubscription(
-						this.options.url,
-						topicPriorityName,
-						options.subscriptionName,
-						this.options.receiveInterval,
-						this.options.receiveTimeout);
+			for (const connectionString of allConnectionStrings) {
+				const subscription = this.createSubscription(topicPriorityName, connectionString);
 
+				this.azureSubscriptions.push(subscription);
 			}
-			this.azureSubscriptions.push(subscription);
 		}
 	}
 
@@ -84,4 +74,20 @@ export class AzureNotificationBus implements INotificationBus {
 		return Promise.race(promises);
 	}
 
+	private createSubscription(topicName: string, connectionString: string) {
+		if (this.options.useAmqp) {
+			return new AzureAmqpSubscription(
+					connectionString,
+					topicName,
+					this.options.subscriptionName);
+		} else {// legacy version
+			return new azureServiceBus.AzureSubscription(
+					connectionString,
+					topicName,
+					this.options.subscriptionName,
+					this.options.receiveInterval,
+					this.options.receiveTimeout);
+
+		}
+	}
 }

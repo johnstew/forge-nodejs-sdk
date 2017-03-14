@@ -6,7 +6,8 @@ export interface INotificationBus {
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate): Promise<any>;
 }
 export interface INotificationBusOptions {
-    url: string;
+    connectionString: string;
+    secondaryConnectionStrings?: string[];
     notificationBusName: string;
 }
 export declare enum MessagePriority {

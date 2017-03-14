@@ -15,13 +15,19 @@ export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions
 export class RabbitMqNotificationBus implements INotificationBus {
 	readonly options: IRabbitMqNotificationBusOptions;
 	readonly _eventEmitter: EventEmitter;
-	readonly rabbitMqChannel: RabbitMqChannel;
+	readonly rabbitMqChannels = new Array<RabbitMqChannel>();
 	readonly _waitOnceListeners = new Set();
 
 	constructor(options: IRabbitMqNotificationBusOptions) {
 		this.options = options;
 		this._eventEmitter = new EventEmitter();
-		this.rabbitMqChannel = new RabbitMqChannel(this.options.url);
+
+		const secondaryConnections = this.options.secondaryConnectionStrings || [];
+		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
+
+		for (const connectionString of allConnectionStrings) {
+			this.rabbitMqChannels.push(new RabbitMqChannel(connectionString));
+		}
 
 		this.options.queueOptions = this.options.queueOptions || {
 			exclusive: true,
@@ -31,19 +37,21 @@ export class RabbitMqNotificationBus implements INotificationBus {
 	}
 
 	async startReceiving(): Promise<any> {
-		await this.rabbitMqChannel.connect();
+		for (const channel of this.rabbitMqChannels) {
+			await channel.connect();
 
-		for (const p of MessagePriorities.values) {
-			const routingKey = MessagePriorities.toShortString(p) + ".*";
-			const queueName = this.options.queueName + "-" + MessagePriorities.toShortString(p);
+			for (const p of MessagePriorities.values) {
+				const routingKey = MessagePriorities.toShortString(p) + ".*";
+				const queueName = this.options.queueName + "-" + MessagePriorities.toShortString(p);
 
-			await this.rabbitMqChannel
-				.subscribeToExchange(
-				this.options.notificationBusName, // exchange
-				this.options.queueOptions,
-				(msg) => this._dispatch(msg),
-				routingKey,
-				queueName);
+				await channel
+					.subscribeToExchange(
+					this.options.notificationBusName, // exchange
+					this.options.queueOptions,
+					(msg) => this._dispatch(msg),
+					routingKey,
+					queueName);
+			}
 		}
 	}
 
@@ -52,7 +60,9 @@ export class RabbitMqNotificationBus implements INotificationBus {
 	}
 
 	async stopReceiving(): Promise<any> {
-		await this.rabbitMqChannel.close();
+		for (const channel of this.rabbitMqChannels) {
+			await channel.close();
+		}
 	}
 
 	waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any> {
@@ -68,6 +78,10 @@ export class RabbitMqNotificationBus implements INotificationBus {
 
 	private _dispatch(msg) {
 		try {
+			if (!msg) {
+				return;
+			}
+
 			if (!msg.properties
 				|| !msg.properties.headers
 				|| !msg.properties.headers.TypeName) {

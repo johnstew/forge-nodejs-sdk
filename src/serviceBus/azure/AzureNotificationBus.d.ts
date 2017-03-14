@@ -14,4 +14,5 @@ export declare class AzureNotificationBus implements INotificationBus {
     on(eventName: string, listener: Function): void;
     stopReceiving(): Promise<any>;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any>;
+    private createSubscription(topicName, connectionString);
 }
