@@ -23,19 +23,15 @@ class AzureNotificationBus {
         this.options.useAmqp = this.options.hasOwnProperty("useAmqp")
             ? this.options.useAmqp
             : true;
+        const secondaryConnections = this.options.secondaryConnectionStrings || [];
+        const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
         for (const p of notificationBusTypes_1.MessagePriorities.values) {
             var priority = notificationBusTypes_1.MessagePriority[p];
             const topicPriorityName = `${topicName}-${notificationBusTypes_1.MessagePriorities.toShortString(p)}`;
-            let subscription;
-            if (this.options.useAmqp) {
-                subscription =
-                    new AzureAmqpServiceBus_js_1.AzureAmqpSubscription(this.options.url, topicPriorityName, options.subscriptionName);
+            for (const connectionString of allConnectionStrings) {
+                const subscription = this.createSubscription(topicPriorityName, connectionString);
+                this.azureSubscriptions.push(subscription);
             }
-            else {
-                subscription =
-                    new azureServiceBus.AzureSubscription(this.options.url, topicPriorityName, options.subscriptionName, this.options.receiveInterval, this.options.receiveTimeout);
-            }
-            this.azureSubscriptions.push(subscription);
         }
     }
     startReceiving() {
@@ -66,6 +62,14 @@ class AzureNotificationBus {
             }
             return Promise.race(promises);
         });
+    }
+    createSubscription(topicName, connectionString) {
+        if (this.options.useAmqp) {
+            return new AzureAmqpServiceBus_js_1.AzureAmqpSubscription(connectionString, topicName, this.options.subscriptionName);
+        }
+        else {
+            return new azureServiceBus.AzureSubscription(connectionString, topicName, this.options.subscriptionName, this.options.receiveInterval, this.options.receiveTimeout);
+        }
     }
 }
 exports.AzureNotificationBus = AzureNotificationBus;

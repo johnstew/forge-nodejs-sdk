@@ -16,10 +16,15 @@ const notificationBusTypes_1 = require("./../notificationBusTypes");
 const utils_1 = require("../../utils");
 class RabbitMqNotificationBus {
     constructor(options) {
+        this.rabbitMqChannels = new Array();
         this._waitOnceListeners = new Set();
         this.options = options;
         this._eventEmitter = new events_1.EventEmitter();
-        this.rabbitMqChannel = new RabbitMqServiceBus_js_1.RabbitMqChannel(this.options.url);
+        const secondaryConnections = this.options.secondaryConnectionStrings || [];
+        const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
+        for (const connectionString of allConnectionStrings) {
+            this.rabbitMqChannels.push(new RabbitMqServiceBus_js_1.RabbitMqChannel(connectionString));
+        }
         this.options.queueOptions = this.options.queueOptions || {
             exclusive: true,
             durable: false,
@@ -28,12 +33,14 @@ class RabbitMqNotificationBus {
     }
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.rabbitMqChannel.connect();
-            for (const p of notificationBusTypes_1.MessagePriorities.values) {
-                const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
-                const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
-                yield this.rabbitMqChannel
-                    .subscribeToExchange(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
+            for (const channel of this.rabbitMqChannels) {
+                yield channel.connect();
+                for (const p of notificationBusTypes_1.MessagePriorities.values) {
+                    const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
+                    const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
+                    yield channel
+                        .subscribeToExchange(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
+                }
             }
         });
     }
@@ -42,7 +49,9 @@ class RabbitMqNotificationBus {
     }
     stopReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.rabbitMqChannel.close();
+            for (const channel of this.rabbitMqChannels) {
+                yield channel.close();
+            }
         });
     }
     waitOnce(resolvePredicate, rejectPredicate) {
@@ -57,6 +66,9 @@ class RabbitMqNotificationBus {
     }
     _dispatch(msg) {
         try {
+            if (!msg) {
+                return;
+            }
             if (!msg.properties
                 || !msg.properties.headers
                 || !msg.properties.headers.TypeName) {

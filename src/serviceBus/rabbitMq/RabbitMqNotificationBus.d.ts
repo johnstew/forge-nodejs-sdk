@@ -9,7 +9,7 @@ export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions
 export declare class RabbitMqNotificationBus implements INotificationBus {
     readonly options: IRabbitMqNotificationBusOptions;
     readonly _eventEmitter: EventEmitter;
-    readonly rabbitMqChannel: RabbitMqChannel;
+    readonly rabbitMqChannels: RabbitMqChannel[];
     readonly _waitOnceListeners: Set<any>;
     constructor(options: IRabbitMqNotificationBusOptions);
     startReceiving(): Promise<any>;

@@ -9,7 +9,8 @@ export interface INotificationBus {
 }
 
 export interface INotificationBusOptions {
-	url: string;
+	connectionString: string;
+	secondaryConnectionStrings?: string[];
 	notificationBusName: string;
 }
 

@@ -23,9 +23,18 @@ export class DistributionNotificationBus {
 		options = Object.assign({}, options);
 		options.notificationBusName = options.notificationBusName || "dist-ntf";
 
+		// for compatibility with older sdk...
+		if (!options.connectionString) {
+			options.connectionString = (options as any).url;
+		}
+
+		if (!options.connectionString) {
+			throw new Error("Invalid configuration, connectionString cannot be empty");
+		}
+
 		this._options = options;
 
-		if (options.url.startsWith("amqp")) {
+		if (options.connectionString.startsWith("amqp")) {
 			options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
 			this.bus = new RabbitMqNotificationBus(options);
 		} else {

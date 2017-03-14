@@ -10,8 +10,14 @@ class DistributionNotificationBus {
     constructor(options) {
         options = Object.assign({}, options);
         options.notificationBusName = options.notificationBusName || "dist-ntf";
+        if (!options.connectionString) {
+            options.connectionString = options.url;
+        }
+        if (!options.connectionString) {
+            throw new Error("Invalid configuration, connectionString cannot be empty");
+        }
         this._options = options;
-        if (options.url.startsWith("amqp")) {
+        if (options.connectionString.startsWith("amqp")) {
             options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
             this.bus = new RabbitMqNotificationBus_1.RabbitMqNotificationBus(options);
         }
