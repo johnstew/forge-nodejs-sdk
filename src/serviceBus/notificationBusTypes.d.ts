@@ -2,7 +2,7 @@ export declare type EventPredicate = (name: string, body: any) => boolean;
 export interface INotificationBus {
     startReceiving(): Promise<any>;
     stopReceiving(): Promise<any>;
-    on(eventName: string, listener: Function): void;
+    on(eventName: string, listener: (msg) => void): void;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate): Promise<any>;
 }
 export interface INotificationBusOptions {
@@ -17,4 +17,9 @@ export declare enum MessagePriority {
 export declare class MessagePriorities {
     static values: MessagePriority[];
     static toShortString(value: MessagePriority): "bg" | "fg";
+}
+export declare class ConnectionStatus {
+    error?: Error;
+    name: string;
+    connected: boolean;
 }

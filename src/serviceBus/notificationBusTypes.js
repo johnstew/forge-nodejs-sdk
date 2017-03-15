@@ -19,3 +19,6 @@ class MessagePriorities {
 }
 MessagePriorities.values = [MessagePriority.Background, MessagePriority.Foreground];
 exports.MessagePriorities = MessagePriorities;
+class ConnectionStatus {
+}
+exports.ConnectionStatus = ConnectionStatus;

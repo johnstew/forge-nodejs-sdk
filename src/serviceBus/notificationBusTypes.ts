@@ -4,7 +4,7 @@ export type EventPredicate = (name: string, body: any) => boolean;
 export interface INotificationBus {
 	startReceiving(): Promise<any>;
 	stopReceiving(): Promise<any>;
-	on(eventName: string, listener: Function): void;
+	on(eventName: string, listener: (msg) => void): void;
 	waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate): Promise<any>;
 }
 
@@ -32,4 +32,10 @@ export class MessagePriorities {
 				throw new Error("Invalid value");
 		}
 	}
+}
+
+export class ConnectionStatus {
+	error?: Error;
+	name: string;
+	connected: boolean;
 }

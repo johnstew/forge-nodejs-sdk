@@ -48,7 +48,7 @@ export class ForgeNotificationBus {
 		return this.bus.startReceiving();
 	}
 
-	on(eventName: string, listener: Function): void {
+	on(eventName: string, listener: (msg) => void): void {
 		return this.bus.on(eventName, listener);
 	}
 

@@ -10,6 +10,7 @@ class DistributionNotificationBus {
     constructor(options) {
         options = Object.assign({}, options);
         options.notificationBusName = options.notificationBusName || "dist-ntf";
+        // for compatibility with older sdk...
         if (!options.connectionString) {
             options.connectionString = options.url;
         }

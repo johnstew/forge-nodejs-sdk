@@ -10,7 +10,7 @@ export declare class ForgeNotificationBus {
     readonly defaultWaitOnceTimeout: number;
     constructor(options: IForgeNotificationBusOptions);
     startReceiving(): Promise<any>;
-    on(eventName: string, listener: Function): void;
+    on(eventName: string, listener: (msg) => void): void;
     stopReceiving(): Promise<any>;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<any>;
     waitCommand(cmdId: string, successNotificationName: string, failedNotificationName: string, waitTimeout?: number): Promise<any>;

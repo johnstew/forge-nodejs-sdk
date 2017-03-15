@@ -10,6 +10,7 @@ class ForgeNotificationBus {
     constructor(options) {
         options = Object.assign({}, options);
         options.notificationBusName = options.notificationBusName || "forge-ntf";
+        // for compatibility with older sdk...
         if (!options.connectionString) {
             options.connectionString = options.url;
         }

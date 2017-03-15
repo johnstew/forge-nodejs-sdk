@@ -10,21 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeNotificationBus.RabbitMq");
-const RabbitMqServiceBus_js_1 = require("./RabbitMqServiceBus.js");
+const RabbitMqChannel_js_1 = require("./RabbitMqChannel.js");
 const events_1 = require("events");
 const notificationBusTypes_1 = require("./../notificationBusTypes");
 const utils_1 = require("../../utils");
-class RabbitMqNotificationBus {
+class RabbitMqNotificationBus extends events_1.EventEmitter {
     constructor(options) {
+        super();
         this.rabbitMqChannels = new Array();
         this._waitOnceListeners = new Set();
+        this._started = false;
         this.options = options;
-        this._eventEmitter = new events_1.EventEmitter();
         const secondaryConnections = this.options.secondaryConnectionStrings || [];
         const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
         for (const connectionString of allConnectionStrings) {
-            const channel = new RabbitMqServiceBus_js_1.RabbitMqChannel(connectionString);
-            this.rabbitMqChannels.push(channel);
+            this.rabbitMqChannels.push(this.createChannel(connectionString));
         }
         this.options.queueOptions = this.options.queueOptions || {
             exclusive: true,
@@ -34,21 +34,17 @@ class RabbitMqNotificationBus {
     }
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
+            debug("Starting...");
+            this._started = true;
             for (const channel of this.rabbitMqChannels) {
                 yield channel.connect();
-                for (const p of notificationBusTypes_1.MessagePriorities.values) {
-                    const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
-                    const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
-                    yield channel.consume(this.options.notificationBusName, this.options.queueOptions, (msg) => this._dispatch(msg), routingKey, queueName);
-                }
             }
         });
     }
-    on(eventName, listener) {
-        this._eventEmitter.on(eventName, listener);
-    }
     stopReceiving() {
         return __awaiter(this, void 0, void 0, function* () {
+            debug("Stopping...");
+            this._started = false;
             for (const channel of this.rabbitMqChannels) {
                 yield channel.close();
             }
@@ -64,7 +60,48 @@ class RabbitMqNotificationBus {
             });
         });
     }
-    _dispatch(msg) {
+    createChannel(connectionString) {
+        const channel = new RabbitMqChannel_js_1.RabbitMqChannel(connectionString);
+        channel.on("message", (msg) => this.onRabbitMqMessage(msg));
+        channel.on("error", (msg) => this.emitError(msg));
+        channel.on("connectionError", (msg) => this.onConnectionError(channel, msg));
+        channel.on("connectionSuccess", (msg) => this.onConnectionSuccess(channel));
+        for (const p of notificationBusTypes_1.MessagePriorities.values) {
+            const routingKey = notificationBusTypes_1.MessagePriorities.toShortString(p) + ".*";
+            const queueName = this.options.queueName + "-" + notificationBusTypes_1.MessagePriorities.toShortString(p);
+            channel.defineConsumer({
+                queueName,
+                queueOptions: this.options.queueOptions,
+                bindings: [{
+                        exchange: this.options.notificationBusName,
+                        routingKey
+                    }]
+            });
+        }
+        return channel;
+    }
+    onConnectionSuccess(channel) {
+        debug("Connection success");
+        this.emitConnectionStatusChanged({
+            connected: true,
+            name: channel.URL
+        });
+    }
+    onConnectionError(channel, err) {
+        debug("Connection error, retry after 10s", err);
+        this.emitConnectionStatusChanged({
+            connected: false,
+            error: err,
+            name: channel.URL
+        });
+        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+            if (!this._started) {
+                return;
+            }
+            yield channel.connect();
+        }), 10000);
+    }
+    onRabbitMqMessage(msg) {
         try {
             if (!msg) {
                 return;
@@ -76,16 +113,16 @@ class RabbitMqNotificationBus {
             }
             else {
                 const body = JSON.parse(msg.content.toString());
-                this._emit(msg.properties.headers.TypeName, utils_1.toCamel(body));
+                this.emitMessage(msg.properties.headers.TypeName, utils_1.toCamel(body));
             }
         }
         catch (e) {
-            this._emit("error", e);
+            this.emitMessage("error", e);
         }
     }
-    _emit(name, body) {
+    emitMessage(name, body) {
         debug(name, body);
-        this._eventEmitter.emit(name, body);
+        this.emit(name, body);
         const listeners = this._waitOnceListeners;
         for (const item of listeners) {
             if (item.resolvePredicate && item.resolvePredicate(name, body)) {
@@ -97,6 +134,13 @@ class RabbitMqNotificationBus {
                 listeners.delete(item);
             }
         }
+    }
+    emitError(msg) {
+        debug("error", msg);
+        this.emit("error", msg);
+    }
+    emitConnectionStatusChanged(msg) {
+        this.emit("_connectionStatusChanged", msg);
     }
 }
 exports.RabbitMqNotificationBus = RabbitMqNotificationBus;

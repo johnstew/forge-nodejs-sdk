@@ -12,6 +12,10 @@ const DistributionNotificationBus = sdk.DistributionNotificationBus;
 const config = require("./../config.js");
 
 let notificationBus = new ForgeNotificationBus(config.serviceBus);
+notificationBus.on("error", console.error);
+notificationBus.on("_connectionStatusChanged", (s) => {
+	console.log(s.name, s.connected ? "-> CONNECTED" : "-> DISCONNECTED");
+});
 
 function connect(){
 	return notificationBus.startReceiving();
@@ -22,8 +26,6 @@ function connect(){
 
 connect()
 .then(() => {
-
-	notificationBus.on("error", console.error);
 
 	console.log("Waiting for an entity to be published/unpublished:");
 	// notificationBus.on("CommandSuccessNotification", (e) => {
