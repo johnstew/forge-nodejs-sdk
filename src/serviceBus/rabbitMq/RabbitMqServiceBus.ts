@@ -1,4 +1,6 @@
 import * as amqp from "amqplib";
+import {EventEmitter} from "events";
+
 import * as Debug from "debug";
 const debug = Debug("forgesdk.rabbitMqServiceBus");
 
@@ -6,20 +8,41 @@ const debug = Debug("forgesdk.rabbitMqServiceBus");
 // https://www.rabbitmq.com/tutorials/tutorial-three-javascript.html
 // https://github.com/squaremo/amqp.node/blob/master/examples/tutorials/receive_logs.js
 
-export class RabbitMqChannel {
+export class QueueBinding {
+	constructor(
+		readonly exchange: string, 
+		readonly routingKey: string) {
+	}
+}
+
+export class QueueConsumer {
+	constructor(
+		readonly queueName: string,
+		readonly queueOptions: amqp.Options.AssertQueue,
+		readonly bindings: QueueBinding[]) {
+	}
+}
+
+export class RabbitMqChannel extends EventEmitter {
 	readonly URL: string;
-	connection: amqp.Connection;
-	channel: amqp.Channel;
+	readonly consumers = new Array<QueueConsumer>();
+
+	private connection: amqp.Connection;
+	private channel: amqp.Channel;
 
 	constructor(url: string) {
+		super();
+
 		this.URL = url;
+	}
+
+	defineConsumer(consumer: QueueConsumer) {
+		this.consumers.push(consumer);
 	}
 
 	async connect(): Promise<void> {
 		this.connection = await amqp.connect(this.URL);
 		this.channel = await this.connection.createChannel();
-		// TODO We should register to "error" events, connection.on("error", ...)
-		//  and channel.on("error", ...)
 	}
 
 	async close(): Promise<void> {
@@ -29,19 +52,18 @@ export class RabbitMqChannel {
 		await this.connection.close();
 	}
 
-	async consume(
-		exchange: string,
-		queueOptions: amqp.Options.AssertQueue,
-		listener: (msg: amqp.Message) => any,
-		queueRoutingKey: string = "",
-		queueName: string = ""): Promise<void> {
+	private async configure(): Promise<void> {
 
-		const qok = await this.channel
-			.assertQueue(queueName, queueOptions);
+		for (const c of this.consumers) {
+			const qok = await this.channel
+				.assertQueue(queueName, queueOptions);
 
-		await this.channel.bindQueue(qok.queue, exchange, queueRoutingKey);
-		await this.channel.consume(qok.queue, listener, { noAck: true });
+			await this.channel.bindQueue(qok.queue, exchange, queueRoutingKey);
+			await this.channel.consume(qok.queue, listener, { noAck: true });
+		}
+	}
 
-		debug(` [*] Waiting for ${exchange}...`);
+	private listener(msg: amqp.Message): void {
+		this.emit("message", msg);
 	}
 }
