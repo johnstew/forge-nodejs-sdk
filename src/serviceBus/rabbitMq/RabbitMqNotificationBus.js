@@ -94,12 +94,10 @@ class RabbitMqNotificationBus extends events_1.EventEmitter {
             error: err,
             name: channel.URL
         });
-        setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-            if (!this._started) {
-                return;
-            }
-            yield channel.connect();
-        }), 10000);
+        if (!this._started) {
+            return;
+        }
+        channel.retryReconnecting();
     }
     onRabbitMqMessage(msg) {
         try {

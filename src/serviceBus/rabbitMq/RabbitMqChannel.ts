@@ -25,10 +25,12 @@ export class RabbitMqQueue {
 
 export class RabbitMqChannel extends EventEmitter {
 	readonly URL: string;
-	readonly consumers = new Array<RabbitMqQueue>();
+	private consumers = new Array<RabbitMqQueue>();
 
 	private connection: amqp.Connection | undefined;
 	private channel: amqp.Channel | undefined;
+
+	private _connectingTimer: NodeJS.Timer | undefined;
 
 	constructor(url: string) {
 		super();
@@ -75,11 +77,32 @@ export class RabbitMqChannel extends EventEmitter {
 		this.channel = undefined;
 		this.connection = undefined;
 
+		this.stopReconnecting();
+
 		if (ch) {
 			await ch.close();
 		}
 		if (cn) {
 			await cn.close();
+		}
+	}
+
+	retryReconnecting() {
+		if (this._connectingTimer) {
+			return;
+		}
+
+		this._connectingTimer = setTimeout(async () => {
+			this.stopReconnecting();
+
+			await this.connect();
+		}, 10000);
+	}
+
+	private stopReconnecting() {
+		if (this._connectingTimer) {
+			clearTimeout(this._connectingTimer);
+			this._connectingTimer = undefined;
 		}
 	}
 

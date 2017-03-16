@@ -14,13 +14,16 @@ export declare class RabbitMqQueue {
 }
 export declare class RabbitMqChannel extends EventEmitter {
     readonly URL: string;
-    readonly consumers: RabbitMqQueue[];
+    private consumers;
     private connection;
     private channel;
+    private _connectingTimer;
     constructor(url: string);
     defineConsumer(consumer: RabbitMqQueue): void;
     connect(): Promise<void>;
     close(): Promise<void>;
+    retryReconnecting(): void;
+    private stopReconnecting();
     private emitMessage(msg);
     private emitConnectionError(msg);
     private emitConnectionSuccess();

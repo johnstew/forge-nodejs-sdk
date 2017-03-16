@@ -17,6 +17,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 	readonly options: IRabbitMqNotificationBusOptions;
 	readonly rabbitMqChannels = new Array<RabbitMqChannel>();
 	readonly _waitOnceListeners = new Set();
+
 	private _started = false;
 
 	constructor(options: IRabbitMqNotificationBusOptions) {
@@ -51,6 +52,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 		debug("Stopping...");
 
 		this._started = false;
+
 		for (const channel of this.rabbitMqChannels) {
 			await channel.close();
 		}
@@ -111,12 +113,11 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 			name: channel.URL
 		});
 
-		setTimeout(async () => {
-			if (!this._started) {
-				return;
-			}
-			await channel.connect();
-		}, 10000);
+		if (!this._started) {
+			return;
+		}
+
+		channel.retryReconnecting();
 	}
 
 	private onRabbitMqMessage(msg) {

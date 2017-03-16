@@ -7,14 +7,13 @@
 
 const sdk = require("./../index.js"); // forge-nodejs-sdk
 const ForgeNotificationBus = sdk.ForgeNotificationBus;
-const DistributionNotificationBus = sdk.DistributionNotificationBus;
 
 const config = require("./../config.js");
 
 let notificationBus = new ForgeNotificationBus(config.serviceBus);
 notificationBus.on("error", console.error);
 notificationBus.on("_connectionStatusChanged", (s) => {
-	console.log(s.name, s.connected ? "-> CONNECTED" : "-> DISCONNECTED");
+	console.log(s.name, s.connected ? "-> CONNECTED" : "-> DISCONNECTED " + s.error);
 });
 
 function connect(){
