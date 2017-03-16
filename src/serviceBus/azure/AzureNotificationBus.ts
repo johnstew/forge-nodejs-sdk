@@ -1,23 +1,28 @@
+import * as Debug from "debug";
+const debug = Debug("forgesdk.AzureNotificationBus");
+
 import {AzureAmqpSubscription} from "./AzureAmqpServiceBus.js";
 
-import { INotificationBus, EventPredicate, INotificationBusOptions, MessagePriority, MessagePriorities} from "./../notificationBusTypes";
-import {IAzureSubscription} from "./azureNotificationBusTypes";
+import { INotificationBus, EventPredicate,
+	INotificationBusOptions, MessagePriority, MessagePriorities, ConnectionStatus} from "./../notificationBusTypes";
+import {toCamel} from "../../utils";
 
-const azureServiceBus = require("./AzureServiceBus.js");
+import {EventEmitter} from "events";
 
 export interface IAzureNotificationBusOptions extends INotificationBusOptions {
 	subscriptionName: string;
 	subscriptionOptions?: any;
-	useAmqp?: boolean;
-	receiveInterval?: number;
-	receiveTimeout?: number;
 }
 
-export class AzureNotificationBus implements INotificationBus {
+export class AzureNotificationBus extends EventEmitter implements INotificationBus {
 	readonly options: IAzureNotificationBusOptions;
-	private azureSubscriptions = new Array<IAzureSubscription>();
+	private azureSubscriptions = new Array<AzureAmqpSubscription>();
+	readonly _waitOnceListeners = new Set();
+
+	private _started = false;
 
 	constructor(options: IAzureNotificationBusOptions) {
+		super();
 		this.options = options;
 
 		const topicName = options.notificationBusName;
@@ -27,15 +32,11 @@ export class AzureNotificationBus implements INotificationBus {
 			AutoDeleteOnIdle : "PT5M"
 		};
 
-		this.options.useAmqp = this.options.hasOwnProperty("useAmqp")
-			? this.options.useAmqp
-			: true;
-
 		const secondaryConnections = this.options.secondaryConnectionStrings || [];
 		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
 
 		for (const p of MessagePriorities.values) {
-			var priority = MessagePriority[p];
+			const priority = MessagePriority[p];
 			const topicPriorityName = `${topicName}-${MessagePriorities.toShortString(p)}`;
 
 			for (const connectionString of allConnectionStrings) {
@@ -46,48 +47,123 @@ export class AzureNotificationBus implements INotificationBus {
 		}
 	}
 
-	async startReceiving(): Promise<any> {
+	async startReceiving(): Promise<void> {
+
+		this._started = true;
+
 		for (const subscription of this.azureSubscriptions) {
-			await subscription.createIfNotExists(this.options.subscriptionOptions);
-			await subscription.startReceiving();
+			await subscription.connect();
 		}
 	}
 
-	on(eventName: string, listener: Function): void {
+	async stopReceiving(): Promise<void> {
+		this._started = false;
+
 		for (const subscription of this.azureSubscriptions) {
-			subscription.on(eventName, listener);
+			await subscription.close();
 		}
 	}
 
-	async stopReceiving(): Promise<any> {
-		for (const subscription of this.azureSubscriptions) {
-			await subscription.stopReceiving();
-		}
-	}
-
-	async waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any> {
-		const promises = new Array<Promise<any>>();
-
-		for (const subscription of this.azureSubscriptions) {
-			promises.push(subscription.waitOnce(resolvePredicate, rejectPredicate));
-		}
-		return Promise.race(promises);
+	waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._waitOnceListeners.add({
+				resolvePredicate,
+				rejectPredicate,
+				resolve,
+				reject
+			});
+		});
 	}
 
 	private createSubscription(topicName: string, connectionString: string) {
-		if (this.options.useAmqp) {
-			return new AzureAmqpSubscription(
-					connectionString,
-					topicName,
-					this.options.subscriptionName);
-		} else {// legacy version
-			return new azureServiceBus.AzureSubscription(
-					connectionString,
-					topicName,
-					this.options.subscriptionName,
-					this.options.receiveInterval,
-					this.options.receiveTimeout);
+		const subscription = new AzureAmqpSubscription(
+				connectionString,
+				topicName,
+				this.options.subscriptionName,
+				this.options.subscriptionOptions);
 
+		subscription.on("message", (msg) => this.onAzureMessage(msg));
+		subscription.on("error", (msg) => this.emitError(msg));
+		subscription.on("connectionError", (msg) => this.onConnectionError(subscription, msg));
+		subscription.on("connectionSuccess", (msg) => this.onConnectionSuccess(subscription));
+
+		return subscription;
+	}
+
+	private onConnectionSuccess(subscription: AzureAmqpSubscription) {
+		debug("Connection success");
+
+		this.emitConnectionStatusChanged({
+			connected: true,
+			name: subscription._amqpUrl
+		});
+	}
+
+	private onConnectionError(subscription: AzureAmqpSubscription, err: Error) {
+		debug("Connection error, retry after 10s", err);
+
+		this.emitConnectionStatusChanged({
+			connected: false,
+			error: err,
+			name: subscription._amqpUrl
+		});
+
+		if (!this._started) {
+			return;
 		}
+
+		subscription.retryReconnecting();
+	}
+
+	private onAzureMessage(msg) {
+		try {
+			if (!msg
+				|| !msg.body
+				|| !msg.properties
+				|| !msg.properties.subject) {
+				return;
+			}
+
+			// Parse body
+			// try to read the body (and check if is serialized with .NET, int this case remove extra characters)
+			// http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
+			//  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
+			const matches = msg.body.match(/({.*})/);
+			if (matches || matches.length >= 1) {
+				msg.body = JSON.parse(matches[0]);
+				// azure use PascalCase, I prefer camelCase
+				msg.body = toCamel(msg.body);
+
+				this.emitMessage(msg.properties.subject, msg.body);
+			}
+		} catch (e) {
+			this.emitMessage("error", e);
+		}
+	}
+
+	private emitMessage(name, body) {
+		debug(name, body);
+
+		this.emit(name, body);
+
+		const listeners = this._waitOnceListeners;
+		for (const item of listeners) {
+			if (item.resolvePredicate && item.resolvePredicate(name, body)) {
+				item.resolve(body);
+				listeners.delete(item);
+			} else if (item.rejectPredicate && item.rejectPredicate(name, body)) {
+				item.reject(body);
+				listeners.delete(item);
+			}
+		}
+	}
+
+	private emitError(msg: Error): void {
+		debug("error", msg);
+		this.emit("error", msg);
+	}
+
+	private emitConnectionStatusChanged(msg: ConnectionStatus): void {
+		this.emit("_connectionStatusChanged", msg);
 	}
 }

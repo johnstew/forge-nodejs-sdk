@@ -14,38 +14,83 @@ const debugTracking = Debug("forgesdk.azureAmqpServiceBus.tracking");
 const events_1 = require("events");
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 const azure = require("azure");
-const utils_1 = require("../../utils");
 const amqp10 = require("amqp10");
 const AMQPClient = amqp10.Client;
 const Policy = amqp10.Policy;
-class AzureAmqpSubscription {
-    constructor(azureBusUrl, topic, subscription) {
-        this._waitOnceListeners = new Set();
-        this.receiving = false;
+class AzureAmqpSubscription extends events_1.EventEmitter {
+    constructor(azureBusUrl, topic, subscription, subscriptionOptions) {
+        super();
         this.receiveWithPeekLock = false;
-        this._eventEmitter = new events_1.EventEmitter();
         const retryOperations = new azure.ExponentialRetryPolicyFilter();
         this.topic = topic;
         this.subscription = subscription;
+        this.subscriptionOptions = subscriptionOptions || {};
         const serviceBus = azure
             .createServiceBusService(azureBusUrl);
         this.serviceBusService = serviceBus
             .withFilter(retryOperations);
         this._amqpUrl = this._createAmqpUrl(azureBusUrl);
     }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                this.close().catch(() => { });
+                yield this.createIfNotExists();
+                this._amqpClient = new AMQPClient(Policy.ServiceBusTopic);
+                yield this._amqpClient.connect(this._amqpUrl);
+                const receiver = yield this._amqpClient.createReceiver(`${this.topic}/Subscriptions/${this.subscription}`);
+                receiver.on("message", (message) => {
+                    this.emitMessage(message);
+                });
+                // TODO Check... _amqpClient.on("error")...
+                receiver.on("error", (e) => this.emitConnectionError(e));
+                receiver.on("errorReceived", (e) => this.emitConnectionError(e));
+                this.emitConnectionSuccess();
+            }
+            catch (err) {
+                this.emitConnectionError(err);
+            }
+        });
+    }
+    close() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const client = this._amqpClient;
+            this._amqpClient = undefined;
+            this.stopReconnecting();
+            if (client) {
+                yield client.disconnect();
+            }
+        });
+    }
+    retryReconnecting() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this._connectingTimer) {
+                return;
+            }
+            this._connectingTimer = setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                this.stopReconnecting();
+                yield this.connect();
+            }), 10000);
+        });
+    }
     // options: {DefaultMessageTimeToLive : "PT10S",AutoDeleteOnIdle : "PT5M"}
     // note: PT10S=10seconds, PT5M=5minutes
-    createIfNotExists(options) {
+    createIfNotExists() {
         return __awaiter(this, void 0, void 0, function* () {
-            options = options || {};
             debug(`Checking subscription ${this.topic}/${this.subscription} ...`);
             const exists = yield this.exists();
             if (exists) {
                 debug(`Subscription ${this.topic}/${this.subscription} already exists.`);
                 return;
             }
-            yield this._createSubscription(options);
+            yield this._createSubscription(this.subscriptionOptions);
         });
+    }
+    stopReconnecting() {
+        if (this._connectingTimer) {
+            clearTimeout(this._connectingTimer);
+            this._connectingTimer = undefined;
+        }
     }
     exists() {
         return new Promise((resolve, reject) => {
@@ -60,72 +105,6 @@ class AzureAmqpSubscription {
                 resolve(true);
             });
         });
-    }
-    on(eventName, listener) {
-        this._eventEmitter.on(eventName, listener);
-    }
-    startReceiving() {
-        if (this.receiving) {
-            return Promise.resolve(true);
-        }
-        debug("Start receiving messages with amqp protocol...");
-        this.receiving = true;
-        this._amqpClient = new AMQPClient(Policy.ServiceBusTopic);
-        return this._amqpClient.connect(this._amqpUrl)
-            .then(() => {
-            return this._amqpClient.createReceiver(`${this.topic}/Subscriptions/${this.subscription}`);
-        })
-            .then((receiver) => {
-            receiver.on("message", (message) => {
-                this._receiveMessage(message);
-            });
-            receiver.on("errorReceived", (e) => this._emit("error", e));
-        });
-    }
-    stopReceiving() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.receiving = false;
-            debug("Stop receiving messages.");
-            if (this._amqpClient) {
-                yield this._amqpClient.disconnect();
-            }
-            this._amqpClient = null;
-        });
-    }
-    waitOnce(resolvePredicate, rejectPredicate) {
-        return new Promise((resolve, reject) => {
-            this._waitOnceListeners.add({
-                resolvePredicate,
-                rejectPredicate,
-                resolve,
-                reject
-            });
-        });
-    }
-    _normalizeBody(body) {
-        // azure use PascalCase, I prefer camelCase
-        return utils_1.toCamel(body);
-    }
-    _emit(name, body) {
-        debug(name, body);
-        if (name === "CommandSuccessNotification") {
-            debugTracking(`... ${body.commandId} OK`);
-        }
-        if (name === "CommandFailedNotification") {
-            debugTracking(`... ${body.commandId} FAIL`);
-        }
-        this._eventEmitter.emit(name, body);
-        const listeners = this._waitOnceListeners;
-        for (const item of listeners) {
-            if (item.resolvePredicate && item.resolvePredicate(name, body)) {
-                item.resolve(body);
-                listeners.delete(item);
-            }
-            else if (item.rejectPredicate && item.rejectPredicate(name, body)) {
-                item.reject(body);
-                listeners.delete(item);
-            }
-        }
     }
     _createSubscription(options) {
         return new Promise((resolve, reject) => {
@@ -153,34 +132,14 @@ class AzureAmqpSubscription {
             throw new Error("Invalid azure bus url");
         }
     }
-    _receiveMessage(msg) {
-        if (!msg
-            || !msg.body
-            || !msg.properties
-            || !msg.properties.subject) {
-            return;
-        }
-        // Parse body
-        // try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-        // http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-        //  "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-        const matches = msg.body.match(/({.*})/);
-        if (matches || matches.length >= 1) {
-            msg.body = JSON.parse(matches[0]);
-            msg.body = this._normalizeBody(msg.body);
-            this._emit(msg.properties.subject, msg.body);
-        }
+    emitMessage(msg) {
+        this.emit("message", msg);
     }
-    _deleteMessage(message) {
-        return new Promise((resolve, reject) => {
-            this.serviceBusService
-                .deleteMessage(message, (error) => {
-                if (error) {
-                    return reject(error);
-                }
-                return resolve(true);
-            });
-        });
+    emitConnectionError(msg) {
+        this.emit("connectionError", msg);
+    }
+    emitConnectionSuccess() {
+        this.emit("connectionSuccess");
     }
 }
 exports.AzureAmqpSubscription = AzureAmqpSubscription;

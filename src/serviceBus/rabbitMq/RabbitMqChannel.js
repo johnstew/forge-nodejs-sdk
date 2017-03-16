@@ -12,6 +12,9 @@ const Debug = require("debug");
 const debug = Debug("forgesdk.RabbitMqChannel.RabbitMq");
 const amqp = require("amqplib");
 const events_1 = require("events");
+// Code based on:
+// https://www.rabbitmq.com/tutorials/tutorial-three-javascript.html
+// https://github.com/squaremo/amqp.node/blob/master/examples/tutorials/receive_logs.js
 class RabbitMqQueueBinding {
     constructor(exchange, routingKey) {
         this.exchange = exchange;
@@ -93,6 +96,9 @@ class RabbitMqChannel extends events_1.EventEmitter {
     emitMessage(msg) {
         this.emit("message", msg);
     }
+    // private emitError(msg: Error): void {
+    // 	this.emit("error", msg);
+    // }
     emitConnectionError(msg) {
         this.emit("connectionError", msg);
     }

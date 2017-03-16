@@ -10,7 +10,7 @@ export declare class DistributionNotificationBus {
     readonly defaultWaitOnceTimeout: number;
     constructor(options: IDistributionNotificationBusOptions);
     startReceiving(): Promise<any>;
-    on(eventName: string, listener: Function): void;
+    on(eventName: string, listener: (msg) => void): void;
     stopReceiving(): Promise<any>;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<any>;
     waitDistributionPublish(entityTranslationId: any, waitTimeout?: number): Promise<any>;

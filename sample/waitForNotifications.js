@@ -27,6 +27,11 @@ connect()
 .then(() => {
 
 	console.log("Waiting for an entity to be published/unpublished:");
+
+	notificationBus.on("HeartbeatNotification", (e) => {
+		console.log(`HeartbeatNotification ${e.nodeId}`);
+	});
+
 	// notificationBus.on("CommandSuccessNotification", (e) => {
 	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
 	// });

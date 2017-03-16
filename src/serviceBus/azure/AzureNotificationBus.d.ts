@@ -1,18 +1,24 @@
+/// <reference types="node" />
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";
+import { EventEmitter } from "events";
 export interface IAzureNotificationBusOptions extends INotificationBusOptions {
     subscriptionName: string;
     subscriptionOptions?: any;
-    useAmqp?: boolean;
-    receiveInterval?: number;
-    receiveTimeout?: number;
 }
-export declare class AzureNotificationBus implements INotificationBus {
+export declare class AzureNotificationBus extends EventEmitter implements INotificationBus {
     readonly options: IAzureNotificationBusOptions;
     private azureSubscriptions;
+    readonly _waitOnceListeners: Set<any>;
+    private _started;
     constructor(options: IAzureNotificationBusOptions);
-    startReceiving(): Promise<any>;
-    on(eventName: string, listener: Function): void;
-    stopReceiving(): Promise<any>;
+    startReceiving(): Promise<void>;
+    stopReceiving(): Promise<void>;
     waitOnce(resolvePredicate: EventPredicate, rejectPredicate: EventPredicate): Promise<any>;
     private createSubscription(topicName, connectionString);
+    private onConnectionSuccess(subscription);
+    private onConnectionError(subscription, err);
+    private onAzureMessage(msg);
+    private emitMessage(name, body);
+    private emitError(msg);
+    private emitConnectionStatusChanged(msg);
 }
