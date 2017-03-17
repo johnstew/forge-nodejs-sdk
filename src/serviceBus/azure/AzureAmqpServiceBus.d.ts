@@ -16,7 +16,7 @@ export declare class AzureAmqpSubscription extends EventEmitter {
     private createIfNotExists();
     private stopReconnecting();
     private exists();
-    private _createSubscription(options);
+    private _createSubscription();
     private _createAmqpUrl(azureBusUrl);
     private emitMessage(msg);
     private emitConnectionError(msg);

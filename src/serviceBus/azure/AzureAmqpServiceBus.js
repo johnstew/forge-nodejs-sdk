@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
-const debug = Debug("forgesdk.azureAmqpServiceBus");
-const debugTracking = Debug("forgesdk.azureAmqpServiceBus.tracking");
+const debug = Debug("forgesdk.AzureAmqpSubscription");
+const debugTracking = Debug("forgesdk.AzureAmqpSubscription.tracking");
 const events_1 = require("events");
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 const azure = require("azure");
@@ -33,6 +33,7 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
+            debug(`Connecting to ${this._amqpUrl}...`);
             try {
                 this.close().catch(() => { });
                 yield this.createIfNotExists();
@@ -83,7 +84,7 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
                 debug(`Subscription ${this.topic}/${this.subscription} already exists.`);
                 return;
             }
-            yield this._createSubscription(this.subscriptionOptions);
+            yield this._createSubscription();
         });
     }
     stopReconnecting() {
@@ -106,10 +107,11 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
             });
         });
     }
-    _createSubscription(options) {
+    _createSubscription() {
+        debug(`Creating subscription ${this.topic}/${this.subscription} ...`, this.subscriptionOptions);
         return new Promise((resolve, reject) => {
             this.serviceBusService
-                .createSubscription(this.topic, this.subscription, options, (error) => {
+                .createSubscription(this.topic, this.subscription, this.subscriptionOptions, (error) => {
                 if (error) {
                     return reject(error);
                 }

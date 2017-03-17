@@ -13,30 +13,21 @@ const config = require("./../config.js");
 const api = new index_1.ForgeManagementApi(config.managementApi);
 const notificationBus = new index_1.ForgeNotificationBus(config.serviceBus);
 api.autoWaitCommandNotification(notificationBus);
-function addSitePage(pagePath) {
+function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        let cmd = new index_1.ForgeCommands.AddSitePage({
-            path: pagePath
-        });
-        let waitAdded = notificationBus.waitCommand(cmd.id(), "SitePageAddedNotification");
-        yield api.post(cmd);
-        const msg = yield waitAdded;
-        return msg.itemId;
+        yield notificationBus.startReceiving();
+        try {
+            const exportId = api.uuid();
+            yield api.post(new index_1.ForgeCommands.ExportNode({ path: "~/_libraries/", exportId: exportId }));
+            const packageResponse = yield api.get(`deltatre.forge.vsm/api/exports/node/${exportId}`);
+            console.log(packageResponse);
+        }
+        finally {
+            yield notificationBus.stopReceiving();
+        }
     });
 }
-function changeTemplate(pageId, template) {
-    var cmd = new index_1.ForgeCommands.ChangePageTemplate({ pageId: pageId, template: template });
-    return api.post(cmd);
-}
-notificationBus.startReceiving()
-    .then(() => __awaiter(this, void 0, void 0, function* () {
-    const pageId = yield addSitePage("~/test/sdksample/page_" + (new Date().getTime()));
-    console.log("New page id: " + pageId);
-    yield changeTemplate(pageId, { id: "homePage", namespace: "urn:mynamespace" });
-    console.log("Template changed");
-}))
-    .then(() => notificationBus.stopReceiving())
+run()
     .catch((error) => {
     console.log(error);
-    notificationBus.stopReceiving();
 });

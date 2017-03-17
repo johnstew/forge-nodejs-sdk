@@ -571,7 +571,7 @@ export class ImportNode extends CommandBase {
 
 export class ExportNode extends CommandBase {
 	// cmd: { path, exportId, description }
-	constructor(cmd){
+	constructor(cmd: {path: string, exportId: string, description?: string} ){
 		super("ExportNodeCommand", cmd);
 	}
 }

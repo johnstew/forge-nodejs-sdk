@@ -119,6 +119,7 @@ class AzureNotificationBus extends events_1.EventEmitter {
         this.emit(name, body);
         const listeners = this._waitOnceListeners;
         for (const item of listeners) {
+            debug(`Checking listener ...`);
             if (item.resolvePredicate && item.resolvePredicate(name, body)) {
                 item.resolve(body);
                 listeners.delete(item);

@@ -1,6 +1,6 @@
 import * as Debug from "debug";
-const debug = Debug("forgesdk.azureAmqpServiceBus");
-const debugTracking = Debug("forgesdk.azureAmqpServiceBus.tracking");
+const debug = Debug("forgesdk.AzureAmqpSubscription");
+const debugTracking = Debug("forgesdk.AzureAmqpSubscription.tracking");
 
 import {EventEmitter} from "events";
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
@@ -39,6 +39,8 @@ export class AzureAmqpSubscription extends EventEmitter {
 	}
 
 	async connect(): Promise<void> {
+		debug(`Connecting to ${this._amqpUrl}...`);
+		
 		try {
 			this.close().catch(() => {});
 
@@ -98,7 +100,7 @@ export class AzureAmqpSubscription extends EventEmitter {
 			return;
 		}
 
-		await this._createSubscription(this.subscriptionOptions);
+		await this._createSubscription();
 	}
 
 	private stopReconnecting() {
@@ -125,10 +127,12 @@ export class AzureAmqpSubscription extends EventEmitter {
 		});
 	}
 
-	private _createSubscription(options) {
+	private _createSubscription() {
+		debug(`Creating subscription ${this.topic}/${this.subscription} ...`, this.subscriptionOptions);
+
 		return new Promise((resolve, reject) => {
 			this.serviceBusService
-			.createSubscription(this.topic, this.subscription, options, (error) => {
+			.createSubscription(this.topic, this.subscription, this.subscriptionOptions, (error) => {
 				if (error) {
 					return reject(error);
 				}

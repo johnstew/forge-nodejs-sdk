@@ -221,5 +221,9 @@ export declare class ImportNode extends CommandBase {
     constructor(cmd: any);
 }
 export declare class ExportNode extends CommandBase {
-    constructor(cmd: any);
+    constructor(cmd: {
+        path: string;
+        exportId: string;
+        description?: string;
+    });
 }

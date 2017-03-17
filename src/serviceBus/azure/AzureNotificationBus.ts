@@ -48,7 +48,6 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 	}
 
 	async startReceiving(): Promise<void> {
-
 		this._started = true;
 
 		for (const subscription of this.azureSubscriptions) {
@@ -148,6 +147,7 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 
 		const listeners = this._waitOnceListeners;
 		for (const item of listeners) {
+			debug(`Checking listener ...`);
 			if (item.resolvePredicate && item.resolvePredicate(name, body)) {
 				item.resolve(body);
 				listeners.delete(item);

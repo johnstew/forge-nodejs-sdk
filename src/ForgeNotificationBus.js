@@ -28,6 +28,7 @@ class ForgeNotificationBus {
         }
     }
     startReceiving() {
+        debug("Starting bus...");
         return this.bus.startReceiving();
     }
     on(eventName, listener) {
@@ -49,7 +50,7 @@ class ForgeNotificationBus {
         if (!cmdId) {
             throw new Error("cmdId not defined");
         }
-        debug(`Waiting for command ${cmdId}...`);
+        debug(`Waiting command ${cmdId} for ${successNotificationName} ...`);
         const isSuccessCommand = (name, msg) => {
             if (name !== successNotificationName) {
                 return false;

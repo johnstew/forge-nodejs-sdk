@@ -1,0 +1,48 @@
+import { ForgeNotificationBus } from "./ForgeNotificationBus";
+import * as ForgeCommands from "./ForgeCommands";
+export declare class ForgeManagementApi {
+    KEY: string;
+    FORGE_URL: string;
+    notificationBus: ForgeNotificationBus | undefined;
+    constructor(options: {
+        authKey: string;
+        url: string;
+    });
+    post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): any;
+    autoWaitCommandNotification(notificationBus: ForgeNotificationBus): void;
+    get(path: string, questyStringObject?: any): Promise<{}>;
+    getEvents(bucketId: string, options: any): Promise<{}>;
+    getCommits(bucketId: string, options: any): Promise<{}>;
+    getEventsByAggregateId(bucketId: string, aggregateId: any, options: any): Promise<{}>;
+    getStories(version: string, options: any): Promise<{}>;
+    getStory(version: string, translationId: any): Promise<{}>;
+    getStoryByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getPhotos(version: string, options: any): Promise<{}>;
+    getPhoto(version: string, translationId: any): Promise<{}>;
+    getPhotoByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getPhotoTranslations(version: string, entityId: any): Promise<{}>;
+    getTags(version: string, options: any): Promise<{}>;
+    getTag(version: string, translationId: any): Promise<{}>;
+    getTagByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getTagTranslations(version: string, entityId: any): Promise<{}>;
+    getDocuments(version: string, options: any): Promise<{}>;
+    getDocument(version: string, translationId: any): Promise<{}>;
+    getDocumentByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getDocumentTranslations(version: string, entityId: any): Promise<{}>;
+    getSelections(version: string, options: any): Promise<{}>;
+    getSelection(version: string, translationId: any): Promise<{}>;
+    getSelectionByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getSelectionTranslations(version: string, entityId: any): Promise<{}>;
+    getAlbum(version: string, translationId: any): Promise<{}>;
+    getAlbumByCultureSlug(version: string, culture: string, slug: string): Promise<{}>;
+    getAlbumTranslations(version: string, entityId: any): Promise<{}>;
+    getAlbums(version: string, options: any): Promise<{}>;
+    getCustomEntity(entityCode: string, version: string, translationId: any): Promise<{}>;
+    getCustomEntityTranslations(entityCode: string, version: string, entityId: any): Promise<{}>;
+    getCustomEntityBySlug(entityCode: string, version: string, culture: string, slug: string): Promise<{}>;
+    getCustomEntities(entityCode: string, version: string, options: any): Promise<{}>;
+    getCheckpoints(bucketId: string): Promise<{}>;
+    getPage(pageId: any): Promise<{}>;
+    uuid(): any;
+    randomSlug(): any;
+}

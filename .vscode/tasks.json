@@ -3,6 +3,7 @@
     // for the documentation about the tasks.json format
     "version": "0.1.0",
     "taskName": "src-build",
+    "isShellCommand": true,
     "command": "npm",
     "args": ["run", "develop"],
     "isBackground": true,

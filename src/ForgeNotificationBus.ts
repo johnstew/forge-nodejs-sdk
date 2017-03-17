@@ -45,6 +45,7 @@ export class ForgeNotificationBus {
 	}
 
 	startReceiving(): Promise<any> {
+		debug("Starting bus...");
 		return this.bus.startReceiving();
 	}
 
@@ -66,7 +67,7 @@ export class ForgeNotificationBus {
 		return withTimeout(myPromise, msWaitTimeout);
 	}
 
-	waitCommand(cmdId: string, successNotificationName: string, failedNotificationName: string, waitTimeout?: number) {
+	waitCommand(cmdId: string, successNotificationName?: string, failedNotificationName?: string, waitTimeout?: number) {
 		successNotificationName = successNotificationName || "CommandSuccessNotification";
 		failedNotificationName = failedNotificationName || "CommandFailedNotification";
 
@@ -74,7 +75,7 @@ export class ForgeNotificationBus {
 			throw new Error("cmdId not defined");
 		}
 
-		debug(`Waiting for command ${cmdId}...`);
+		debug(`Waiting command ${cmdId} for ${successNotificationName} ...`);
 
 		const isSuccessCommand = (name, msg) => {
 			if (name !== successNotificationName) {
