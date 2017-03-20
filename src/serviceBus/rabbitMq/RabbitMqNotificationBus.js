@@ -23,14 +23,15 @@ class RabbitMqNotificationBus extends events_1.EventEmitter {
         this.options = options;
         const secondaryConnections = this.options.secondaryConnectionStrings || [];
         const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
-        for (const connectionString of allConnectionStrings) {
-            this.rabbitMqChannels.push(this.createChannel(connectionString));
-        }
-        this.options.queueOptions = this.options.queueOptions || {
+        const defaultQueueOptions = {
             exclusive: true,
             durable: false,
             autoDelete: true
         };
+        this.options.queueOptions = Object.assign({}, defaultQueueOptions, this.options.queueOptions);
+        for (const connectionString of allConnectionStrings) {
+            this.rabbitMqChannels.push(this.createChannel(connectionString));
+        }
     }
     startReceiving() {
         return __awaiter(this, void 0, void 0, function* () {

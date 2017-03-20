@@ -54,6 +54,7 @@ export class RabbitMqChannel extends EventEmitter {
 			this.channel.on("error", (e) => this.emitConnectionError(e));
 
 			for (const q of this.consumers) {
+				debug("Asserting queue ", q.queueName, q.queueOptions);
 				const qok = await this.channel
 					.assertQueue(q.queueName, q.queueOptions);
 

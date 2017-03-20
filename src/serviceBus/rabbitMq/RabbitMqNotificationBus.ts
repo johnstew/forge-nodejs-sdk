@@ -28,15 +28,17 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 		const secondaryConnections = this.options.secondaryConnectionStrings || [];
 		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
 
-		for (const connectionString of allConnectionStrings) {
-			this.rabbitMqChannels.push(this.createChannel(connectionString));
-		}
-
-		this.options.queueOptions = this.options.queueOptions || {
+		const defaultQueueOptions = {
 			exclusive: true,
 			durable: false,
 			autoDelete: true
 		};
+		
+		this.options.queueOptions = Object.assign({}, defaultQueueOptions, this.options.queueOptions);
+
+		for (const connectionString of allConnectionStrings) {
+			this.rabbitMqChannels.push(this.createChannel(connectionString));
+		}
 	}
 
 	async startReceiving(): Promise<any> {

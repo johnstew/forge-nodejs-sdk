@@ -49,6 +49,7 @@ class RabbitMqChannel extends events_1.EventEmitter {
                 this.channel = yield this.connection.createChannel();
                 this.channel.on("error", (e) => this.emitConnectionError(e));
                 for (const q of this.consumers) {
+                    debug("Asserting queue ", q.queueName, q.queueOptions);
                     const qok = yield this.channel
                         .assertQueue(q.queueName, q.queueOptions);
                     for (const b of q.bindings) {
