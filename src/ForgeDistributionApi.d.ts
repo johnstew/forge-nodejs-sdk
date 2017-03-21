@@ -8,9 +8,13 @@ export declare class ForgeDistributionApi {
     getStory(culture: string, slug: string): Promise<{}>;
     getPhotos(culture: string, queryStringObject?: any): Promise<{}>;
     getPhoto(culture: string, slug: string): Promise<{}>;
+    getTags(culture: string, queryStringObject?: any): Promise<{}>;
     getTag(culture: string, slug: string): Promise<{}>;
+    getDocuments(culture: string, queryStringObject?: any): Promise<{}>;
     getDocument(culture: string, slug: string): Promise<{}>;
+    getAlbums(culture: string, queryStringObject?: any): Promise<{}>;
     getAlbum(culture: string, slug: string): Promise<{}>;
+    getCustomEntities(culture: string, entityCode: string, queryStringObject?: any): Promise<{}>;
     getCustomEntity(culture: string, entityCode: string, slug: string): Promise<{}>;
     getSelection(culture: string, slug: string, queryStringObject?: any): Promise<{}>;
 }

@@ -40,14 +40,26 @@ class ForgeDistributionApi {
     getPhoto(culture, slug) {
         return this.get(`v1/content/${culture}/photos/${slug}`);
     }
+    getTags(culture, queryStringObject) {
+        return this.get(`v1/content/${culture}/tags`, queryStringObject);
+    }
     getTag(culture, slug) {
         return this.get(`v1/content/${culture}/tags/${slug}`);
+    }
+    getDocuments(culture, queryStringObject) {
+        return this.get(`v1/content/${culture}/documents`, queryStringObject);
     }
     getDocument(culture, slug) {
         return this.get(`v1/content/${culture}/documents/${slug}`);
     }
+    getAlbums(culture, queryStringObject) {
+        return this.get(`v1/content/${culture}/albums`, queryStringObject);
+    }
     getAlbum(culture, slug) {
         return this.get(`v1/content/${culture}/albums/${slug}`);
+    }
+    getCustomEntities(culture, entityCode, queryStringObject) {
+        return this.get(`v1/content/${culture}/${entityCode}`, queryStringObject);
     }
     getCustomEntity(culture, entityCode, slug) {
         return this.get(`v1/content/${culture}/${entityCode}/${slug}`);

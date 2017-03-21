@@ -49,16 +49,32 @@ export class ForgeDistributionApi {
 		return this.get(`v1/content/${culture}/photos/${slug}`);
 	}
 
+	getTags (culture: string, queryStringObject?: any){
+		return this.get(`v1/content/${culture}/tags`, queryStringObject);
+	}
+
 	getTag (culture: string, slug: string){
 		return this.get(`v1/content/${culture}/tags/${slug}`);
+	}
+
+	getDocuments (culture: string, queryStringObject?: any){
+		return this.get(`v1/content/${culture}/documents`, queryStringObject);
 	}
 
 	getDocument (culture: string, slug: string){
 		return this.get(`v1/content/${culture}/documents/${slug}`);
 	}
 
+	getAlbums (culture: string, queryStringObject?: any){
+		return this.get(`v1/content/${culture}/albums`, queryStringObject);
+	}
+
 	getAlbum (culture: string, slug: string){
 		return this.get(`v1/content/${culture}/albums/${slug}`);
+	}
+
+	getCustomEntities (culture: string, entityCode: string, queryStringObject?: any){
+		return this.get(`v1/content/${culture}/${entityCode}`, queryStringObject);
 	}
 
 	getCustomEntity (culture: string, entityCode: string, slug: string){
