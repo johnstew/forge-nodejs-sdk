@@ -100,6 +100,9 @@ export declare class SetStoryPartExtendedFields extends CommandBase {
 export declare class AddEntityRelation extends CommandBase {
     constructor(cmd: any);
 }
+export declare class RemoveEntityRelation extends CommandBase {
+    constructor(cmd: any);
+}
 export declare class MoveEntityRelation extends CommandBase {
     constructor(cmd: any);
 }

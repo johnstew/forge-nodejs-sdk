@@ -276,6 +276,14 @@ export class AddEntityRelation extends CommandBase {
 	}
 }
 
+export class RemoveEntityRelation extends CommandBase {
+	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId } }
+	constructor(cmd){
+		super("AddEntityRelationCommand", cmd);
+	}
+}
+
+
 export class MoveEntityRelation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId }, position }
 	constructor(cmd){
