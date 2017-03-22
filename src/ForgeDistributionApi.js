@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const debug = require("debug")("ForgeDistributionApi");
+const Debug = require("debug");
+const debug = Debug("forgesdk.ForgeDistributionApi");
 const request = require("request");
 const urlJoin = require("url-join");
 class ForgeDistributionApi {
@@ -11,15 +12,17 @@ class ForgeDistributionApi {
         const options = {
             url: urlJoin(this.URL, path),
             headers: {
-                "Accept": "application/json"
+                Accept: "application/json"
             },
-            qs: queryStringObject || null
+            qs: queryStringObject || null,
+            useQuerystring: true
         };
         debug("Requesting " + options.url);
-        var promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
-                if (error)
+                if (error) {
                     return reject(error);
+                }
                 if (response.statusCode !== 200) {
                     return reject(new Error(`${response.statusCode}: ${response.statusMessage}`));
                 }
