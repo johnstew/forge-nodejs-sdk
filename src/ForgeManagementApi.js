@@ -58,8 +58,8 @@ class ForgeManagementApi {
             url: urlJoin(this.FORGE_URL, path),
             qs: questyStringObject,
             headers: {
-                "Authorization": "GUIShellApp key=" + this.KEY,
-                "Accept": "application/json"
+                Authorization: "GUIShellApp key=" + this.KEY,
+                Accept: "application/json"
             }
         };
         debug("Requesting " + options.url);

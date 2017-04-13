@@ -67,13 +67,13 @@ export class ForgeManagementApi {
 		this.notificationBus = notificationBus;
 	}
 
-	get (path: string, questyStringObject?: any){
+	get(path: string, questyStringObject?: any): Promise<any> {
 		const options = {
 			url: urlJoin(this.FORGE_URL, path),
 			qs: questyStringObject,
 			headers: {
-				"Authorization": "GUIShellApp key=" + this.KEY,
-				"Accept":"application/json"
+				Authorization: "GUIShellApp key=" + this.KEY,
+				Accept: "application/json"
 			}
 		};
 

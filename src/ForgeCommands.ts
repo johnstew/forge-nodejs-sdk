@@ -248,6 +248,13 @@ export class SetExtendedFields extends CommandBase {
 	}
 }
 
+export class SetWorkflowFields extends CommandBase {
+	// cmd: {values, aggregateId, aggregateType, translationId?, workflowName}
+	constructor(cmd){
+		super("SetWorkflowFieldsCommand", cmd);
+	}
+}
+
 export class SetFeatured extends CommandBase {
 	// cmd: {aggregateId, aggregateType, featured}
 	constructor(cmd){
@@ -516,42 +523,42 @@ export class SetLayoutProperties extends CommandBase {
 
 export class SetModuleProperties extends CommandBase {
 	// cmd: {commandId, pageId, moduleInstanceId, properties {key, value}}
-	constructor(cmd){
+	constructor(cmd) {
 		super("SetModulePropertiesCommand", cmd);
 	}
 }
 
 export class RemoveLinkRuleFromPage extends CommandBase {
 	// cmd: {commandId, linkRuleId}
-	constructor(cmd){
+	constructor(cmd) {
 		super("RemoveLinkRuleFromPageCommand", cmd);
 	}
 }
 
 export class CreateLinkRuleForPage extends CommandBase {
 	// cmd: {commandId, pageId, entityType, priority, properties {key, value}}
-	constructor(cmd){
+	constructor(cmd) {
 		super("CreateLinkRuleForPageCommand", cmd);
 	}
 }
 
 export class GenerateDiff extends CommandBase {
 	// cmd: {aggregateId, aggregateType, leftRevision, rightRevision? }
-	constructor(cmd){
+	constructor(cmd) {
 		super("GenerateDiffCommand", cmd);
 	}
 }
 
 export class Rollback extends CommandBase {
 	// cmd: {aggregateId, aggregateType, aggregateRevision }
-	constructor(cmd){
+	constructor(cmd) {
 		super("RollbackCommand", cmd);
 	}
 }
 
 export class CreateCheckpoint extends CommandBase {
 	// cmd: { checkpointId, label, bucketId }
-	constructor(cmd){
+	constructor(cmd) {
 		super("CreateCheckpointCommand", cmd);
 	}
 }

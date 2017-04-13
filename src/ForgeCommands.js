@@ -239,6 +239,13 @@ class SetExtendedFields extends CommandBase {
     }
 }
 exports.SetExtendedFields = SetExtendedFields;
+class SetWorkflowFields extends CommandBase {
+    // cmd: {values, aggregateId, aggregateType, translationId?, workflowName}
+    constructor(cmd) {
+        super("SetWorkflowFieldsCommand", cmd);
+    }
+}
+exports.SetWorkflowFields = SetWorkflowFields;
 class SetFeatured extends CommandBase {
     // cmd: {aggregateId, aggregateType, featured}
     constructor(cmd) {

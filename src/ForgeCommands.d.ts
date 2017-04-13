@@ -88,6 +88,9 @@ export declare class SetStoryHeadline extends CommandBase {
 export declare class SetExtendedFields extends CommandBase {
     constructor(cmd: any);
 }
+export declare class SetWorkflowFields extends CommandBase {
+    constructor(cmd: any);
+}
 export declare class SetFeatured extends CommandBase {
     constructor(cmd: any);
 }
