@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -15,17 +16,17 @@ const notificationBus = new index_1.ForgeNotificationBus(config.serviceBus);
 api.autoWaitCommandNotification(notificationBus);
 function addSitePage(pagePath) {
     return __awaiter(this, void 0, void 0, function* () {
-        let cmd = new index_1.ForgeCommands.AddSitePage({
+        const cmd = new index_1.ForgeCommands.AddSitePage({
             path: pagePath
         });
-        let waitAdded = notificationBus.waitCommand(cmd.id(), "SitePageAddedNotification");
+        const waitAdded = notificationBus.waitCommand(cmd.id(), "SitePageAddedNotification");
         yield api.post(cmd);
         const msg = yield waitAdded;
         return msg.itemId;
     });
 }
 function changeTemplate(pageId, template) {
-    var cmd = new index_1.ForgeCommands.ChangePageTemplate({ pageId: pageId, template: template });
+    const cmd = new index_1.ForgeCommands.ChangePageTemplate({ pageId, template });
     return api.post(cmd);
 }
 notificationBus.startReceiving()

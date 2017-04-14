@@ -19,10 +19,14 @@ export class ForgeFrontEndApi {
 
 		debug("Requesting " + options.url);
 
-		var promise = new Promise((resolve, reject) => {
-			request(options, (error, response, body) => {
-				if (error) return reject(error);
-				if (response.statusCode !== 200) return reject(new Error(response.statusCode));
+		const promise = new Promise((resolve, reject) => {
+			request(options, (error: any, response: any, body: any) => {
+				if (error) {
+					return reject(error);
+				}
+				if (response.statusCode !== 200) {
+					return reject(new Error(response.statusCode));
+				}
 
 				resolve(body);
 			});
@@ -35,15 +39,15 @@ export class ForgeFrontEndApi {
 			url: urlJoin(this.URL, path),
 			qs: questyStringObject,
 			headers: {
-				"Authorization": "CMS key=" + this.KEY,
-				"Accept":"application/json"
+				Authorization: "CMS key=" + this.KEY,
+				Accept: "application/json"
 			}
 		};
 
 		debug("Requesting " + options.url);
 
-		var promise = new Promise((resolve, reject) => {
-			request(options, (error, response, body) => {
+		const promise = new Promise((resolve, reject) => {
+			request(options, (error: any, response: any, body: any) => {
 				if (error) return reject(error);
 				if (response.statusCode !== 200) return reject(new Error(response.statusCode));
 
@@ -53,7 +57,7 @@ export class ForgeFrontEndApi {
 		return promise;
 	}
 
-	getData (dataPath: string){
+	getData(dataPath: string) {
 		return this.getApi("/cms/api/data/getallraw",
 			{
 				format: "json",
@@ -61,11 +65,11 @@ export class ForgeFrontEndApi {
 			});
 	}
 
-	getDataStories (){
+	getDataStories() {
 		return this.getData("/wcm/stories");
 	}
 
-	getDataStory (slug){
+	getDataStory(slug: string) {
 		return this.getData(`/wcm/stories/${slug}`);
 	}
 }

@@ -15,8 +15,9 @@ exports.CommandBase = CommandBase;
 class Batch extends CommandBase {
     // {commands}
     constructor(cmd) {
-        if (!cmd.commands)
+        if (!cmd.commands) {
             throw new Error("Invalid commands");
+        }
         super("BatchCommand", cmd);
     }
 }

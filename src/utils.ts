@@ -1,5 +1,5 @@
-export function toCamel(o) {
-	let build;
+export function toCamel(o: any) {
+	let build: any;
 
 	if (o instanceof Array) {
 		build = [];

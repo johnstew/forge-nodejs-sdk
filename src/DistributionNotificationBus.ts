@@ -47,7 +47,7 @@ export class DistributionNotificationBus {
 		return this.bus.startReceiving();
 	}
 
-	on(eventName: string, listener: (msg) => void): void {
+	on(eventName: string, listener: (msg: any) => void): void {
 		return this.bus.on(eventName, listener);
 	}
 
@@ -65,7 +65,7 @@ export class DistributionNotificationBus {
 		return withTimeout(myPromise, msWaitTimeout);
 	}
 
-	waitDistributionPublish(entityTranslationId, waitTimeout?: number) {
+	waitDistributionPublish(entityTranslationId: string, waitTimeout?: number) {
 		return this.waitOnce((name, msg) => {
 			return name === "EntityDistributionNotification" &&
 				msg.action === "publish" &&
@@ -73,7 +73,7 @@ export class DistributionNotificationBus {
 		}, undefined, waitTimeout);
 	}
 
-	waitDistributionPublishByEntityId(entityId, culture, waitTimeout?: number) {
+	waitDistributionPublishByEntityId(entityId: string, culture: string, waitTimeout?: number) {
 		return this.waitOnce((name, msg) => {
 			return name === "EntityDistributionNotification" &&
 				msg.action === "publish" &&

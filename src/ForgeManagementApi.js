@@ -17,8 +17,9 @@ class ForgeManagementApi {
         if (Array.isArray(cmd)) {
             return this.post(new ForgeCommands.Batch({ commands: cmd }));
         }
-        if (!cmd.bodyObject)
+        if (!cmd.bodyObject) {
             throw new Error("cmd.bodyObject not defined");
+        }
         const options = {
             method: "POST",
             url: urlJoin(this.FORGE_URL, "api/command"),
@@ -37,7 +38,7 @@ class ForgeManagementApi {
             waiterPromise = Promise.resolve(true);
         debug("Sending command...", cmd);
         debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
-        var postPromise = new Promise((resolve, reject) => {
+        const postPromise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
                 if (error)
                     return reject(error);
@@ -81,15 +82,15 @@ class ForgeManagementApi {
     //  and skip or limit returned events
     //  options: {from, skip, limit}
     getEvents(bucketId, options) {
-        let safeFromCheckpoint = parseInt(options.from);
+        let safeFromCheckpoint = parseInt(options.from, 10);
         let safeToCheckpoint;
         if (options.skip) {
-            safeFromCheckpoint += parseInt(options.skip);
+            safeFromCheckpoint += parseInt(options.skip, 10);
         }
         if (options.limit) {
-            safeToCheckpoint = safeFromCheckpoint + parseInt(options.limit);
+            safeToCheckpoint = safeFromCheckpoint + parseInt(options.limit, 10);
         }
-        let newOptions = { fromCheckpoint: safeFromCheckpoint };
+        const newOptions = { fromCheckpoint: safeFromCheckpoint };
         if (safeToCheckpoint) {
             newOptions.toCheckpoint = safeToCheckpoint;
         }
@@ -110,8 +111,9 @@ class ForgeManagementApi {
     }
     getStories(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/stories/${version}`, options);
     }
     getStory(version, translationId) {
@@ -122,8 +124,9 @@ class ForgeManagementApi {
     }
     getPhotos(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/photos/${version}`, options);
     }
     getPhoto(version, translationId) {
@@ -152,8 +155,9 @@ class ForgeManagementApi {
     }
     getDocuments(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/documents/${version}`, options);
     }
     getDocument(version, translationId) {
@@ -167,8 +171,9 @@ class ForgeManagementApi {
     }
     getSelections(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/selections/${version}`, options);
     }
     getSelection(version, translationId) {
@@ -206,8 +211,9 @@ class ForgeManagementApi {
     }
     getCustomEntities(entityCode, version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}`, options);
     }
     getCheckpoints(bucketId) {

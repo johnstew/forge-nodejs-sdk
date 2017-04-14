@@ -49,7 +49,7 @@ export class ForgeNotificationBus {
 		return this.bus.startReceiving();
 	}
 
-	on(eventName: string, listener: (msg) => void): void {
+	on(eventName: string, listener: (msg: any) => void): void {
 		return this.bus.on(eventName, listener);
 	}
 
@@ -77,7 +77,7 @@ export class ForgeNotificationBus {
 
 		debug(`Waiting command ${cmdId} for ${successNotificationName} ...`);
 
-		const isSuccessCommand = (name, msg) => {
+		const isSuccessCommand = (name: string, msg: any) => {
 			if (name !== successNotificationName) {
 				return false;
 			}
@@ -94,7 +94,7 @@ export class ForgeNotificationBus {
 
 			return false;
 		};
-		const isFailedCommand = (name, msg) => {
+		const isFailedCommand = (name: string, msg: any) => {
 			if (name !== failedNotificationName) {
 				return false;
 			}

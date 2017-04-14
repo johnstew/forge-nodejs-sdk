@@ -124,10 +124,25 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
         const hostNameRegEx = /sb\:\/\/(.*?)\;/;
         const sasNameRegEx = /SharedAccessKeyName=(.*?)(\;|$)/;
         const sasKeyRegEx = /SharedAccessKey=(.*?)(\;|$)/;
+        if (!azureBusUrl) {
+            throw new Error("Invalid azure bus url");
+        }
         try {
-            const sasName = azureBusUrl.match(sasNameRegEx)[1];
-            const sasKey = azureBusUrl.match(sasKeyRegEx)[1];
-            const serviceBusHost = azureBusUrl.match(hostNameRegEx)[1];
+            const matchName = azureBusUrl.match(sasNameRegEx);
+            if (!matchName) {
+                throw new Error("Invalid azure bus url");
+            }
+            const sasName = matchName[1];
+            const matchKey = azureBusUrl.match(sasKeyRegEx);
+            if (!matchKey) {
+                throw new Error("Invalid azure bus url");
+            }
+            const sasKey = matchKey[1];
+            const matchHost = azureBusUrl.match(hostNameRegEx);
+            if (!matchHost) {
+                throw new Error("Invalid azure bus url");
+            }
+            const serviceBusHost = matchHost[1];
             return `amqps://${encodeURIComponent(sasName)}:${encodeURIComponent(sasKey)}@${serviceBusHost}`;
         }
         catch (e) {

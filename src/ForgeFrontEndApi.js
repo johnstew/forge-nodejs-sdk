@@ -14,12 +14,14 @@ class ForgeFrontEndApi {
             qs: questyStringObject
         };
         debug("Requesting " + options.url);
-        var promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
-                if (error)
+                if (error) {
                     return reject(error);
-                if (response.statusCode !== 200)
+                }
+                if (response.statusCode !== 200) {
                     return reject(new Error(response.statusCode));
+                }
                 resolve(body);
             });
         });
@@ -30,12 +32,12 @@ class ForgeFrontEndApi {
             url: urlJoin(this.URL, path),
             qs: questyStringObject,
             headers: {
-                "Authorization": "CMS key=" + this.KEY,
-                "Accept": "application/json"
+                Authorization: "CMS key=" + this.KEY,
+                Accept: "application/json"
             }
         };
         debug("Requesting " + options.url);
-        var promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
                 if (error)
                     return reject(error);

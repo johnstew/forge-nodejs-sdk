@@ -4,7 +4,7 @@ export type EventPredicate = (name: string, body: any) => boolean;
 export interface INotificationBus {
 	startReceiving(): Promise<any>;
 	stopReceiving(): Promise<any>;
-	on(eventName: string, listener: (msg) => void): void;
+	on(eventName: string, listener: (msg: any) => void): void;
 	waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate): Promise<any>;
 }
 

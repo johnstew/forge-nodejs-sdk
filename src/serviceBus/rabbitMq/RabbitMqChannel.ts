@@ -49,9 +49,9 @@ export class RabbitMqChannel extends EventEmitter {
 			this.close().catch(() => {});
 
 			this.connection = await amqp.connect(this.URL);
-			this.connection.on("error", (e) => this.emitConnectionError(e));
+			this.connection.on("error", (e: any) => this.emitConnectionError(e));
 			this.channel = await this.connection.createChannel();
-			this.channel.on("error", (e) => this.emitConnectionError(e));
+			this.channel.on("error", (e: any) => this.emitConnectionError(e));
 
 			for (const q of this.consumers) {
 				debug("Asserting queue ", q.queueName, q.queueOptions);

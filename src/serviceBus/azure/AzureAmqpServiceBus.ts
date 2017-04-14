@@ -51,18 +51,18 @@ export class AzureAmqpSubscription extends EventEmitter {
 
 			const receiver = await this._amqpClient.createReceiver(`${this.topic}/Subscriptions/${this.subscription}`);
 
-			receiver.on("message", (message) => {
+			receiver.on("message", (message: any) => {
 				this.emitMessage(message);
 			});
 
 			// TODO Check... _amqpClient.on("error")...
-			receiver.on("error", (e) => this.emitConnectionError(e));
-			receiver.on("errorReceived", (e) => this.emitConnectionError(e));
+			receiver.on("error", (e: any) => this.emitConnectionError(e));
+			receiver.on("errorReceived", (e: any) => this.emitConnectionError(e));
 
 			this.emitConnectionSuccess();
 		} catch (err) {
 			this.emitConnectionError(err);
-		}			
+		}
 	}
 
 	async close(): Promise<void> {
@@ -113,7 +113,7 @@ export class AzureAmqpSubscription extends EventEmitter {
 	private exists(): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.serviceBusService
-			.getSubscription(this.topic, this.subscription, (error) => {
+			.getSubscription(this.topic, this.subscription, (error: any) => {
 				if (error) {
 					if (error.statusCode === 404) {
 						return resolve(false);
@@ -132,7 +132,7 @@ export class AzureAmqpSubscription extends EventEmitter {
 
 		return new Promise((resolve, reject) => {
 			this.serviceBusService
-			.createSubscription(this.topic, this.subscription, this.subscriptionOptions, (error) => {
+			.createSubscription(this.topic, this.subscription, this.subscriptionOptions, (error: any) => {
 				if (error) {
 					return reject(error);
 				}
@@ -143,15 +143,33 @@ export class AzureAmqpSubscription extends EventEmitter {
 		});
 	}
 
-	private _createAmqpUrl(azureBusUrl) {
+	private _createAmqpUrl(azureBusUrl: string) {
 		const hostNameRegEx = /sb\:\/\/(.*?)\;/;
 		const sasNameRegEx = /SharedAccessKeyName=(.*?)(\;|$)/;
 		const sasKeyRegEx = /SharedAccessKey=(.*?)(\;|$)/;
 
+		if (!azureBusUrl) {
+			throw new Error("Invalid azure bus url");
+		}
+
 		try {
-			const sasName = azureBusUrl.match(sasNameRegEx)[1];
-			const sasKey = azureBusUrl.match(sasKeyRegEx)[1];
-			const serviceBusHost = azureBusUrl.match(hostNameRegEx)[1];
+			const matchName = azureBusUrl.match(sasNameRegEx);
+			if (!matchName) {
+				throw new Error("Invalid azure bus url");
+			}
+			const sasName = matchName[1];
+
+			const matchKey = azureBusUrl.match(sasKeyRegEx);
+			if (!matchKey) {
+				throw new Error("Invalid azure bus url");
+			}
+			const sasKey = matchKey[1];
+
+			const matchHost = azureBusUrl.match(hostNameRegEx);
+			if (!matchHost) {
+				throw new Error("Invalid azure bus url");
+			}
+			const serviceBusHost = matchHost[1];
 
 			return `amqps://${encodeURIComponent(sasName)}:${encodeURIComponent(sasKey)}@${serviceBusHost}`;
 		}	catch (e) {

@@ -9,5 +9,5 @@ export declare class ForgeFrontEndApi {
     getApi(path: string, questyStringObject?: any): Promise<{}>;
     getData(dataPath: string): Promise<{}>;
     getDataStories(): Promise<{}>;
-    getDataStory(slug: any): Promise<{}>;
+    getDataStory(slug: string): Promise<{}>;
 }

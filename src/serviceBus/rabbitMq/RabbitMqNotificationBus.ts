@@ -73,10 +73,10 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 
 	private createChannel(connectionString: string): RabbitMqChannel {
 		const channel = new RabbitMqChannel(connectionString);
-		channel.on("message", (msg) => this.onRabbitMqMessage(msg));
-		channel.on("error", (msg) => this.emitError(msg));
-		channel.on("connectionError", (msg) => this.onConnectionError(channel, msg));
-		channel.on("connectionSuccess", (msg) => this.onConnectionSuccess(channel));
+		channel.on("message", (msg: any) => this.onRabbitMqMessage(msg));
+		channel.on("error", (msg: any) => this.emitError(msg));
+		channel.on("connectionError", (msg: any) => this.onConnectionError(channel, msg));
+		channel.on("connectionSuccess", (msg: any) => this.onConnectionSuccess(channel));
 
 		for (const p of MessagePriorities.values) {
 			const routingKey = MessagePriorities.toShortString(p) + ".*";
@@ -122,7 +122,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 		channel.retryReconnecting();
 	}
 
-	private onRabbitMqMessage(msg) {
+	private onRabbitMqMessage(msg: any) {
 		try {
 			if (!msg) {
 				return;
@@ -141,7 +141,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 		}
 	}
 
-	private emitMessage(name, body) {
+	private emitMessage(name: string, body: any) {
 		debug(name, body);
 
 		this.emit(name, body);

@@ -24,7 +24,7 @@ export class ForgeDistributionApi {
 		debug("Requesting " + options.url);
 
 		const promise = new Promise((resolve, reject) => {
-			request(options, (error, response, body) => {
+			request(options, (error: any, response: any, body: any) => {
 				if (error) {
 					return reject(error);
 				}

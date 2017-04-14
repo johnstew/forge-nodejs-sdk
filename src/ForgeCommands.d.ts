@@ -1,7 +1,7 @@
 export declare class CommandBase {
     readonly name: string;
     readonly bodyObject: any;
-    constructor(name: any, cmd: any);
+    constructor(name: string, cmd: any);
     id(): any;
 }
 export declare class Batch extends CommandBase {

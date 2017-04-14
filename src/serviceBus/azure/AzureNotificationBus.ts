@@ -81,10 +81,10 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 				this.options.subscriptionName,
 				this.options.subscriptionOptions);
 
-		subscription.on("message", (msg) => this.onAzureMessage(msg));
-		subscription.on("error", (msg) => this.emitError(msg));
-		subscription.on("connectionError", (msg) => this.onConnectionError(subscription, msg));
-		subscription.on("connectionSuccess", (msg) => this.onConnectionSuccess(subscription));
+		subscription.on("message", (msg: any) => this.onAzureMessage(msg));
+		subscription.on("error", (msg: any) => this.emitError(msg));
+		subscription.on("connectionError", (msg: any) => this.onConnectionError(subscription, msg));
+		subscription.on("connectionSuccess", (msg: any) => this.onConnectionSuccess(subscription));
 
 		return subscription;
 	}
@@ -114,7 +114,7 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 		subscription.retryReconnecting();
 	}
 
-	private onAzureMessage(msg) {
+	private onAzureMessage(msg: any) {
 		try {
 			if (!msg
 				|| !msg.body
@@ -140,7 +140,7 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 		}
 	}
 
-	private emitMessage(name, body) {
+	private emitMessage(name: string, body: any) {
 		debug(name, body);
 
 		this.emit(name, body);
