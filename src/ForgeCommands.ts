@@ -11,7 +11,7 @@ export class CommandBase {
 		this.bodyObject = cmd;
 	}
 
-	id(){
+	id() {
 		return this.bodyObject.commandId;
 	}
 }
@@ -34,7 +34,9 @@ export class CreateStory extends CommandBase {
 	constructor(cmd: any) {
 		cmd.storyId = cmd.storyId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
-		if (!cmd.translationInfo) throw new Error("Invalid translationInfo");
+		if (!cmd.translationInfo) {
+			throw new Error("Invalid translationInfo");
+		}
 		cmd.translationInfo.platform = cmd.translationInfo.platform || "default";
 
 		super("CreateStoryCommand", cmd);
@@ -43,7 +45,7 @@ export class CreateStory extends CommandBase {
 
 export class CreatePhoto extends CommandBase {
 	// {photoId, translationId, storagePath, originalFileName}
-	constructor(cmd: any){
+	constructor(cmd: any) {
 		cmd.photoId = cmd.photoId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
 
@@ -53,7 +55,7 @@ export class CreatePhoto extends CommandBase {
 
 export class CreateDocument extends CommandBase {
 	// {documentId, translationId, storagePath, originalFileName}
-	constructor(cmd: any){
+	constructor(cmd: any) {
 		cmd.documentId = cmd.documentId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
 
@@ -62,7 +64,7 @@ export class CreateDocument extends CommandBase {
 }
 
 export class CreateCustomEntity extends CommandBase {
-	//{entityId, translationId, entityCode}
+	// {entityId, translationId, entityCode}
 	constructor(cmd: any) {
 		cmd.entityId = cmd.entityId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
@@ -72,7 +74,7 @@ export class CreateCustomEntity extends CommandBase {
 
 export class CreateTag extends CommandBase {
 	// {tagId, translationId, title, [slug]}
-	constructor(cmd: any){
+	constructor(cmd: any) {
 		cmd.tagId = cmd.tagId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
 		super("CreateTagCommand", cmd);
@@ -176,7 +178,7 @@ export class UnsetContext extends CommandBase {
 }
 
 export class AddAlbumItems extends CommandBase {
-	//{albumId, items {id, elementType, element { entityId } } , position}
+	// {albumId, items {id, elementType, element { entityId } } , position}
 	constructor(cmd: any) {
 		cmd.position = cmd.position || 9999;
 		super("AddAlbumItemsCommand", cmd);
@@ -184,7 +186,7 @@ export class AddAlbumItems extends CommandBase {
 }
 
 export class AddSelectionItems extends CommandBase {
-	//{selectionId, items {id, elementType, element { entityId } } , position}
+	// {selectionId, items {id, elementType, element { entityId } } , position}
 	constructor(cmd: any) {
 		cmd.position = cmd.position || 9999;
 		super("AddSelectionItemsCommand", cmd);
@@ -192,35 +194,35 @@ export class AddSelectionItems extends CommandBase {
 }
 
 export class DeleteAlbumItems extends CommandBase {
-	//{albumId, albumItemIds}
+	// {albumId, albumItemIds}
 	constructor(cmd: any) {
 		super("DeleteAlbumItemsCommand", cmd);
 	}
 }
 
 export class MoveAlbumItem extends CommandBase {
-	//{albumId, albumItemId, position}
+	// {albumId, albumItemId, position}
 	constructor(cmd: any) {
 		super("MoveAlbumItemCommand", cmd);
 	}
 }
 
 export class Publish extends CommandBase {
-	//{aggregateId, aggregateType, translationId}
+	// {aggregateId, aggregateType, translationId}
 	constructor(cmd: any) {
 		super("PublishCommand", cmd);
 	}
 }
 
 export class Unpublish extends CommandBase {
-	//{aggregateId, aggregateType, translationId}
+	// {aggregateId, aggregateType, translationId}
 	constructor(cmd: any) {
 		super("UnpublishCommand", cmd);
 	}
 }
 
 export class Archive extends CommandBase {
-	//{aggregateId, aggregateType, translationId}
+	// {aggregateId, aggregateType, translationId}
 	constructor(cmd: any) {
 		super("ArchiveCommand", cmd);
 	}
@@ -339,7 +341,9 @@ export class AddTranslation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
 	constructor(cmd: any) {
 		cmd.translationId = cmd.translationId || uuid.v4();
-		if (!cmd.translationInfo) throw new Error("Invalid translationInfo");
+		if (!cmd.translationInfo) {
+			throw new Error("Invalid translationInfo");
+		}
 		cmd.translationInfo.platform = cmd.translationInfo.platform || "default";
 
 		super("AddTranslationCommand", cmd);
@@ -356,7 +360,9 @@ export class RemoveTranslation extends CommandBase {
 export class SetTranslationVisibility extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, visibility }
 	constructor(cmd: any) {
-		if (!cmd.visibility) throw new Error("Invalid visibility");
+		if (!cmd.visibility) {
+			throw new Error("Invalid visibility");
+		}
 
 		super("SetTranslationVisibilityCommand", cmd);
 	}
@@ -580,7 +586,9 @@ export class RestoreCheckpoint extends CommandBase {
 }
 
 export class ImportNode extends CommandBase {
-	// cmd: { importId, targetPath, node { structureNode : SiteNodeTradeContract, memento : MementoContract, mode : ImportMode}, pagesWithLinkRules }
+	// cmd: { importId, targetPath,
+	// node { structureNode : SiteNodeTradeContract, memento : MementoContract, mode : ImportMode}, pagesWithLinkRules
+	// }
 	constructor(cmd: any) {
 		super("ImportNodeCommand", cmd);
 	}
@@ -588,7 +596,7 @@ export class ImportNode extends CommandBase {
 
 export class ExportNode extends CommandBase {
 	// cmd: { path, exportId, description }
-	constructor(cmd: {path: string, exportId: string, description?: string} ){
+	constructor(cmd: {path: string, exportId: string, description?: string} ) {
 		super("ExportNodeCommand", cmd);
 	}
 }

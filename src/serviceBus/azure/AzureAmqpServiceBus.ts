@@ -19,7 +19,7 @@ export class AzureAmqpSubscription extends EventEmitter {
 	readonly _amqpUrl: string;
 	private _amqpClient: any;
 
-	private serviceBusService: any; //azure.ServiceBusService;
+	private serviceBusService: any; // azure.ServiceBusService;
 	private _connectingTimer: NodeJS.Timer | undefined;
 
 	constructor(azureBusUrl: string, topic: string, subscription: string, subscriptionOptions?: any) {
@@ -40,7 +40,7 @@ export class AzureAmqpSubscription extends EventEmitter {
 
 	async connect(): Promise<void> {
 		debug(`Connecting to ${this._amqpUrl}...`);
-		
+
 		try {
 			this.close().catch(() => {});
 

@@ -33,7 +33,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 			durable: false,
 			autoDelete: true
 		};
-		
+
 		this.options.queueOptions = Object.assign({}, defaultQueueOptions, this.options.queueOptions);
 
 		for (const connectionString of allConnectionStrings) {

@@ -28,8 +28,9 @@ class CreateStory extends CommandBase {
     constructor(cmd) {
         cmd.storyId = cmd.storyId || uuid.v4();
         cmd.translationId = cmd.translationId || uuid.v4();
-        if (!cmd.translationInfo)
+        if (!cmd.translationInfo) {
             throw new Error("Invalid translationInfo");
+        }
         cmd.translationInfo.platform = cmd.translationInfo.platform || "default";
         super("CreateStoryCommand", cmd);
     }
@@ -54,7 +55,7 @@ class CreateDocument extends CommandBase {
 }
 exports.CreateDocument = CreateDocument;
 class CreateCustomEntity extends CommandBase {
-    //{entityId, translationId, entityCode}
+    // {entityId, translationId, entityCode}
     constructor(cmd) {
         cmd.entityId = cmd.entityId || uuid.v4();
         cmd.translationId = cmd.translationId || uuid.v4();
@@ -166,7 +167,7 @@ class UnsetContext extends CommandBase {
 }
 exports.UnsetContext = UnsetContext;
 class AddAlbumItems extends CommandBase {
-    //{albumId, items {id, elementType, element { entityId } } , position}
+    // {albumId, items {id, elementType, element { entityId } } , position}
     constructor(cmd) {
         cmd.position = cmd.position || 9999;
         super("AddAlbumItemsCommand", cmd);
@@ -174,7 +175,7 @@ class AddAlbumItems extends CommandBase {
 }
 exports.AddAlbumItems = AddAlbumItems;
 class AddSelectionItems extends CommandBase {
-    //{selectionId, items {id, elementType, element { entityId } } , position}
+    // {selectionId, items {id, elementType, element { entityId } } , position}
     constructor(cmd) {
         cmd.position = cmd.position || 9999;
         super("AddSelectionItemsCommand", cmd);
@@ -182,35 +183,35 @@ class AddSelectionItems extends CommandBase {
 }
 exports.AddSelectionItems = AddSelectionItems;
 class DeleteAlbumItems extends CommandBase {
-    //{albumId, albumItemIds}
+    // {albumId, albumItemIds}
     constructor(cmd) {
         super("DeleteAlbumItemsCommand", cmd);
     }
 }
 exports.DeleteAlbumItems = DeleteAlbumItems;
 class MoveAlbumItem extends CommandBase {
-    //{albumId, albumItemId, position}
+    // {albumId, albumItemId, position}
     constructor(cmd) {
         super("MoveAlbumItemCommand", cmd);
     }
 }
 exports.MoveAlbumItem = MoveAlbumItem;
 class Publish extends CommandBase {
-    //{aggregateId, aggregateType, translationId}
+    // {aggregateId, aggregateType, translationId}
     constructor(cmd) {
         super("PublishCommand", cmd);
     }
 }
 exports.Publish = Publish;
 class Unpublish extends CommandBase {
-    //{aggregateId, aggregateType, translationId}
+    // {aggregateId, aggregateType, translationId}
     constructor(cmd) {
         super("UnpublishCommand", cmd);
     }
 }
 exports.Unpublish = Unpublish;
 class Archive extends CommandBase {
-    //{aggregateId, aggregateType, translationId}
+    // {aggregateId, aggregateType, translationId}
     constructor(cmd) {
         super("ArchiveCommand", cmd);
     }
@@ -328,8 +329,9 @@ class AddTranslation extends CommandBase {
     // cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
     constructor(cmd) {
         cmd.translationId = cmd.translationId || uuid.v4();
-        if (!cmd.translationInfo)
+        if (!cmd.translationInfo) {
             throw new Error("Invalid translationInfo");
+        }
         cmd.translationInfo.platform = cmd.translationInfo.platform || "default";
         super("AddTranslationCommand", cmd);
     }
@@ -345,8 +347,9 @@ exports.RemoveTranslation = RemoveTranslation;
 class SetTranslationVisibility extends CommandBase {
     // cmd: { aggregateId, aggregateType, translationId, visibility }
     constructor(cmd) {
-        if (!cmd.visibility)
+        if (!cmd.visibility) {
             throw new Error("Invalid visibility");
+        }
         super("SetTranslationVisibilityCommand", cmd);
     }
 }
@@ -568,7 +571,9 @@ class RestoreCheckpoint extends CommandBase {
 }
 exports.RestoreCheckpoint = RestoreCheckpoint;
 class ImportNode extends CommandBase {
-    // cmd: { importId, targetPath, node { structureNode : SiteNodeTradeContract, memento : MementoContract, mode : ImportMode}, pagesWithLinkRules }
+    // cmd: { importId, targetPath,
+    // node { structureNode : SiteNodeTradeContract, memento : MementoContract, mode : ImportMode}, pagesWithLinkRules
+    // }
     constructor(cmd) {
         super("ImportNodeCommand", cmd);
     }
