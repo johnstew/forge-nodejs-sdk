@@ -378,6 +378,9 @@ export class ImportFeeds extends CommandBase {
 export class UploadPhoto extends CommandBase {
 	// cmd: { photoId, translationId, sourceUrl, [title], [slug] }
 	constructor(cmd: any) {
+		cmd.photoId = cmd.photoId || uuid.v4();
+		cmd.translationId = cmd.translationId || uuid.v4();
+
 		super("UploadPhotoCommand", cmd);
 	}
 }
