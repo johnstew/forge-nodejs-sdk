@@ -1,6 +1,6 @@
 {
   "name": "forge-nodejs-sdk",
-  "version": "4.3.5",
+  "version": "4.3.6",
   "description": "Deltatre Forge Node.js SDK",
   "main": "index.js",
   "typings": "index.d.ts",
