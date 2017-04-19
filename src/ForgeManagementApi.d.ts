@@ -1,13 +1,14 @@
 import { ForgeNotificationBus } from "./ForgeNotificationBus";
 import * as ForgeCommands from "./ForgeCommands";
+export interface IForgeManagementApiOptions {
+    authKey: string;
+    url: string;
+}
 export declare class ForgeManagementApi {
     KEY: string;
     FORGE_URL: string;
     notificationBus: ForgeNotificationBus | undefined;
-    constructor(options: {
-        authKey: string;
-        url: string;
-    });
+    constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
     autoWaitCommandNotification(notificationBus: ForgeNotificationBus): void;
     get(path: string, questyStringObject?: any): Promise<any>;

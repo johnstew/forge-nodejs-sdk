@@ -9,12 +9,17 @@ const request = require("request");
 const uuid = require("uuid");
 const urlJoin = require("url-join");
 
+export interface IForgeManagementApiOptions {
+	authKey: string;
+	url: string;
+}
+
 export class ForgeManagementApi {
 	KEY: string;
 	FORGE_URL: string;
 	notificationBus: ForgeNotificationBus | undefined;
 
-	constructor(options: { authKey: string, url: string } ){
+	constructor(options: IForgeManagementApiOptions ) {
 		this.KEY = options.authKey;
 		this.FORGE_URL = options.url;
 		this.notificationBus = undefined;
@@ -42,17 +47,20 @@ export class ForgeManagementApi {
 		};
 
 		let waiterPromise;
-		if (this.notificationBus)
+		if (this.notificationBus) {
 			waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId, undefined, undefined, waitTimeout);
-		else
+		} else {
 			waiterPromise = Promise.resolve(true);
+		}
 
 		debug("Sending command...", cmd);
 		debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
 
 		const postPromise = new Promise((resolve, reject) => {
 			request(options, (error: any, response: any, body: any) => {
-				if (error) return reject(error);
+				if (error) {
+					return reject(error);
+				}
 				if (response.statusCode !== 204) {
 					return reject(new Error(response.statusCode + ":" + body));
 				}
@@ -65,7 +73,7 @@ export class ForgeManagementApi {
 		.then((values) => values[0]);
 	}
 
-	autoWaitCommandNotification(notificationBus: ForgeNotificationBus){
+	autoWaitCommandNotification(notificationBus: ForgeNotificationBus) {
 		this.notificationBus = notificationBus;
 	}
 
@@ -81,11 +89,15 @@ export class ForgeManagementApi {
 
 		debug("Requesting " + options.url);
 
-		var promise = new Promise((resolve, reject) => {
+		const promise = new Promise((resolve, reject) => {
 			request(options, (error: any, response: any, body: any) => {
-				if (error) return reject(error);
+				if (error) {
+					return reject(error);
+				}
 				debug("Response status " + response.statusCode);
-				if (response.statusCode !== 200) return reject(new Error(response.statusCode));
+				if (response.statusCode !== 200) {
+					return reject(new Error(response.statusCode));
+				}
 
 				resolve(JSON.parse(body));
 			});
@@ -112,7 +124,7 @@ export class ForgeManagementApi {
 
 		const newOptions: any = { fromCheckpoint: safeFromCheckpoint };
 
-		if (safeToCheckpoint){
+		if (safeToCheckpoint) {
 			newOptions.toCheckpoint = safeToCheckpoint;
 		}
 
@@ -123,7 +135,7 @@ export class ForgeManagementApi {
 	//  you can give all events from a given checkpoint (optional)
 	//  to a given checkpoint (optional)
 	//  options: {fromCheckpoint, toCheckpoint}
-	getCommits(bucketId: string, options: any){
+	getCommits(bucketId: string, options: any) {
 		return this.get(`api/eventstore/commits/${bucketId}`, options);
 	}
 
@@ -142,10 +154,10 @@ export class ForgeManagementApi {
 
 		return this.get(`deltatre.forge.wcm/api/stories/${version}`, options);
 	}
-	getStory (version: string, translationId: string){
+	getStory(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/stories/${version}/${translationId}`);
 	}
-	getStoryByCultureSlug (version: string, culture: string, slug: string){
+	getStoryByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/stories/${version}/culture/${culture}/slug/${slug}`);
 	}
 
@@ -160,27 +172,28 @@ export class ForgeManagementApi {
 	getPhoto(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/${translationId}`);
 	}
-	getPhotoByCultureSlug(version: string, culture: string, slug: string){
+	getPhotoByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/culture/${culture}/slug/${slug}`);
 	}
 	getPhotoTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/photos/${version}/entity/${entityId}`);
 	}
 
-	getTags (version: string, options: any) {
+	getTags(version: string, options: any) {
 		// for compatibility with old version
-		if (typeof options === "string")
-			options = {terms:options};
+		if (typeof options === "string") {
+			options = {terms: options};
+		}
 
 		return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
 	}
-	getTag (version: string, translationId: string) {
+	getTag(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
-	getTagByCultureSlug (version: string, culture: string, slug: string){
+	getTagByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`);
 	}
-	getTagTranslations (version: string, entityId: string) {
+	getTagTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
 	}
 
@@ -192,17 +205,17 @@ export class ForgeManagementApi {
 
 		return this.get(`deltatre.forge.wcm/api/documents/${version}`, options);
 	}
-	getDocument (version: string, translationId: string) {
+	getDocument(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/${translationId}`);
 	}
-	getDocumentByCultureSlug (version: string, culture: string, slug: string){
+	getDocumentByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/culture/${culture}/slug/${slug}`);
 	}
-	getDocumentTranslations (version: string, entityId: string) {
+	getDocumentTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/documents/${version}/entity/${entityId}`);
 	}
 
-	getSelections (version: string, options: any) {
+	getSelections(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
 			options = {terms: options};
@@ -210,48 +223,49 @@ export class ForgeManagementApi {
 
 		return this.get(`deltatre.forge.wcm/api/selections/${version}`, options);
 	}
-	getSelection (version: string, translationId: string) {
+	getSelection(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/${translationId}`);
 	}
-	getSelectionByCultureSlug (version: string, culture: string, slug: string) {
+	getSelectionByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/culture/${culture}/slug/${slug}`);
 	}
-	getSelectionTranslations (version: string, entityId: string) {
+	getSelectionTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/selections/${version}/entity/${entityId}`);
 	}
 
 
-	getAlbum (version: string, translationId: string) {
+	getAlbum(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/${translationId}`);
 	}
-	getAlbumByCultureSlug (version: string, culture: string, slug: string) {
+	getAlbumByCultureSlug(version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/culture/${culture}/slug/${slug}`);
 	}
-	getAlbumTranslations (version: string, entityId: string) {
+	getAlbumTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/albums/${version}/entity/${entityId}`);
 	}
-	getAlbums (version: string, options: any) {
+	getAlbums(version: string, options: any) {
 		// for compatibility with old version
-		if (typeof options === "string")
-			options = {terms:options};
+		if (typeof options === "string") {
+			options = {terms: options};
+		}
 
 		return this.get(`deltatre.forge.wcm/api/albums/${version}`, options);
 	}
 
 
-	getCustomEntity (entityCode: string, version: string, translationId: string) {
+	getCustomEntity(entityCode: string, version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/${translationId}`);
 	}
-	getCustomEntityTranslations (entityCode: string, version: string, entityId: string) {
+	getCustomEntityTranslations(entityCode: string, version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/entity/${entityId}`);
 	}
-	getCustomEntityBySlug (entityCode: string, version: string, culture: string, slug: string) {
+	getCustomEntityBySlug(entityCode: string, version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/culture/${culture}/slug/${slug}`);
 	}
-	getCustomEntities (entityCode: string, version: string, options: any) {
+	getCustomEntities(entityCode: string, version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms:options};
+			options = {terms: options};
 		}
 
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}`, options);

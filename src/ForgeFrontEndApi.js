@@ -39,10 +39,12 @@ class ForgeFrontEndApi {
         debug("Requesting " + options.url);
         const promise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
-                if (error)
+                if (error) {
                     return reject(error);
-                if (response.statusCode !== 200)
+                }
+                if (response.statusCode !== 200) {
                     return reject(new Error(response.statusCode));
+                }
                 resolve(JSON.parse(body));
             });
         });

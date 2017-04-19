@@ -4,10 +4,14 @@ const debug = Debug("forgesdk.ForgeDistributionApi");
 const request = require("request");
 const urlJoin = require("url-join");
 
+export interface IForgeDistributionApiOptions {
+	url: string;
+}
+
 export class ForgeDistributionApi {
 	URL: string;
 
-	constructor(options: { url: string }) {
+	constructor(options: IForgeDistributionApiOptions) {
 		this.URL = options.url;
 	}
 

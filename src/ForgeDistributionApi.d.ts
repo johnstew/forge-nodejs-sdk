@@ -1,8 +1,9 @@
+export interface IForgeDistributionApiOptions {
+    url: string;
+}
 export declare class ForgeDistributionApi {
     URL: string;
-    constructor(options: {
-        url: string;
-    });
+    constructor(options: IForgeDistributionApiOptions);
     get(path: string, queryStringObject?: any): Promise<{}>;
     getStories(culture: string, queryStringObject?: any): Promise<{}>;
     getStory(culture: string, slug: string): Promise<{}>;

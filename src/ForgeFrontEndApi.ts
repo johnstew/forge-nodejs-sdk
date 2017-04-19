@@ -2,16 +2,21 @@ const debug = require("debug")("ForgeFrontEndApi");
 const request = require("request");
 const urlJoin = require("url-join");
 
+export interface IForgeFrontEndApiOptions {
+	url: string;
+	authKey: string;
+}
+
 export class ForgeFrontEndApi {
 	URL: string;
 	KEY: string;
 
-	constructor(options: { url: string, authKey: string }){
+	constructor(options: IForgeFrontEndApiOptions) {
 		this.URL = options.url;
 		this.KEY = options.authKey;
 	}
 
-	get (path: string, questyStringObject?: any){
+	get(path: string, questyStringObject?: any) {
 		const options = {
 			url: urlJoin(this.URL, path),
 			qs: questyStringObject
@@ -34,7 +39,7 @@ export class ForgeFrontEndApi {
 		return promise;
 	}
 
-	getApi (path: string, questyStringObject?: any){
+	getApi(path: string, questyStringObject?: any) {
 		const options = {
 			url: urlJoin(this.URL, path),
 			qs: questyStringObject,
@@ -48,8 +53,12 @@ export class ForgeFrontEndApi {
 
 		const promise = new Promise((resolve, reject) => {
 			request(options, (error: any, response: any, body: any) => {
-				if (error) return reject(error);
-				if (response.statusCode !== 200) return reject(new Error(response.statusCode));
+				if (error) {
+					return reject(error);
+				}
+				if (response.statusCode !== 200) {
+					return reject(new Error(response.statusCode));
+				}
 
 				resolve(JSON.parse(body));
 			});

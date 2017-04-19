@@ -32,16 +32,19 @@ class ForgeManagementApi {
             json: true
         };
         let waiterPromise;
-        if (this.notificationBus)
+        if (this.notificationBus) {
             waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId, undefined, undefined, waitTimeout);
-        else
+        }
+        else {
             waiterPromise = Promise.resolve(true);
+        }
         debug("Sending command...", cmd);
         debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
         const postPromise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
-                if (error)
+                if (error) {
                     return reject(error);
+                }
                 if (response.statusCode !== 204) {
                     return reject(new Error(response.statusCode + ":" + body));
                 }
@@ -64,13 +67,15 @@ class ForgeManagementApi {
             }
         };
         debug("Requesting " + options.url);
-        var promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve, reject) => {
             request(options, (error, response, body) => {
-                if (error)
+                if (error) {
                     return reject(error);
+                }
                 debug("Response status " + response.statusCode);
-                if (response.statusCode !== 200)
+                if (response.statusCode !== 200) {
                     return reject(new Error(response.statusCode));
+                }
                 resolve(JSON.parse(body));
             });
         });
@@ -140,8 +145,9 @@ class ForgeManagementApi {
     }
     getTags(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
     }
     getTag(version, translationId) {
@@ -196,8 +202,9 @@ class ForgeManagementApi {
     }
     getAlbums(version, options) {
         // for compatibility with old version
-        if (typeof options === "string")
+        if (typeof options === "string") {
             options = { terms: options };
+        }
         return this.get(`deltatre.forge.wcm/api/albums/${version}`, options);
     }
     getCustomEntity(entityCode, version, translationId) {
