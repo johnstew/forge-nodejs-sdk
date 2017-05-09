@@ -1,6 +1,4 @@
 import * as shortid from "shortid";
-import * as Debug from "debug";
-const debug = Debug("forgesdk.ForgeDistributionNotificationBus");
 
 import {RabbitMqNotificationBus, IRabbitMqNotificationBusOptions} from "./serviceBus/rabbitMq/RabbitMqNotificationBus";
 import {AzureNotificationBus, IAzureNotificationBusOptions} from "./serviceBus/azure/AzureNotificationBus";

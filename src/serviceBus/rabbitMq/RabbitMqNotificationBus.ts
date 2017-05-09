@@ -5,7 +5,7 @@ import {RabbitMqChannel} from "./RabbitMqChannel.js";
 import {EventEmitter} from "events";
 
 import {INotificationBus, EventPredicate, INotificationBusOptions,
-	MessagePriority, MessagePriorities, ConnectionStatus} from "./../notificationBusTypes";
+	MessagePriorities, ConnectionStatus} from "./../notificationBusTypes";
 import {toCamel} from "../../utils";
 
 export interface IRabbitMqNotificationBusOptions extends INotificationBusOptions {

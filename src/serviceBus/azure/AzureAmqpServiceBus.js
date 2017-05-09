@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
 const debug = Debug("forgesdk.AzureAmqpSubscription");
-const debugTracking = Debug("forgesdk.AzureAmqpSubscription.tracking");
 const events_1 = require("events");
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
 const azure = require("azure");

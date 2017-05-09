@@ -1,6 +1,5 @@
 import * as Debug from "debug";
 const debug = Debug("forgesdk.AzureAmqpSubscription");
-const debugTracking = Debug("forgesdk.AzureAmqpSubscription.tracking");
 
 import {EventEmitter} from "events";
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html

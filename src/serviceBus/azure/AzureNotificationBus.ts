@@ -4,7 +4,7 @@ const debug = Debug("forgesdk.AzureNotificationBus");
 import {AzureAmqpSubscription} from "./AzureAmqpServiceBus.js";
 
 import { INotificationBus, EventPredicate,
-	INotificationBusOptions, MessagePriority, MessagePriorities, ConnectionStatus} from "./../notificationBusTypes";
+	INotificationBusOptions, MessagePriorities, ConnectionStatus} from "./../notificationBusTypes";
 import {toCamel} from "../../utils";
 
 import {EventEmitter} from "events";
@@ -16,8 +16,8 @@ export interface IAzureNotificationBusOptions extends INotificationBusOptions {
 
 export class AzureNotificationBus extends EventEmitter implements INotificationBus {
 	readonly options: IAzureNotificationBusOptions;
-	private azureSubscriptions = new Array<AzureAmqpSubscription>();
 	readonly _waitOnceListeners = new Set();
+	private azureSubscriptions = new Array<AzureAmqpSubscription>();
 
 	private _started = false;
 
@@ -36,7 +36,6 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 		const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
 
 		for (const p of MessagePriorities.values) {
-			const priority = MessagePriority[p];
 			const topicPriorityName = `${topicName}-${MessagePriorities.toShortString(p)}`;
 
 			for (const connectionString of allConnectionStrings) {

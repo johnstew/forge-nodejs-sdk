@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shortid = require("shortid");
-const Debug = require("debug");
-const debug = Debug("forgesdk.ForgeDistributionNotificationBus");
 const RabbitMqNotificationBus_1 = require("./serviceBus/rabbitMq/RabbitMqNotificationBus");
 const AzureNotificationBus_1 = require("./serviceBus/azure/AzureNotificationBus");
 const utils_1 = require("./utils");

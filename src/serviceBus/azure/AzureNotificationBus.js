@@ -17,8 +17,8 @@ const events_1 = require("events");
 class AzureNotificationBus extends events_1.EventEmitter {
     constructor(options) {
         super();
-        this.azureSubscriptions = new Array();
         this._waitOnceListeners = new Set();
+        this.azureSubscriptions = new Array();
         this._started = false;
         this.options = options;
         const topicName = options.notificationBusName;
@@ -29,7 +29,6 @@ class AzureNotificationBus extends events_1.EventEmitter {
         const secondaryConnections = this.options.secondaryConnectionStrings || [];
         const allConnectionStrings = [this.options.connectionString, ...secondaryConnections];
         for (const p of notificationBusTypes_1.MessagePriorities.values) {
-            const priority = notificationBusTypes_1.MessagePriority[p];
             const topicPriorityName = `${topicName}-${notificationBusTypes_1.MessagePriorities.toShortString(p)}`;
             for (const connectionString of allConnectionStrings) {
                 const subscription = this.createSubscription(topicPriorityName, connectionString);

@@ -10,6 +10,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
 
     "sourceMap": false,
     "declaration": true

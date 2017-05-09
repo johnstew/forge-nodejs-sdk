@@ -7,8 +7,8 @@ export interface IAzureNotificationBusOptions extends INotificationBusOptions {
 }
 export declare class AzureNotificationBus extends EventEmitter implements INotificationBus {
     readonly options: IAzureNotificationBusOptions;
-    private azureSubscriptions;
     readonly _waitOnceListeners: Set<any>;
+    private azureSubscriptions;
     private _started;
     constructor(options: IAzureNotificationBusOptions);
     startReceiving(): Promise<void>;
