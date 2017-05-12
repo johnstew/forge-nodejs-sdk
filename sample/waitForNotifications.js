@@ -28,24 +28,28 @@ connect()
 
 	console.log("Waiting for an entity to be published/unpublished:");
 
-	notificationBus.on("HeartbeatNotification", (e) => {
-		console.log(`HeartbeatNotification ${e.nodeId}`);
+	// notificationBus.on("HeartbeatNotification", (e) => {
+	// 	console.log(`HeartbeatNotification ${e.nodeId}`);
+	// });
+
+	notificationBus.on("SitePageAddedNotification", (e) => {
+		console.log(`SitePageAddedNotification ${JSON.stringify(e)}`);
 	});
 
 	// notificationBus.on("CommandSuccessNotification", (e) => {
 	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
 	// });
 
-	notificationBus.on("PublishedBatchNotification", (e) => {
-		console.log(`Forge PublishedBatchNotification (Priority:${e.messagePriority})`);
-	});
+	// notificationBus.on("PublishedBatchNotification", (e) => {
+	// 	console.log(`Forge PublishedBatchNotification (Priority:${e.messagePriority})`);
+	// });
 
-	notificationBus.on("PublishedNotification", (e) => {
-		console.log(`Forge PublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
-	});
-	notificationBus.on("UnpublishedNotification", (e) => {
-		console.log(`Forge UnpublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
-	});
+	// notificationBus.on("PublishedNotification", (e) => {
+	// 	console.log(`Forge PublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
+	// });
+	// notificationBus.on("UnpublishedNotification", (e) => {
+	// 	console.log(`Forge UnpublishedNotification ${e.translationKeys[0].slug} (Priority:${e.messagePriority})`);
+	// });
 
 })
 .catch(console.log.bind(console));  // just catch everything here
