@@ -26,14 +26,14 @@ function connect(){
 connect()
 .then(() => {
 
-	console.log("Waiting for an entity to be published/unpublished:");
+	// console.log("Waiting for an entity to be published/unpublished:");
 
-	// notificationBus.on("HeartbeatNotification", (e) => {
-	// 	console.log(`HeartbeatNotification ${e.nodeId}`);
-	// });
+	notificationBus.on("HeartbeatNotification", (e) => {
+		console.log(`HeartbeatNotification ${e.nodeId}`);
+	});
 
-	notificationBus.on("SitePageAddedNotification", (e) => {
-		console.log(`SitePageAddedNotification ${JSON.stringify(e)}`);
+	notificationBus.on("SitePageRemovedNotification", (e) => {
+		console.log(`SitePageRemovedNotification ${JSON.stringify(e)}`);
 	});
 
 	// notificationBus.on("CommandSuccessNotification", (e) => {

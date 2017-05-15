@@ -12,6 +12,8 @@ describe("serviceBusBodyParser", function () {
         { source: `x{x{"a":1}x}x`, expected: { a: 1 } },
         { source: `{"a":1}x}x`, expected: { a: 1 } },
         { source: `�{♠{"a":1}�}x`, expected: { a: 1 } },
+        { source: `x{"a":{"b":1}}x`, expected: { a: { b: 1 } } },
+        { source: `x{x{"a":{"b":1}}x}x`, expected: { a: { b: 1 } } },
     ];
     tests.forEach(function (test) {
         it(`correctly parse '${test.source}'`, function () {
