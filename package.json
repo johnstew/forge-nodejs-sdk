@@ -8,7 +8,7 @@
     "src-build": "tsc",
     "src-build-w": "tsc -w",
     "develop": "npm run src-build-w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Deltatre Webplu",
   "repository": {
@@ -35,7 +35,11 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "@types/chai": "^3.5.2",
+    "@types/mocha": "^2.2.41",
+    "chai": "^3.5.0",
     "eslint": "^3.12.2",
+    "mocha": "^3.4.1",
     "tslint": "^4.5.1",
     "typescript": "^2.2.2"
   }

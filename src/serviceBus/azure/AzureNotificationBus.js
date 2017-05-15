@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
 const debug = Debug("forgesdk.AzureNotificationBus");
 const AzureAmqpServiceBus_js_1 = require("./AzureAmqpServiceBus.js");
+const serviceBusBodyParser = require("./serviceBusBodyParser");
 const notificationBusTypes_1 = require("./../notificationBusTypes");
 const utils_1 = require("../../utils");
 const events_1 = require("events");
@@ -97,29 +98,9 @@ class AzureNotificationBus extends events_1.EventEmitter {
                 || !msg.properties.subject) {
                 return;
             }
-            /* Parse body
-                try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-                http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-                "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-                "@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/�{\u0001{\"ItemId\":\..."
-            */
-            let matches = msg.body.match(/(\\u[\S]{4})({.*})/);
-            let rawBody;
-            if (!matches || matches.length < 2) {
-                /*
-                 Sometimes .NET serialization uses "strange" characters
-                 "♠strin3http://schemas.microsoft.com/2003/10/Serialization/��{\"ItemId\":\..."
-                 */
-                matches = msg.body.match(/({.*})/);
-                if (matches || matches.length >= 1) {
-                    rawBody = matches[0];
-                }
-            }
-            else {
-                rawBody = matches[1];
-            }
-            if (rawBody) {
-                msg.body = JSON.parse(matches[0]);
+            const body = serviceBusBodyParser.parseJson(msg.body);
+            if (body) {
+                msg.body = body;
                 // azure use PascalCase, I prefer camelCase
                 msg.body = utils_1.toCamel(msg.body);
                 this.emitMessage(msg.properties.subject, msg.body);

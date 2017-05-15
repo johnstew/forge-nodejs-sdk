@@ -3,4 +3,4 @@ export declare class TimeoutError extends Error {
     readonly isTimeout: boolean;
     constructor(msg: string);
 }
-export declare function withTimeout(p: Promise<any>, ms: number): Promise<Promise<any> | Promise<{}>>;
+export declare function withTimeout(p: Promise<any>, ms: number): Promise<any>;

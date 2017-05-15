@@ -12,6 +12,6 @@ export declare class ForgeNotificationBus {
     startReceiving(): Promise<any>;
     on(eventName: string, listener: (msg: any) => void): void;
     stopReceiving(): Promise<any>;
-    waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<Promise<any> | Promise<{}>>;
-    waitCommand(cmdId: string, successNotificationName?: string, failedNotificationName?: string, waitTimeout?: number): Promise<{}>;
+    waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<any>;
+    waitCommand(cmdId: string, successNotificationName?: string, failedNotificationName?: string, waitTimeout?: number): Promise<any>;
 }

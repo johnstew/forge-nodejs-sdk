@@ -12,7 +12,7 @@ export declare class DistributionNotificationBus {
     startReceiving(): Promise<any>;
     on(eventName: string, listener: (msg: any) => void): void;
     stopReceiving(): Promise<any>;
-    waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<Promise<any> | Promise<{}>>;
-    waitDistributionPublish(entityTranslationId: string, waitTimeout?: number): Promise<Promise<any> | Promise<{}>>;
-    waitDistributionPublishByEntityId(entityId: string, culture: string, waitTimeout?: number): Promise<Promise<any> | Promise<{}>>;
+    waitOnce(resolvePredicate: EventPredicate, rejectPredicate?: EventPredicate, waitTimeout?: number): Promise<any>;
+    waitDistributionPublish(entityTranslationId: string, waitTimeout?: number): Promise<any>;
+    waitDistributionPublishByEntityId(entityId: string, culture: string, waitTimeout?: number): Promise<any>;
 }

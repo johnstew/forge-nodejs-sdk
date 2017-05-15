@@ -2,6 +2,7 @@ import * as Debug from "debug";
 const debug = Debug("forgesdk.AzureNotificationBus");
 
 import { AzureAmqpSubscription } from "./AzureAmqpServiceBus.js";
+import * as serviceBusBodyParser from "./serviceBusBodyParser";
 
 import {
 	INotificationBus, EventPredicate,
@@ -124,31 +125,10 @@ export class AzureNotificationBus extends EventEmitter implements INotificationB
 				return;
 			}
 
-			/* Parse body
-				try to read the body (and check if is serialized with .NET, int this case remove extra characters)
-				http://www.bfcamara.com/post/84113031238/send-a-message-to-an-azure-service-bus-queue-with
-				"@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/?\u000b{ \"a\": \"1\"}"
-				"@\u0006string\b3http://schemas.microsoft.com/2003/10/Serialization/�{\u0001{\"ItemId\":\..."
-			*/
+			const body = serviceBusBodyParser.parseJson(msg.body);
+			if (body) {
+				msg.body = body;
 
-			let matches = msg.body.match(/(\\u[\S]{4})({.*})/);
-
-			let rawBody;
-			if (!matches || matches.length < 2) {
-				/*
-				 Sometimes .NET serialization uses "strange" characters
-				 "♠strin3http://schemas.microsoft.com/2003/10/Serialization/��{\"ItemId\":\..."
-				 */
-				matches = msg.body.match(/({.*})/);
-				if (matches || matches.length >= 1)	{
-					rawBody = matches[0];
-				}
-			} else {
-				rawBody = matches[1];
-			}
-
-			if (rawBody) {
-				msg.body = JSON.parse(matches[0]);
 				// azure use PascalCase, I prefer camelCase
 				msg.body = toCamel(msg.body);
 
