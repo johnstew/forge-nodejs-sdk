@@ -7,20 +7,24 @@ export function parseJson(body: string): any {
 	*/
 
 	const patterns = [
-		/^({.*})$/,
-		/^.*?({.*}).*?$/,
-		/^.*?\{.*?({.*}).*?$/,
-		/^.*?({.*}).*?\}.*?$/,
-		/^.*?\{.*?({.*}).*?\}.*?$/
+		/^({[\s\S]*})$/,
+		/^[\s\S]*?({[\s\S]*})[\s\S]*?$/,
+		/^[\s\S]*?\{[\s\S]*?({[\s\S]*})[\s\S]*?$/,
+		/^[\s\S]*?({[\s\S]*})[\s\S]*?\}[\s\S]*?$/,
+		/^[\s\S]*?\{[\s\S]*?({[\s\S]*})[\s\S]*?\}[\s\S]*?$/
 	];
 
-	for (const pattern of patterns) {
-		const matches = body.match(pattern);
-		if (matches && matches.length >= 2)	{
-			try {
-				return JSON.parse(matches[1]);
-			} catch (err) {
-				continue;
+	try {
+		return JSON.parse(body);
+	} catch (err) {
+		for (const pattern of patterns) {
+			const matches = body.match(pattern);
+			if (matches && matches.length >= 2)	{
+				try {
+					return JSON.parse(matches[1]);
+				} catch (err) {
+					continue;
+				}
 			}
 		}
 	}
