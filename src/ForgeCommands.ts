@@ -112,12 +112,30 @@ export class CreateAlbum extends CommandBase {
 
 export class CreateSelection extends CommandBase {
 	// {selectionId, translationId}
-	constructor(cmd: any) {
+	constructor(cmd?: { selectionId?: string, translationId?: string }) {
 		cmd = cmd || {};
 		cmd.selectionId = cmd.selectionId || uuid.v4();
 		cmd.translationId = cmd.translationId || uuid.v4();
 
 		super("CreateSelectionCommand", cmd);
+	}
+}
+
+export class SetSelectionMaxItems extends CommandBase {
+	constructor(cmd: { selectionId: string, maxItems: number, commandId?: string }) {
+		super("SetSelectionMaxItemsCommand", cmd);
+	}
+}
+
+export class AddSelectionEntityTypes extends CommandBase {
+	constructor(cmd: { selectionId: string, entityTypes: string[], commandId?: string }) {
+		super("AddSelectionEntityTypesCommand", cmd);
+	}
+}
+
+export class RemoveSelectionEntityTypes extends CommandBase {
+	constructor(cmd: { selectionId: string, entityTypes: string[], commandId?: string }) {
+		super("RemoveSelectionEntityTypesCommand", cmd);
 	}
 }
 
@@ -290,10 +308,9 @@ export class AddEntityRelation extends CommandBase {
 export class RemoveEntityRelation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId } }
 	constructor(cmd: any) {
-		super("AddEntityRelationCommand", cmd);
+		super("RemoveEntityRelationCommand", cmd);
 	}
 }
-
 
 export class MoveEntityRelation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId }, position }
@@ -599,7 +616,7 @@ export class ImportNode extends CommandBase {
 
 export class ExportNode extends CommandBase {
 	// cmd: { path, exportId, description }
-	constructor(cmd: {path: string, exportId: string, description?: string} ) {
+	constructor(cmd: { path: string, exportId: string, description?: string }) {
 		super("ExportNodeCommand", cmd);
 	}
 }

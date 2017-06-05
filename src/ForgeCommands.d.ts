@@ -32,7 +32,31 @@ export declare class CreateAlbum extends CommandBase {
     constructor(cmd: any);
 }
 export declare class CreateSelection extends CommandBase {
-    constructor(cmd: any);
+    constructor(cmd?: {
+        selectionId?: string;
+        translationId?: string;
+    });
+}
+export declare class SetSelectionMaxItems extends CommandBase {
+    constructor(cmd: {
+        selectionId: string;
+        maxItems: number;
+        commandId?: string;
+    });
+}
+export declare class AddSelectionEntityTypes extends CommandBase {
+    constructor(cmd: {
+        selectionId: string;
+        entityTypes: string[];
+        commandId?: string;
+    });
+}
+export declare class RemoveSelectionEntityTypes extends CommandBase {
+    constructor(cmd: {
+        selectionId: string;
+        entityTypes: string[];
+        commandId?: string;
+    });
 }
 export declare class SetTitle extends CommandBase {
     constructor(cmd: any);

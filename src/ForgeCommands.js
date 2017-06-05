@@ -110,6 +110,24 @@ class CreateSelection extends CommandBase {
     }
 }
 exports.CreateSelection = CreateSelection;
+class SetSelectionMaxItems extends CommandBase {
+    constructor(cmd) {
+        super("SetSelectionMaxItemsCommand", cmd);
+    }
+}
+exports.SetSelectionMaxItems = SetSelectionMaxItems;
+class AddSelectionEntityTypes extends CommandBase {
+    constructor(cmd) {
+        super("AddSelectionEntityTypesCommand", cmd);
+    }
+}
+exports.AddSelectionEntityTypes = AddSelectionEntityTypes;
+class RemoveSelectionEntityTypes extends CommandBase {
+    constructor(cmd) {
+        super("RemoveSelectionEntityTypesCommand", cmd);
+    }
+}
+exports.RemoveSelectionEntityTypes = RemoveSelectionEntityTypes;
 class SetTitle extends CommandBase {
     // {aggregateId, aggregateType, translationId, title}
     constructor(cmd) {
@@ -279,7 +297,7 @@ exports.AddEntityRelation = AddEntityRelation;
 class RemoveEntityRelation extends CommandBase {
     // cmd: { aggregateId, aggregateType, relatedItem { entityType, entityId } }
     constructor(cmd) {
-        super("AddEntityRelationCommand", cmd);
+        super("RemoveEntityRelationCommand", cmd);
     }
 }
 exports.RemoveEntityRelation = RemoveEntityRelation;
