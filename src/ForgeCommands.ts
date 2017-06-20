@@ -372,6 +372,14 @@ export class RemoveReferenceFieldItems extends CommandBase {
 	}
 }
 
+export class ResetReferenceField extends CommandBase {
+	constructor(cmd: {
+		aggregateId: string, aggregateType: string, translationId: string, fieldName: string
+	}) {
+		super("ResetReferenceFieldCommand", cmd);
+	}
+}
+
 export class AddTranslation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
 	constructor(cmd: any) {

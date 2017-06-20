@@ -148,6 +148,38 @@ export declare class UnsetPhotoGravity extends CommandBase {
 export declare class ExtractPhotoMetadata extends CommandBase {
     constructor(cmd: any);
 }
+export declare class AddReferenceFieldItems extends CommandBase {
+    constructor(cmd: {
+        aggregateId: string;
+        aggregateType: string;
+        translationId: string;
+        fieldName: string;
+        referenceItem: Array<{
+            entityId: string;
+            entityType: string;
+        }>;
+    });
+}
+export declare class RemoveReferenceFieldItems extends CommandBase {
+    constructor(cmd: {
+        aggregateId: string;
+        aggregateType: string;
+        translationId: string;
+        fieldName: string;
+        referenceItem: Array<{
+            entityId: string;
+            entityType: string;
+        }>;
+    });
+}
+export declare class ResetReferenceField extends CommandBase {
+    constructor(cmd: {
+        aggregateId: string;
+        aggregateType: string;
+        translationId: string;
+        fieldName: string;
+    });
+}
 export declare class AddTranslation extends CommandBase {
     constructor(cmd: any);
 }

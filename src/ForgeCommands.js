@@ -343,6 +343,24 @@ class ExtractPhotoMetadata extends CommandBase {
     }
 }
 exports.ExtractPhotoMetadata = ExtractPhotoMetadata;
+class AddReferenceFieldItems extends CommandBase {
+    constructor(cmd) {
+        super("AddReferenceFieldItemsCommand", cmd);
+    }
+}
+exports.AddReferenceFieldItems = AddReferenceFieldItems;
+class RemoveReferenceFieldItems extends CommandBase {
+    constructor(cmd) {
+        super("RemoveReferenceFieldItemsCommand", cmd);
+    }
+}
+exports.RemoveReferenceFieldItems = RemoveReferenceFieldItems;
+class ResetReferenceField extends CommandBase {
+    constructor(cmd) {
+        super("ResetReferenceFieldCommand", cmd);
+    }
+}
+exports.ResetReferenceField = ResetReferenceField;
 class AddTranslation extends CommandBase {
     // cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
     constructor(cmd) {
