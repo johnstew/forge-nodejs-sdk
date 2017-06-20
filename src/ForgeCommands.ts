@@ -354,6 +354,24 @@ export class ExtractPhotoMetadata extends CommandBase {
 	}
 }
 
+export class AddReferenceFieldItems extends CommandBase {
+	constructor(cmd: {
+		aggregateId: string, aggregateType: string, translationId: string, fieldName: string,
+		referenceItem: Array<{ entityId: string, entityType: string }>
+	}) {
+		super("AddReferenceFieldItemsCommand", cmd);
+	}
+}
+
+export class RemoveReferenceFieldItems extends CommandBase {
+	constructor(cmd: {
+		aggregateId: string, aggregateType: string, translationId: string, fieldName: string,
+		referenceItem: Array<{ entityId: string, entityType: string }>
+	}) {
+		super("RemoveReferenceFieldItemsCommand", cmd);
+	}
+}
+
 export class AddTranslation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
 	constructor(cmd: any) {
