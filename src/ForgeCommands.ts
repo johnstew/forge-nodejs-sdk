@@ -380,6 +380,14 @@ export class ResetReferenceField extends CommandBase {
 	}
 }
 
+export class MoveReferenceFieldItem extends CommandBase {
+	constructor(cmd: {
+		aggregateId: string, aggregateType: string, translationId: string, fieldName: string, startPosition: number, endPosition: number
+	}) {
+		super("MoveReferenceFieldItemCommand", cmd);
+	}
+}
+
 export class AddTranslation extends CommandBase {
 	// cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
 	constructor(cmd: any) {

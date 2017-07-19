@@ -180,6 +180,16 @@ export declare class ResetReferenceField extends CommandBase {
         fieldName: string;
     });
 }
+export declare class MoveReferenceFieldItem extends CommandBase {
+    constructor(cmd: {
+        aggregateId: string;
+        aggregateType: string;
+        translationId: string;
+        fieldName: string;
+        startPosition: number;
+        endPosition: number;
+    });
+}
 export declare class AddTranslation extends CommandBase {
     constructor(cmd: any);
 }

@@ -361,6 +361,12 @@ class ResetReferenceField extends CommandBase {
     }
 }
 exports.ResetReferenceField = ResetReferenceField;
+class MoveReferenceFieldItem extends CommandBase {
+    constructor(cmd) {
+        super("MoveReferenceFieldItemCommand", cmd);
+    }
+}
+exports.MoveReferenceFieldItem = MoveReferenceFieldItem;
 class AddTranslation extends CommandBase {
     // cmd: { aggregateId, aggregateType, translationId, translationInfo, [cloneFromTranslationId] }
     constructor(cmd) {
