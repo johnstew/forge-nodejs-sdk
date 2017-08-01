@@ -62,7 +62,13 @@ export class RabbitMqChannel extends EventEmitter {
 					await this.channel.bindQueue(qok.queue, b.exchange, b.routingKey);
 				}
 
-				await this.channel.consume(qok.queue, (m) => this.emitMessage(m), { noAck: true });
+				await this.channel.consume(qok.queue,
+					(m) => {
+						if (m) {
+							this.emitMessage(m);
+						}
+					},
+					{ noAck: true });
 			}
 
 			this.emitConnectionSuccess();
