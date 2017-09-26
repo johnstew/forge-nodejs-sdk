@@ -7,6 +7,7 @@ const urlJoin = require("url-join");
 class ForgeDistributionApi {
     constructor(options) {
         this.URL = options.url;
+        this.version = options.version || "v2";
     }
     get(path, queryStringObject) {
         const options = {
@@ -32,43 +33,43 @@ class ForgeDistributionApi {
         return promise;
     }
     getStories(culture, queryStringObject) {
-        return this.get(`v1/content/${culture}/stories`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/stories`, queryStringObject);
     }
     getStory(culture, slug) {
-        return this.get(`v1/content/${culture}/stories/${slug}`);
+        return this.get(`${this.version}/content/${culture}/stories/${slug}`);
     }
     getPhotos(culture, queryStringObject) {
-        return this.get(`v1/content/${culture}/photos`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/photos`, queryStringObject);
     }
     getPhoto(culture, slug) {
-        return this.get(`v1/content/${culture}/photos/${slug}`);
+        return this.get(`${this.version}/content/${culture}/photos/${slug}`);
     }
     getTags(culture, queryStringObject) {
-        return this.get(`v1/content/${culture}/tags`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/tags`, queryStringObject);
     }
     getTag(culture, slug) {
-        return this.get(`v1/content/${culture}/tags/${slug}`);
+        return this.get(`${this.version}/content/${culture}/tags/${slug}`);
     }
     getDocuments(culture, queryStringObject) {
-        return this.get(`v1/content/${culture}/documents`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/documents`, queryStringObject);
     }
     getDocument(culture, slug) {
-        return this.get(`v1/content/${culture}/documents/${slug}`);
+        return this.get(`${this.version}/content/${culture}/documents/${slug}`);
     }
     getAlbums(culture, queryStringObject) {
-        return this.get(`v1/content/${culture}/albums`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/albums`, queryStringObject);
     }
     getAlbum(culture, slug) {
-        return this.get(`v1/content/${culture}/albums/${slug}`);
+        return this.get(`${this.version}/content/${culture}/albums/${slug}`);
     }
     getCustomEntities(culture, entityCode, queryStringObject) {
-        return this.get(`v1/content/${culture}/${entityCode}`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/${entityCode}`, queryStringObject);
     }
     getCustomEntity(culture, entityCode, slug) {
-        return this.get(`v1/content/${culture}/${entityCode}/${slug}`);
+        return this.get(`${this.version}/content/${culture}/${entityCode}/${slug}`);
     }
     getSelection(culture, slug, queryStringObject) {
-        return this.get(`v1/content/${culture}/sel-${slug}`, queryStringObject);
+        return this.get(`${this.version}/content/${culture}/sel-${slug}`, queryStringObject);
     }
 }
 exports.ForgeDistributionApi = ForgeDistributionApi;

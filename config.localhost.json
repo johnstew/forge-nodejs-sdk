@@ -7,7 +7,8 @@
     "connectionString": "amqp://guest:guest@localhost:5672"
   },
   "distributionApi":{
-    "url": "http://localhost:60192/"
+    "url": "http://localhost:60192/",
+    "version": "v2"
   },
   "frontEnd":{
     "url": "http://localhost:54787/",

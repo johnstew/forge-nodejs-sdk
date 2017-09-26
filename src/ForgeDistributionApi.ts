@@ -6,13 +6,16 @@ const urlJoin = require("url-join");
 
 export interface IForgeDistributionApiOptions {
 	url: string;
+	version?: string;
 }
 
 export class ForgeDistributionApi {
+	version: string;
 	URL: string;
 
 	constructor(options: IForgeDistributionApiOptions) {
 		this.URL = options.url;
+		this.version = options.version || "v2";
 	}
 
 	get(path: string, queryStringObject?: any) {
@@ -43,54 +46,54 @@ export class ForgeDistributionApi {
 	}
 
 	getStories(culture: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/stories`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/stories`, queryStringObject);
 	}
 
 	getStory(culture: string, slug: string) {
-		return this.get(`v1/content/${culture}/stories/${slug}`);
+		return this.get(`${this.version}/content/${culture}/stories/${slug}`);
 	}
 
 	getPhotos(culture: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/photos`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/photos`, queryStringObject);
 	}
 
 	getPhoto(culture: string, slug: string) {
-		return this.get(`v1/content/${culture}/photos/${slug}`);
+		return this.get(`${this.version}/content/${culture}/photos/${slug}`);
 	}
 
 	getTags(culture: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/tags`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/tags`, queryStringObject);
 	}
 
 	getTag(culture: string, slug: string) {
-		return this.get(`v1/content/${culture}/tags/${slug}`);
+		return this.get(`${this.version}/content/${culture}/tags/${slug}`);
 	}
 
 	getDocuments(culture: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/documents`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/documents`, queryStringObject);
 	}
 
 	getDocument(culture: string, slug: string) {
-		return this.get(`v1/content/${culture}/documents/${slug}`);
+		return this.get(`${this.version}/content/${culture}/documents/${slug}`);
 	}
 
 	getAlbums(culture: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/albums`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/albums`, queryStringObject);
 	}
 
 	getAlbum(culture: string, slug: string) {
-		return this.get(`v1/content/${culture}/albums/${slug}`);
+		return this.get(`${this.version}/content/${culture}/albums/${slug}`);
 	}
 
 	getCustomEntities(culture: string, entityCode: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/${entityCode}`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/${entityCode}`, queryStringObject);
 	}
 
 	getCustomEntity(culture: string, entityCode: string, slug: string) {
-		return this.get(`v1/content/${culture}/${entityCode}/${slug}`);
+		return this.get(`${this.version}/content/${culture}/${entityCode}/${slug}`);
 	}
 
 	getSelection(culture: string, slug: string, queryStringObject?: any) {
-		return this.get(`v1/content/${culture}/sel-${slug}`, queryStringObject);
+		return this.get(`${this.version}/content/${culture}/sel-${slug}`, queryStringObject);
 	}
 }
