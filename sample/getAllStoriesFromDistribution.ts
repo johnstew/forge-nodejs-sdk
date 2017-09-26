@@ -14,6 +14,8 @@ interface IStory {
 
 const api = new ForgeDistributionApi(config.distributionApi);
 
+console.log(`Calling distribution API and using version ${api.version}`);
+
 api.getStories("en-us")
 	.then((storyList: IDistributionList<IStory>) => {
 		for (const story of storyList.items) {
