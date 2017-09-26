@@ -3,6 +3,10 @@
 import { ForgeDistributionApi } from "../index";
 const config = require("./../config.js");
 
+interface IDistributionList<T> {
+	items: T[];
+}
+
 interface IStory {
 	title: string;
 	slug: string;
@@ -11,8 +15,8 @@ interface IStory {
 const api = new ForgeDistributionApi(config.distributionApi);
 
 api.getStories("en-us")
-	.then((stories: IStory[]) => {
-		for (const story of stories) {
+	.then((storyList: IDistributionList<IStory>) => {
+		for (const story of storyList.items) {
 			console.log(`Title: ${story.title} Slug: ${story.slug}`);
 		}
 	})

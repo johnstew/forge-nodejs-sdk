@@ -5,8 +5,8 @@ const index_1 = require("../index");
 const config = require("./../config.js");
 const api = new index_1.ForgeDistributionApi(config.distributionApi);
 api.getStories("en-us")
-    .then((stories) => {
-    for (const story of stories) {
+    .then((storyList) => {
+    for (const story of storyList.items) {
         console.log(`Title: ${story.title} Slug: ${story.slug}`);
     }
 })
