@@ -4,25 +4,34 @@ const debug = Debug("forgesdk.ForgeDistributionApi");
 const request = require("request");
 const urlJoin = require("url-join");
 
+export enum ReadSource {
+	Default = "Default",
+	Primary = "Primary"
+}
+
 export interface IForgeDistributionApiOptions {
 	url: string;
 	version?: string;
+	readSource?: ReadSource;
 }
 
 export class ForgeDistributionApi {
-	version: string;
 	URL: string;
+	version: string;
+	readSource: ReadSource;
 
 	constructor(options: IForgeDistributionApiOptions) {
 		this.URL = options.url;
 		this.version = options.version || "v2";
+		this.readSource = options.readSource || ReadSource.Default;
 	}
 
 	get(path: string, queryStringObject?: any) {
 		const options = {
 			url: urlJoin(this.URL, path),
 			headers: {
-				Accept: "application/json"
+				"Accept": "application/json",
+				"X-Read-Source": this.readSource
 			},
 			qs: queryStringObject || null,
 			useQuerystring: true

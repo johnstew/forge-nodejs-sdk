@@ -1,10 +1,16 @@
+export declare enum ReadSource {
+    Default = "Default",
+    Primary = "Primary",
+}
 export interface IForgeDistributionApiOptions {
     url: string;
     version?: string;
+    readSource?: ReadSource;
 }
 export declare class ForgeDistributionApi {
-    version: string;
     URL: string;
+    version: string;
+    readSource: ReadSource;
     constructor(options: IForgeDistributionApiOptions);
     get(path: string, queryStringObject?: any): Promise<{}>;
     getStories(culture: string, queryStringObject?: any): Promise<{}>;
