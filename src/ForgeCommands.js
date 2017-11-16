@@ -37,7 +37,7 @@ class CreateStory extends CommandBase {
 }
 exports.CreateStory = CreateStory;
 class CreatePhoto extends CommandBase {
-    // {photoId, translationId, storagePath, originalFileName}
+    // {photoId, translationId, storagePath, originalFileName, [photoPublishPolicy]}
     constructor(cmd) {
         cmd.photoId = cmd.photoId || uuid.v4();
         cmd.translationId = cmd.translationId || uuid.v4();
@@ -404,7 +404,7 @@ class ImportFeeds extends CommandBase {
 }
 exports.ImportFeeds = ImportFeeds;
 class UploadPhoto extends CommandBase {
-    // cmd: { photoId, translationId, sourceUrl, [title], [slug] }
+    // cmd: { photoId, translationId, sourceUrl, [title], [slug], [photoPublishPolicy] }
     constructor(cmd) {
         cmd.photoId = cmd.photoId || uuid.v4();
         cmd.translationId = cmd.translationId || uuid.v4();
