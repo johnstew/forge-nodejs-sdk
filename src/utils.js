@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 function toCamel(o) {
     let build;
-    if (o instanceof Array) {
+    if (Array.isArray(o)) {
         build = [];
         for (const key in o) {
             if (o.hasOwnProperty(key)) {

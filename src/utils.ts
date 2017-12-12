@@ -1,7 +1,7 @@
 export function toCamel(o: any) {
 	let build: any;
 
-	if (o instanceof Array) {
+	if (Array.isArray(o)) {
 		build = [];
 		for (const key in o) {
 			if (o.hasOwnProperty(key)) {
