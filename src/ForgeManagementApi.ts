@@ -106,12 +106,10 @@ export class ForgeManagementApi {
 				if (response.statusCode !== 200) {
 					return reject(new Error(response.statusCode));
 				}
-				const result = JSON.parse(body);
-				if (result.Success) {
-					return reject(new Error(result.Message));
+				if (!body.Success) {
+					return reject(new Error(body.Message));
 				}
-
-				resolve();
+				resolve(cmd.bodyObject);
 			});
 		});
 		return promise;
