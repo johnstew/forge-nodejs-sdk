@@ -1,4 +1,4 @@
-import {ForgeNotificationBus} from "./ForgeNotificationBus";
+import { ForgeNotificationBus } from "./ForgeNotificationBus";
 import * as ForgeCommands from "./ForgeCommands";
 
 import * as Debug from "debug";
@@ -19,15 +19,15 @@ export class ForgeManagementApi {
 	FORGE_URL: string;
 	notificationBus: ForgeNotificationBus | undefined;
 
-	constructor(options: IForgeManagementApiOptions ) {
+	constructor(options: IForgeManagementApiOptions) {
 		this.KEY = options.authKey;
 		this.FORGE_URL = options.url;
 		this.notificationBus = undefined;
 	}
 
 	post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
-		if (Array.isArray(cmd))	{
-			return this.post(new ForgeCommands.Batch({commands: cmd}));
+		if (Array.isArray(cmd)) {
+			return this.post(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
 		}
 
 		if (!cmd.bodyObject) {
@@ -42,8 +42,8 @@ export class ForgeManagementApi {
 				"Accept": "application/json",
 				"Content-Type": "application/json"
 			},
-			body : cmd,
-			json : true
+			body: cmd,
+			json: true
 		};
 
 		let waiterPromise;
@@ -70,17 +70,61 @@ export class ForgeManagementApi {
 		});
 
 		return Promise.all([postPromise, waiterPromise])
-		.then((values) => values[0]);
+			.then((values) => values[0]);
+	}
+
+	postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
+		if (Array.isArray(cmd)) {
+			return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
+		}
+
+		if (!cmd.bodyObject) {
+			throw new Error("cmd.bodyObject not defined");
+		}
+
+		const options = {
+			method: "POST",
+			url: urlJoin(this.FORGE_URL, "api/command/ack"),
+			headers: {
+				"Authorization": `GUIShellApp key=${this.KEY}`,
+				"Accept": "application/json",
+				"Content-Type": "application/json"
+			},
+			body: cmd,
+			json: true
+		};
+
+		debug("Sending command and waiting ack...", cmd);
+
+		const promise = new Promise((resolve, reject) => {
+
+			request(options, (error: any, response: any, body: any) => {
+				if (error) {
+					return reject(error);
+				}
+				debug("Response status " + response.statusCode);
+				if (response.statusCode !== 200) {
+					return reject(new Error(response.statusCode));
+				}
+				const result = JSON.parse(body);
+				if (result.Success) {
+					return reject(new Error(result.Message));
+				}
+
+				resolve();
+			});
+		});
+		return promise;
 	}
 
 	autoWaitCommandNotification(notificationBus: ForgeNotificationBus) {
 		this.notificationBus = notificationBus;
 	}
 
-	get(path: string, questyStringObject?: any): Promise<any> {
+	get(path: string, queryStringObject?: any): Promise<any> {
 		const options = {
 			url: urlJoin(this.FORGE_URL, path),
-			qs: questyStringObject,
+			qs: queryStringObject,
 			headers: {
 				Authorization: "GUIShellApp key=" + this.KEY,
 				Accept: "application/json"
@@ -110,7 +154,7 @@ export class ForgeManagementApi {
 	//  you can give all events from a given checkpoint (optional)
 	//  and skip or limit returned events
 	//  options: {from, skip, limit}
-	getEvents(bucketId: string, options: {from?: any, skip?: any, limit?: any}) {
+	getEvents(bucketId: string, options: { from?: any, skip?: any, limit?: any }) {
 		let safeFromCheckpoint = parseInt(options.from, 10);
 		let safeToCheckpoint;
 
@@ -149,7 +193,7 @@ export class ForgeManagementApi {
 	getStories(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/stories/${version}`, options);
@@ -164,7 +208,7 @@ export class ForgeManagementApi {
 	getPhotos(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/photos/${version}`, options);
@@ -182,7 +226,7 @@ export class ForgeManagementApi {
 	getTags(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
@@ -200,7 +244,7 @@ export class ForgeManagementApi {
 	getDocuments(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/documents/${version}`, options);
@@ -218,7 +262,7 @@ export class ForgeManagementApi {
 	getSelections(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/selections/${version}`, options);
@@ -246,7 +290,7 @@ export class ForgeManagementApi {
 	getAlbums(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/albums/${version}`, options);
@@ -265,7 +309,7 @@ export class ForgeManagementApi {
 	getCustomEntities(entityCode: string, version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
-			options = {terms: options};
+			options = { terms: options };
 		}
 
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}`, options);
