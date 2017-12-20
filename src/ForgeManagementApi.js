@@ -15,7 +15,7 @@ class ForgeManagementApi {
     }
     post(cmd, waitTimeout) {
         if (Array.isArray(cmd)) {
-            return this.post(new ForgeCommands.Batch({ commands: cmd }));
+            return this.post(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
         }
         if (!cmd.bodyObject) {
             throw new Error("cmd.bodyObject not defined");
@@ -54,13 +54,50 @@ class ForgeManagementApi {
         return Promise.all([postPromise, waiterPromise])
             .then((values) => values[0]);
     }
+    postAndWaitAck(cmd, waitTimeout) {
+        if (Array.isArray(cmd)) {
+            return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
+        }
+        if (!cmd.bodyObject) {
+            throw new Error("cmd.bodyObject not defined");
+        }
+        const options = {
+            method: "POST",
+            url: urlJoin(this.FORGE_URL, "api/command/ack"),
+            headers: {
+                "Authorization": `GUIShellApp key=${this.KEY}`,
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: cmd,
+            json: true
+        };
+        debug("Sending command and waiting ack...", cmd);
+        const promise = new Promise((resolve, reject) => {
+            request(options, (error, response, body) => {
+                if (error) {
+                    return reject(error);
+                }
+                debug("Response status " + response.statusCode);
+                if (response.statusCode !== 200) {
+                    return reject(new Error(response.statusCode));
+                }
+                const result = JSON.parse(body);
+                if (result.Success) {
+                    return reject(new Error(result.Message));
+                }
+                resolve();
+            });
+        });
+        return promise;
+    }
     autoWaitCommandNotification(notificationBus) {
         this.notificationBus = notificationBus;
     }
-    get(path, questyStringObject) {
+    get(path, queryStringObject) {
         const options = {
             url: urlJoin(this.FORGE_URL, path),
-            qs: questyStringObject,
+            qs: queryStringObject,
             headers: {
                 Authorization: "GUIShellApp key=" + this.KEY,
                 Accept: "application/json"

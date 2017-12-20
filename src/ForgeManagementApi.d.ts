@@ -10,8 +10,9 @@ export declare class ForgeManagementApi {
     notificationBus: ForgeNotificationBus | undefined;
     constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
+    postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
     autoWaitCommandNotification(notificationBus: ForgeNotificationBus): void;
-    get(path: string, questyStringObject?: any): Promise<any>;
+    get(path: string, queryStringObject?: any): Promise<any>;
     getEvents(bucketId: string, options: {
         from?: any;
         skip?: any;
