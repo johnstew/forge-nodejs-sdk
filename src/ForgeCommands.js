@@ -36,6 +36,13 @@ class CreateStory extends CommandBase {
     }
 }
 exports.CreateStory = CreateStory;
+class SetListAvailability extends CommandBase {
+    // cmd: {aggregateId, aggregateType, featured}
+    constructor(cmd) {
+        super("SetListAvailabilityCommand", cmd);
+    }
+}
+exports.SetListAvailability = SetListAvailability;
 class CreatePhoto extends CommandBase {
     // {photoId, translationId, storagePath, originalFileName, [photoPublishPolicy]}
     constructor(cmd) {

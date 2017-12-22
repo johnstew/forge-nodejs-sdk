@@ -10,6 +10,14 @@ export declare class Batch extends CommandBase {
 export declare class CreateStory extends CommandBase {
     constructor(cmd: any);
 }
+export declare class SetListAvailability extends CommandBase {
+    constructor(cmd: {
+        commandId?: string;
+        aggregateId: string;
+        aggregateType: string;
+        listAvailability: number;
+    });
+}
 export declare class CreatePhoto extends CommandBase {
     constructor(cmd: any);
 }
