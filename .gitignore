@@ -12,3 +12,5 @@ npm-debug.log
 
 config.*.json
 !config.localhost.json
+
+yarn-error.log
