@@ -18,6 +18,20 @@ export declare class SetListAvailability extends CommandBase {
         listAvailability: number;
     });
 }
+export declare class SetPublicAvailability extends CommandBase {
+    constructor(cmd: {
+        commandId?: string;
+        aggregateId: string;
+        aggregateType: string;
+    });
+}
+export declare class SetUnlistedAvailability extends CommandBase {
+    constructor(cmd: {
+        commandId?: string;
+        aggregateId: string;
+        aggregateType: string;
+    });
+}
 export declare class CreatePhoto extends CommandBase {
     constructor(cmd: any);
 }

@@ -43,6 +43,20 @@ class SetListAvailability extends CommandBase {
     }
 }
 exports.SetListAvailability = SetListAvailability;
+class SetPublicAvailability extends CommandBase {
+    // cmd: {aggregateId, aggregateType, featured}
+    constructor(cmd) {
+        super("SetPublicAvailabilityCommand", cmd);
+    }
+}
+exports.SetPublicAvailability = SetPublicAvailability;
+class SetUnlistedAvailability extends CommandBase {
+    // cmd: {aggregateId, aggregateType, featured}
+    constructor(cmd) {
+        super("SetUnlistedAvailabilityCommand", cmd);
+    }
+}
+exports.SetUnlistedAvailability = SetUnlistedAvailability;
 class CreatePhoto extends CommandBase {
     // {photoId, translationId, storagePath, originalFileName, [photoPublishPolicy]}
     constructor(cmd) {

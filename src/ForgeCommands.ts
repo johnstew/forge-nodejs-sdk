@@ -50,6 +50,20 @@ export class SetListAvailability extends CommandBase {
 	}
 }
 
+export class SetPublicAvailability extends CommandBase {
+	// cmd: {aggregateId, aggregateType, featured}
+	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
+		super("SetPublicAvailabilityCommand", cmd);
+	}
+}
+
+export class SetUnlistedAvailability extends CommandBase {
+	// cmd: {aggregateId, aggregateType, featured}
+	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
+		super("SetUnlistedAvailabilityCommand", cmd);
+	}
+}
+
 export class CreatePhoto extends CommandBase {
 	// {photoId, translationId, storagePath, originalFileName, [photoPublishPolicy]}
 	constructor(cmd: any) {
