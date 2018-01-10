@@ -41,3 +41,4 @@ notificationBus.startReceiving()
     console.log(error);
     notificationBus.stopReceiving();
 });
+//# sourceMappingURL=createPage.js.map

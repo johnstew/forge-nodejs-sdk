@@ -159,3 +159,4 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
     }
 }
 exports.AzureAmqpSubscription = AzureAmqpSubscription;
+//# sourceMappingURL=AzureAmqpServiceBus.js.map

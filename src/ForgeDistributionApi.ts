@@ -26,7 +26,7 @@ export class ForgeDistributionApi {
 		this.readSource = options.readSource || ReadSource.Default;
 	}
 
-	get(path: string, queryStringObject?: any) {
+	get(path: string, queryStringObject?: any): Promise<any> {
 		const options = {
 			url: urlJoin(this.URL, path),
 			headers: {
@@ -54,55 +54,69 @@ export class ForgeDistributionApi {
 		return promise;
 	}
 
-	getStories(culture: string, queryStringObject?: any) {
+	getStories(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/stories`, queryStringObject);
 	}
 
-	getStory(culture: string, slug: string) {
+	getStory(culture: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/stories/${slug}`);
 	}
 
-	getPhotos(culture: string, queryStringObject?: any) {
+	getPhotos(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/photos`, queryStringObject);
 	}
 
-	getPhoto(culture: string, slug: string) {
+	getPhoto(culture: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/photos/${slug}`);
 	}
 
-	getTags(culture: string, queryStringObject?: any) {
+	getTags(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/tags`, queryStringObject);
 	}
 
-	getTag(culture: string, slug: string) {
+	getTag(culture: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/tags/${slug}`);
 	}
 
-	getDocuments(culture: string, queryStringObject?: any) {
+	getDocuments(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/documents`, queryStringObject);
 	}
 
-	getDocument(culture: string, slug: string) {
+	getDocument(culture: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/documents/${slug}`);
 	}
 
-	getAlbums(culture: string, queryStringObject?: any) {
+	getAlbums(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/albums`, queryStringObject);
 	}
 
-	getAlbum(culture: string, slug: string) {
+	getAlbum(culture: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/albums/${slug}`);
 	}
 
-	getCustomEntities(culture: string, entityCode: string, queryStringObject?: any) {
+	getCustomEntities(culture: string, entityCode: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/${entityCode}`, queryStringObject);
 	}
 
-	getCustomEntity(culture: string, entityCode: string, slug: string) {
+	getCustomEntity(culture: string, entityCode: string, slug: string): Promise<DistributionEntity> {
 		return this.get(`${this.version}/content/${culture}/${entityCode}/${slug}`);
 	}
 
-	getSelection(culture: string, slug: string, queryStringObject?: any) {
+	getSelection(culture: string, slug: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {
 		return this.get(`${this.version}/content/${culture}/sel-${slug}`, queryStringObject);
 	}
+}
+
+export interface DistributionEntity {
+	title: string;
+	slug: string;
+	[name: string]: any;
+}
+
+export interface DistributionQueryString {
+	[name: string]: string | undefined;
+}
+
+export interface DistributionList<T> {
+	items: T[];
 }

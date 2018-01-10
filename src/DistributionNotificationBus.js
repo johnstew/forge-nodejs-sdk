@@ -58,3 +58,4 @@ class DistributionNotificationBus {
     }
 }
 exports.DistributionNotificationBus = DistributionNotificationBus;
+//# sourceMappingURL=DistributionNotificationBus.js.map

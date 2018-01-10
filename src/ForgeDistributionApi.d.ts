@@ -12,18 +12,29 @@ export declare class ForgeDistributionApi {
     version: string;
     readSource: ReadSource;
     constructor(options: IForgeDistributionApiOptions);
-    get(path: string, queryStringObject?: any): Promise<{}>;
-    getStories(culture: string, queryStringObject?: any): Promise<{}>;
-    getStory(culture: string, slug: string): Promise<{}>;
-    getPhotos(culture: string, queryStringObject?: any): Promise<{}>;
-    getPhoto(culture: string, slug: string): Promise<{}>;
-    getTags(culture: string, queryStringObject?: any): Promise<{}>;
-    getTag(culture: string, slug: string): Promise<{}>;
-    getDocuments(culture: string, queryStringObject?: any): Promise<{}>;
-    getDocument(culture: string, slug: string): Promise<{}>;
-    getAlbums(culture: string, queryStringObject?: any): Promise<{}>;
-    getAlbum(culture: string, slug: string): Promise<{}>;
-    getCustomEntities(culture: string, entityCode: string, queryStringObject?: any): Promise<{}>;
-    getCustomEntity(culture: string, entityCode: string, slug: string): Promise<{}>;
-    getSelection(culture: string, slug: string, queryStringObject?: any): Promise<{}>;
+    get(path: string, queryStringObject?: any): Promise<any>;
+    getStories(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getStory(culture: string, slug: string): Promise<DistributionEntity>;
+    getPhotos(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getPhoto(culture: string, slug: string): Promise<DistributionEntity>;
+    getTags(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getTag(culture: string, slug: string): Promise<DistributionEntity>;
+    getDocuments(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getDocument(culture: string, slug: string): Promise<DistributionEntity>;
+    getAlbums(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getAlbum(culture: string, slug: string): Promise<DistributionEntity>;
+    getCustomEntities(culture: string, entityCode: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+    getCustomEntity(culture: string, entityCode: string, slug: string): Promise<DistributionEntity>;
+    getSelection(culture: string, slug: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
+}
+export interface DistributionEntity {
+    title: string;
+    slug: string;
+    [name: string]: any;
+}
+export interface DistributionQueryString {
+    [name: string]: string | undefined;
+}
+export interface DistributionList<T> {
+    items: T[];
 }

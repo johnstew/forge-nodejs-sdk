@@ -15,6 +15,7 @@
     "no-var-requires": false,
     "variable-name": false,
     "only-arrow-functions": [false],
-    "max-line-length": [false]
+    "max-line-length": [false],
+    "interface-name": false
   }
 }

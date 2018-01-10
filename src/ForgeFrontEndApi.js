@@ -64,3 +64,4 @@ class ForgeFrontEndApi {
     }
 }
 exports.ForgeFrontEndApi = ForgeFrontEndApi;
+//# sourceMappingURL=ForgeFrontEndApi.js.map
