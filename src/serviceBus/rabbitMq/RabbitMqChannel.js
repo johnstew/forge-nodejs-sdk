@@ -112,3 +112,4 @@ class RabbitMqChannel extends events_1.EventEmitter {
     }
 }
 exports.RabbitMqChannel = RabbitMqChannel;
+//# sourceMappingURL=RabbitMqChannel.js.map

@@ -14,3 +14,4 @@ api.getStories("en-us")
     .catch((error) => {
     console.log(error);
 });
+//# sourceMappingURL=getAllStoriesFromDistribution.js.map

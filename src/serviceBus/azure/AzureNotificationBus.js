@@ -135,3 +135,4 @@ class AzureNotificationBus extends events_1.EventEmitter {
     }
 }
 exports.AzureNotificationBus = AzureNotificationBus;
+//# sourceMappingURL=AzureNotificationBus.js.map

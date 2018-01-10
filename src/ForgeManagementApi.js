@@ -275,3 +275,4 @@ class ForgeManagementApi {
     }
 }
 exports.ForgeManagementApi = ForgeManagementApi;
+//# sourceMappingURL=ForgeManagementApi.js.map

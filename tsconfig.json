@@ -1,23 +1,16 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "es2015",
     "moduleResolution": "node",
 
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noUnusedParameters": false,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    "strict": true,
 
-    "sourceMap": false,
+    "sourceMap": true,
     "declaration": true
   },
   "exclude": [
     "node_modules",
     "**/*.d.ts"
-  ],
-  "compileOnSave": true
+  ]
 }

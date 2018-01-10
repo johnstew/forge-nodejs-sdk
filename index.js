@@ -13,3 +13,4 @@ var ForgeFrontEndApi_1 = require("./src/ForgeFrontEndApi");
 exports.ForgeFrontEndApi = ForgeFrontEndApi_1.ForgeFrontEndApi;
 const ForgeCommands = require("./src/ForgeCommands");
 exports.ForgeCommands = ForgeCommands;
+//# sourceMappingURL=index.js.map

@@ -80,3 +80,4 @@ class ForgeDistributionApi {
     }
 }
 exports.ForgeDistributionApi = ForgeDistributionApi;
+//# sourceMappingURL=ForgeDistributionApi.js.map

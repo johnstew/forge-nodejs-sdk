@@ -143,3 +143,4 @@ class RabbitMqNotificationBus extends events_1.EventEmitter {
     }
 }
 exports.RabbitMqNotificationBus = RabbitMqNotificationBus;
+//# sourceMappingURL=RabbitMqNotificationBus.js.map

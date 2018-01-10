@@ -22,3 +22,4 @@ exports.MessagePriorities = MessagePriorities;
 class ConnectionStatus {
 }
 exports.ConnectionStatus = ConnectionStatus;
+//# sourceMappingURL=notificationBusTypes.js.map

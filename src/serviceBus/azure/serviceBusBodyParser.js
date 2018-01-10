@@ -32,3 +32,4 @@ function parseJson(body) {
     throw new Error("Invalid message body: " + body);
 }
 exports.parseJson = parseJson;
+//# sourceMappingURL=serviceBusBodyParser.js.map

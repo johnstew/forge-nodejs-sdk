@@ -31,3 +31,4 @@ run()
     .catch((error) => {
     console.log(error);
 });
+//# sourceMappingURL=vsmExport.js.map
