@@ -110,7 +110,9 @@ class ForgeManagementApi {
                 }
                 debug("Response status " + response.statusCode);
                 if (response.statusCode !== 200) {
-                    return reject(new Error(response.statusCode));
+                    const rejectError = new Error(response.statusCode);
+                    rejectError.statusCode = response.statusCode;
+                    return reject(rejectError);
                 }
                 resolve(JSON.parse(body));
             });
