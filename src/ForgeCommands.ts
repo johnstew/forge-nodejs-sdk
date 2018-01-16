@@ -43,22 +43,15 @@ export class CreateStory extends CommandBase {
 	}
 }
 
-export class SetListAvailability extends CommandBase {
-	// cmd: {aggregateId, aggregateType, featured}
-	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string, listAvailability: number}) {
-		super("SetListAvailabilityCommand", cmd);
-	}
-}
-
 export class SetPublicAvailability extends CommandBase {
-	// cmd: {aggregateId, aggregateType, featured}
+	// cmd: {aggregateId, aggregateType}
 	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
 		super("SetPublicAvailabilityCommand", cmd);
 	}
 }
 
 export class SetUnlistedAvailability extends CommandBase {
-	// cmd: {aggregateId, aggregateType, featured}
+	// cmd: {aggregateId, aggregateType}
 	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
 		super("SetUnlistedAvailabilityCommand", cmd);
 	}
@@ -675,3 +668,18 @@ export class ExportNode extends CommandBase {
 		super("ExportNodeCommand", cmd);
 	}
 }
+
+export class SetContextualFieldsCommand extends CommandBase {
+	// cmd: {translationId, elementId, contextualFields}
+	constructor(cmd: {commandId?: string, translationId: string, elementId: string, contextualFields: any}) {
+		super("SetContextualFieldsCommand", cmd);
+	}
+}
+
+export class UnsetContextualFieldsCommand extends CommandBase {
+	// cmd: {translationId, elementId, contextualFieldNames}
+	constructor(cmd: {commandId?: string, translationId: string, elementId: string, contextualFieldNames: any}) {
+		super("UnsetContextualFieldsCommand", cmd);
+	}
+}
+
