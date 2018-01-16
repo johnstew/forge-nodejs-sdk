@@ -671,14 +671,14 @@ export class ExportNode extends CommandBase {
 
 export class SetContextualFields extends CommandBase {
 	// cmd: {translationId, elementId, contextualFields}
-	constructor(cmd: {commandId?: string, translationId: string, elementId: string, contextualFields: any}) {
+	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFields: any}) {
 		super("SetContextualFieldsCommand", cmd);
 	}
 }
 
 export class UnsetContextualFields extends CommandBase {
 	// cmd: {translationId, elementId, contextualFieldNames}
-	constructor(cmd: {commandId?: string, translationId: string, elementId: string, contextualFieldNames: any}) {
+	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFieldNames: any}) {
 		super("UnsetContextualFieldsCommand", cmd);
 	}
 }

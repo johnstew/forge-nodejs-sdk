@@ -316,6 +316,8 @@ export declare class ExportNode extends CommandBase {
 export declare class SetContextualFields extends CommandBase {
     constructor(cmd: {
         commandId?: string;
+        aggregateId: string;
+        aggregateType: string;
         translationId: string;
         elementId: string;
         contextualFields: any;
@@ -324,6 +326,8 @@ export declare class SetContextualFields extends CommandBase {
 export declare class UnsetContextualFields extends CommandBase {
     constructor(cmd: {
         commandId?: string;
+        aggregateId: string;
+        aggregateType: string;
         translationId: string;
         elementId: string;
         contextualFieldNames: any;
