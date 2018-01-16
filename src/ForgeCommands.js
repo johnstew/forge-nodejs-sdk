@@ -36,22 +36,15 @@ class CreateStory extends CommandBase {
     }
 }
 exports.CreateStory = CreateStory;
-class SetListAvailability extends CommandBase {
-    // cmd: {aggregateId, aggregateType, featured}
-    constructor(cmd) {
-        super("SetListAvailabilityCommand", cmd);
-    }
-}
-exports.SetListAvailability = SetListAvailability;
 class SetPublicAvailability extends CommandBase {
-    // cmd: {aggregateId, aggregateType, featured}
+    // cmd: {aggregateId, aggregateType}
     constructor(cmd) {
         super("SetPublicAvailabilityCommand", cmd);
     }
 }
 exports.SetPublicAvailability = SetPublicAvailability;
 class SetUnlistedAvailability extends CommandBase {
-    // cmd: {aggregateId, aggregateType, featured}
+    // cmd: {aggregateId, aggregateType}
     constructor(cmd) {
         super("SetUnlistedAvailabilityCommand", cmd);
     }
@@ -651,4 +644,18 @@ class ExportNode extends CommandBase {
     }
 }
 exports.ExportNode = ExportNode;
+class SetContextualFields extends CommandBase {
+    // cmd: {translationId, elementId, contextualFields}
+    constructor(cmd) {
+        super("SetContextualFieldsCommand", cmd);
+    }
+}
+exports.SetContextualFields = SetContextualFields;
+class UnsetContextualFields extends CommandBase {
+    // cmd: {translationId, elementId, contextualFieldNames}
+    constructor(cmd) {
+        super("UnsetContextualFieldsCommand", cmd);
+    }
+}
+exports.UnsetContextualFields = UnsetContextualFields;
 //# sourceMappingURL=ForgeCommands.js.map

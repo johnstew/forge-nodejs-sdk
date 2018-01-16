@@ -10,14 +10,6 @@ export declare class Batch extends CommandBase {
 export declare class CreateStory extends CommandBase {
     constructor(cmd: any);
 }
-export declare class SetListAvailability extends CommandBase {
-    constructor(cmd: {
-        commandId?: string;
-        aggregateId: string;
-        aggregateType: string;
-        listAvailability: number;
-    });
-}
 export declare class SetPublicAvailability extends CommandBase {
     constructor(cmd: {
         commandId?: string;
@@ -319,5 +311,21 @@ export declare class ExportNode extends CommandBase {
         path: string;
         exportId: string;
         description?: string;
+    });
+}
+export declare class SetContextualFields extends CommandBase {
+    constructor(cmd: {
+        commandId?: string;
+        translationId: string;
+        elementId: string;
+        contextualFields: any;
+    });
+}
+export declare class UnsetContextualFields extends CommandBase {
+    constructor(cmd: {
+        commandId?: string;
+        translationId: string;
+        elementId: string;
+        contextualFieldNames: any;
     });
 }

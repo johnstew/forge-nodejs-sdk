@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import * as amqp from "amqplib";
 import { EventEmitter } from "events";
 export declare class RabbitMqQueueBinding {

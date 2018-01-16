@@ -682,4 +682,3 @@ export class UnsetContextualFields extends CommandBase {
 		super("UnsetContextualFieldsCommand", cmd);
 	}
 }
-
