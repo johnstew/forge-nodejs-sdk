@@ -273,6 +273,9 @@ class ForgeManagementApi {
     randomSlug() {
         return uuid.v4().toLowerCase();
     }
+    getAlbumContextualFieldsForElement(entityId, elementId) {
+        return this.get(`deltatre.forge.wcm/api/albums/${entityId}/contextualfields/${elementId}`);
+    }
 }
 exports.ForgeManagementApi = ForgeManagementApi;
 //# sourceMappingURL=ForgeManagementApi.js.map
