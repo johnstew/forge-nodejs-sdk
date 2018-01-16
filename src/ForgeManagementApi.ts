@@ -296,7 +296,6 @@ export class ForgeManagementApi {
 		return this.get(`deltatre.forge.wcm/api/albums/${version}`, options);
 	}
 
-
 	getCustomEntity(entityCode: string, version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/${translationId}`);
 	}
@@ -315,7 +314,6 @@ export class ForgeManagementApi {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}`, options);
 	}
 
-
 	getCheckpoints(bucketId: string) {
 		return this.get(`api/checkpoints/list/${bucketId}`);
 	}
@@ -330,5 +328,9 @@ export class ForgeManagementApi {
 
 	randomSlug() {
 		return uuid.v4().toLowerCase();
+	}
+
+	getAlbumContextualFieldsForElement(entityId: string, elementId: string) {
+		return this.get(`deltatre.forge.wcm/api/albums/${entityId}/contextualfields/${elementId}`);
 	}
 }
