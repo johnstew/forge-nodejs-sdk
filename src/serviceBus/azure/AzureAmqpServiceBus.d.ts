@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { EventEmitter } from "events";
 export declare class AzureAmqpSubscription extends EventEmitter {
     readonly topic: string;

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { RabbitMqChannel } from "./RabbitMqChannel.js";
 import { EventEmitter } from "events";
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";

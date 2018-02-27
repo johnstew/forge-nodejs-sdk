@@ -8,21 +8,34 @@ const debugTracking = require("debug")("forgesdk.ForgeManagementApi.tracking");
 const request = require("request");
 const uuid = require("uuid");
 const urlJoin = require("url-join");
+const packageJson = require("../package.json");
 
 export interface IForgeManagementApiOptions {
 	authKey: string;
 	url: string;
+	userAgent?: string;
 }
 
 export class ForgeManagementApi {
 	KEY: string;
 	FORGE_URL: string;
 	notificationBus: ForgeNotificationBus | undefined;
+	defaultHeaders: { [name: string]: string };
 
 	constructor(options: IForgeManagementApiOptions) {
 		this.KEY = options.authKey;
 		this.FORGE_URL = options.url;
 		this.notificationBus = undefined;
+
+		this.defaultHeaders = {
+			"Authorization": `GUIShellApp key=${this.KEY}`,
+			"User-Agent": "NodeSDK/" + packageJson.version,
+			"Accept": "application/json"
+		};
+
+		if (options.userAgent) {
+			this.defaultHeaders["User-Agent"] = options.userAgent + " " + this.defaultHeaders["User-Agent"];
+		}
 	}
 
 	post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
@@ -38,20 +51,16 @@ export class ForgeManagementApi {
 			method: "POST",
 			url: urlJoin(this.FORGE_URL, "api/command"),
 			headers: {
-				"Authorization": `GUIShellApp key=${this.KEY}`,
-				"Accept": "application/json",
+				...this.defaultHeaders,
 				"Content-Type": "application/json"
 			},
 			body: cmd,
 			json: true
 		};
 
-		let waiterPromise;
-		if (this.notificationBus) {
-			waiterPromise = this.notificationBus.waitCommand(cmd.bodyObject.commandId, undefined, undefined, waitTimeout);
-		} else {
-			waiterPromise = Promise.resolve(true);
-		}
+		const waiterPromise = this.notificationBus
+			? this.notificationBus.waitCommand(cmd.bodyObject.commandId, undefined, undefined, waitTimeout)
+			: Promise.resolve(true);
 
 		debug("Sending command...", cmd);
 		debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
@@ -86,8 +95,7 @@ export class ForgeManagementApi {
 			method: "POST",
 			url: urlJoin(this.FORGE_URL, "api/command/ack"),
 			headers: {
-				"Authorization": `GUIShellApp key=${this.KEY}`,
-				"Accept": "application/json",
+				...this.defaultHeaders,
 				"Content-Type": "application/json"
 			},
 			body: cmd,
@@ -124,8 +132,7 @@ export class ForgeManagementApi {
 			url: urlJoin(this.FORGE_URL, path),
 			qs: queryStringObject,
 			headers: {
-				Authorization: "GUIShellApp key=" + this.KEY,
-				Accept: "application/json"
+				...this.defaultHeaders
 			}
 		};
 

@@ -3,11 +3,15 @@ import * as ForgeCommands from "./ForgeCommands";
 export interface IForgeManagementApiOptions {
     authKey: string;
     url: string;
+    userAgent?: string;
 }
 export declare class ForgeManagementApi {
     KEY: string;
     FORGE_URL: string;
     notificationBus: ForgeNotificationBus | undefined;
+    defaultHeaders: {
+        [name: string]: string;
+    };
     constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
     postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable-next-line:no-implicit-dependencies
 const chai_1 = require("chai");
 const serviceBusBodyParser_1 = require("../src/serviceBus/azure/serviceBusBodyParser");
 describe("serviceBusBodyParser", function () {

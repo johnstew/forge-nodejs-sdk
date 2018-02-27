@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { INotificationBus, EventPredicate, INotificationBusOptions } from "./../notificationBusTypes";
 import { EventEmitter } from "events";
 export interface IAzureNotificationBusOptions extends INotificationBusOptions {
