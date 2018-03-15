@@ -15,10 +15,9 @@ export interface IDistributionNotificationBusOptions
 export class DistributionNotificationBus {
 	readonly _options: IDistributionNotificationBusOptions;
 	readonly bus: INotificationBus;
-	readonly defaultWaitOnceTimeout: number;
 
 	constructor(options: IDistributionNotificationBusOptions) {
-		options = Object.assign({}, options);
+		options = {...options};
 		options.notificationBusName = options.notificationBusName || "dist-ntf";
 
 		// for compatibility with older sdk...

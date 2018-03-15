@@ -7,7 +7,6 @@ export interface IDistributionNotificationBusOptions extends INotificationBusOpt
 export declare class DistributionNotificationBus {
     readonly _options: IDistributionNotificationBusOptions;
     readonly bus: INotificationBus;
-    readonly defaultWaitOnceTimeout: number;
     constructor(options: IDistributionNotificationBusOptions);
     startReceiving(): Promise<any>;
     on(eventName: string, listener: (msg: any) => void): void;

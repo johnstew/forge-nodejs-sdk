@@ -7,7 +7,6 @@ export interface IForgeNotificationBusOptions extends INotificationBusOptions, I
 export declare class ForgeNotificationBus {
     readonly _options: IForgeNotificationBusOptions;
     readonly bus: INotificationBus;
-    readonly defaultWaitOnceTimeout: number;
     constructor(options: IForgeNotificationBusOptions);
     startReceiving(): Promise<any>;
     on(eventName: string, listener: (msg: any) => void): void;

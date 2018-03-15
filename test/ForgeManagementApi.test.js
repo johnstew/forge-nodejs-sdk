@@ -92,6 +92,9 @@ class ManagementApiServerStub {
     }
     disconnect() {
         return new Promise((resolve, reject) => {
+            if (!this.srv) {
+                return resolve();
+            }
             this.srv.close(() => {
                 resolve();
             });

@@ -73,7 +73,7 @@ class ManagementApiServerStub {
 		queryString: any,
 		headers: any
 	};
-	private srv: http.Server;
+	private srv?: http.Server;
 
 	connect(port: number) {
 		this.srv = http.createServer((req, res) => {
@@ -90,7 +90,7 @@ class ManagementApiServerStub {
 		});
 
 		return new Promise((resolve, reject) => {
-			this.srv.listen(port, "127.0.0.1", () => {
+			this.srv!.listen(port, "127.0.0.1", () => {
 				resolve();
 			});
 		});
@@ -98,6 +98,9 @@ class ManagementApiServerStub {
 
 	disconnect() {
 		return new Promise((resolve, reject) => {
+			if (!this.srv) {
+				return resolve();
+			}
 			this.srv.close(() => {
 				resolve();
 			});

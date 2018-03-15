@@ -36,9 +36,9 @@ connect()
 		console.log(`SitePageRemovedNotification ${JSON.stringify(e)}`);
 	});
 
-	// notificationBus.on("CommandSuccessNotification", (e) => {
-	// 	console.log(`CommandSuccessNotification ${e.commandId}`);
-	// });
+	notificationBus.on("CommandSuccessNotification", (e) => {
+		console.log(`CommandSuccessNotification ${e.commandId}`);
+	});
 
 	// notificationBus.on("PublishedBatchNotification", (e) => {
 	// 	console.log(`Forge PublishedBatchNotification (Priority:${e.messagePriority})`);
