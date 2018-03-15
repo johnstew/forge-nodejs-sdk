@@ -18,10 +18,9 @@ export interface IForgeNotificationBusOptions
 export class ForgeNotificationBus {
 	readonly _options: IForgeNotificationBusOptions;
 	readonly bus: INotificationBus;
-	readonly defaultWaitOnceTimeout: number;
 
 	constructor(options: IForgeNotificationBusOptions) {
-		options = Object.assign({}, options);
+		options = {...options};
 		options.notificationBusName = options.notificationBusName || "forge-ntf";
 
 		// for compatibility with older sdk...
