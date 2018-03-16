@@ -18,7 +18,7 @@ export declare class MessagePriorities {
     static values: MessagePriority[];
     static toShortString(value: MessagePriority): "bg" | "fg";
 }
-export declare class ConnectionStatus {
+export interface ConnectionStatus {
     error?: Error;
     name: string;
     connected: boolean;

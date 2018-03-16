@@ -34,7 +34,7 @@ export class MessagePriorities {
 	}
 }
 
-export class ConnectionStatus {
+export interface ConnectionStatus {
 	error?: Error;
 	name: string;
 	connected: boolean;
