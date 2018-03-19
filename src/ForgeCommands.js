@@ -658,4 +658,11 @@ class UnsetContextualFields extends CommandBase {
     }
 }
 exports.UnsetContextualFields = UnsetContextualFields;
+class EnsureTag extends CommandBase {
+    // cmd: { slug }
+    constructor(cmd) {
+        super("EnsureTagCommand", cmd);
+    }
+}
+exports.EnsureTag = EnsureTag;
 //# sourceMappingURL=ForgeCommands.js.map

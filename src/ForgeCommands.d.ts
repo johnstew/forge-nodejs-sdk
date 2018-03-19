@@ -333,3 +333,8 @@ export declare class UnsetContextualFields extends CommandBase {
         contextualFieldNames: any;
     });
 }
+export declare class EnsureTag extends CommandBase {
+    constructor(cmd: {
+        slug: string;
+    });
+}

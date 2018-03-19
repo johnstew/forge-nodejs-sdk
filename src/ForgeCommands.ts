@@ -45,14 +45,14 @@ export class CreateStory extends CommandBase {
 
 export class SetPublicAvailability extends CommandBase {
 	// cmd: {aggregateId, aggregateType}
-	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
+	constructor(cmd: { commandId?: string, aggregateId: string, aggregateType: string }) {
 		super("SetPublicAvailabilityCommand", cmd);
 	}
 }
 
 export class SetUnlistedAvailability extends CommandBase {
 	// cmd: {aggregateId, aggregateType}
-	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string}) {
+	constructor(cmd: { commandId?: string, aggregateId: string, aggregateType: string }) {
 		super("SetUnlistedAvailabilityCommand", cmd);
 	}
 }
@@ -671,14 +671,21 @@ export class ExportNode extends CommandBase {
 
 export class SetContextualFields extends CommandBase {
 	// cmd: {translationId, elementId, contextualFields}
-	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFields: any}) {
+	constructor(cmd: { commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFields: any }) {
 		super("SetContextualFieldsCommand", cmd);
 	}
 }
 
 export class UnsetContextualFields extends CommandBase {
 	// cmd: {translationId, elementId, contextualFieldNames}
-	constructor(cmd: {commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFieldNames: any}) {
+	constructor(cmd: { commandId?: string, aggregateId: string, aggregateType: string, translationId: string, elementId: string, contextualFieldNames: any }) {
 		super("UnsetContextualFieldsCommand", cmd);
+	}
+}
+
+export class EnsureTag extends CommandBase {
+	// cmd: { slug }
+	constructor(cmd: { slug: string }) {
+		super("EnsureTagCommand", cmd);
 	}
 }
