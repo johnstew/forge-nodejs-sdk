@@ -238,7 +238,7 @@ export class ForgeManagementApi {
 
 		return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
 	}
-	
+
 	getTag(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
@@ -342,17 +342,22 @@ export class ForgeManagementApi {
 		return this.get(`deltatre.forge.wcm/api/albums/${entityId}/contextualfields/${elementId}`);
 	}
 
-	slugify(values: string[]): Promise<any> {
-		if(!values) {
+	slugify(values: string[]): Promise<SlugificationResultContract[]> {
+		if (!values) {
 			throw new Error("Parameter values is mandatory");
 		}
 
 		const queryStringObject: any = {
 			values
 		};
-		
+
 		const path: string = "deltatre.forge.wcm/api/entities/slugify";
 
 		return this.get(path, queryStringObject);
 	}
+}
+
+export interface SlugificationResultContract {
+	OriginalValue: string;
+	SlugifiedValue: string;
 }
