@@ -56,9 +56,9 @@ export declare class ForgeManagementApi {
     uuid(): any;
     randomSlug(): any;
     getAlbumContextualFieldsForElement(entityId: string, elementId: string): Promise<any>;
-    slugify(values: string[]): Promise<SlugificationResultContract[]>;
+    slugify(values: string[]): Promise<ISlugificationResult[]>;
 }
-export interface SlugificationResultContract {
+export interface ISlugificationResult {
     OriginalValue: string;
     SlugifiedValue: string;
 }

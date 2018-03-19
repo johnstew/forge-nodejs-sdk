@@ -1,4 +1,4 @@
-export { ForgeManagementApi, IForgeManagementApiOptions } from "./src/ForgeManagementApi";
+export { ForgeManagementApi, IForgeManagementApiOptions, ISlugificationResult } from "./src/ForgeManagementApi";
 export { ForgeNotificationBus, IForgeNotificationBusOptions } from "./src/ForgeNotificationBus";
 export { DistributionNotificationBus, IDistributionNotificationBusOptions } from "./src/DistributionNotificationBus";
 export { ForgeDistributionApi, IForgeDistributionApiOptions, ReadSource, DistributionEntity, DistributionQueryString } from "./src/ForgeDistributionApi";
