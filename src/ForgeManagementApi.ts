@@ -340,4 +340,18 @@ export class ForgeManagementApi {
 	getAlbumContextualFieldsForElement(entityId: string, elementId: string) {
 		return this.get(`deltatre.forge.wcm/api/albums/${entityId}/contextualfields/${elementId}`);
 	}
+
+	slugify(values: string[]): Promise<any> {
+		if(!values) {
+			throw new Error("Parameter values is mandatory");
+		}
+
+		const queryStringObject: any = {
+			values
+		};
+		
+		const path: string = "deltatre.forge.wcm/api/entities/slugify";
+
+		return this.get(path, queryStringObject);
+	}
 }

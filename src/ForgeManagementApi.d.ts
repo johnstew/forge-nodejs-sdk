@@ -56,4 +56,5 @@ export declare class ForgeManagementApi {
     uuid(): any;
     randomSlug(): any;
     getAlbumContextualFieldsForElement(entityId: string, elementId: string): Promise<any>;
+    slugify(values: string[]): Promise<any>;
 }

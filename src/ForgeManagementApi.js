@@ -270,6 +270,16 @@ class ForgeManagementApi {
     getAlbumContextualFieldsForElement(entityId, elementId) {
         return this.get(`deltatre.forge.wcm/api/albums/${entityId}/contextualfields/${elementId}`);
     }
+    slugify(values) {
+        if (!values) {
+            throw new Error("Parameter values is mandatory");
+        }
+        const queryStringObject = {
+            values
+        };
+        const path = "deltatre.forge.wcm/api/entities/slugify";
+        return this.get(path, queryStringObject);
+    }
 }
 exports.ForgeManagementApi = ForgeManagementApi;
 //# sourceMappingURL=ForgeManagementApi.js.map
