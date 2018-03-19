@@ -238,6 +238,7 @@ export class ForgeManagementApi {
 
 		return this.get(`deltatre.forge.wcm/api/tags/${version}`, options);
 	}
+	
 	getTag(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
