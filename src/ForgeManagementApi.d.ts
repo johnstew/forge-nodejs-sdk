@@ -35,6 +35,7 @@ export declare class ForgeManagementApi {
     getTag(version: string, translationId: string): Promise<any>;
     getTagByCultureSlug(version: string, culture: string, slug: string, mode?: AssemblerMode): Promise<any>;
     getTagTranslations(version: string, entityId: string): Promise<any>;
+    getTagsByVersionAndEntityIds(version: string, entityIds: string[]): Promise<any>;
     getDocuments(version: string, options: any): Promise<any>;
     getDocument(version: string, translationId: string): Promise<any>;
     getDocumentByCultureSlug(version: string, culture: string, slug: string): Promise<any>;

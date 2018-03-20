@@ -194,6 +194,13 @@ class ForgeManagementApi {
     getTagTranslations(version, entityId) {
         return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
     }
+    getTagsByVersionAndEntityIds(version, entityIds) {
+        const queryStringObj = {
+            entityIds
+        };
+        const path = `deltatre.forge.wcm/api/tags/${version}/entities`;
+        return this.get(path, queryStringObj);
+    }
     getDocuments(version, options) {
         // for compatibility with old version
         if (typeof options === "string") {

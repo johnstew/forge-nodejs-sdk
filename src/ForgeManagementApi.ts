@@ -255,6 +255,16 @@ export class ForgeManagementApi {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
 	}
 
+	getTagsByVersionAndEntityIds(version: string, entityIds: string[]) {
+		const queryStringObj = {
+			entityIds
+		};
+
+		const path: string = `deltatre.forge.wcm/api/tags/${version}/entities`;
+
+		return this.get(path, queryStringObj);
+	}
+
 	getDocuments(version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {
