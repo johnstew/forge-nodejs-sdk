@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ForgeManagementApi_1 = require("./src/ForgeManagementApi");
 exports.ForgeManagementApi = ForgeManagementApi_1.ForgeManagementApi;
+exports.AssemblerMode = ForgeManagementApi_1.AssemblerMode;
 var ForgeNotificationBus_1 = require("./src/ForgeNotificationBus");
 exports.ForgeNotificationBus = ForgeNotificationBus_1.ForgeNotificationBus;
 var DistributionNotificationBus_1 = require("./src/DistributionNotificationBus");
