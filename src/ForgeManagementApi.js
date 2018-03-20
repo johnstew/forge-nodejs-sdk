@@ -185,8 +185,11 @@ class ForgeManagementApi {
     getTag(version, translationId) {
         return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
     }
-    getTagByCultureSlug(version, culture, slug) {
-        return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`);
+    getTagByCultureSlug(version, culture, slug, mode = AssemblerMode.Full) {
+        const queryStringObj = {
+            mode
+        };
+        return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`, queryStringObj);
     }
     getTagTranslations(version, entityId) {
         return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
@@ -282,4 +285,9 @@ class ForgeManagementApi {
     }
 }
 exports.ForgeManagementApi = ForgeManagementApi;
+var AssemblerMode;
+(function (AssemblerMode) {
+    AssemblerMode[AssemblerMode["Full"] = 0] = "Full";
+    AssemblerMode[AssemblerMode["Compact"] = 1] = "Compact";
+})(AssemblerMode = exports.AssemblerMode || (exports.AssemblerMode = {}));
 //# sourceMappingURL=ForgeManagementApi.js.map

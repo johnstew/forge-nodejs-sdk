@@ -33,7 +33,7 @@ export declare class ForgeManagementApi {
     getPhotoTranslations(version: string, entityId: string): Promise<any>;
     getTags(version: string, options: any): Promise<any>;
     getTag(version: string, translationId: string): Promise<any>;
-    getTagByCultureSlug(version: string, culture: string, slug: string): Promise<any>;
+    getTagByCultureSlug(version: string, culture: string, slug: string, mode?: AssemblerMode): Promise<any>;
     getTagTranslations(version: string, entityId: string): Promise<any>;
     getDocuments(version: string, options: any): Promise<any>;
     getDocument(version: string, translationId: string): Promise<any>;
@@ -61,4 +61,8 @@ export declare class ForgeManagementApi {
 export interface ISlugificationResult {
     OriginalValue: string;
     SlugifiedValue: string;
+}
+export declare enum AssemblerMode {
+    Full = 0,
+    Compact = 1,
 }
