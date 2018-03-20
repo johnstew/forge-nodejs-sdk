@@ -242,9 +242,15 @@ export class ForgeManagementApi {
 	getTag(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
-	getTagByCultureSlug(version: string, culture: string, slug: string) {
-		return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`);
+	
+	getTagByCultureSlug(version: string, culture: string, slug: string, mode: AssemblerMode = AssemblerMode.Full) {
+		const queryStringObj = {
+			mode
+		};
+
+		return this.get(`deltatre.forge.wcm/api/tags/${version}/culture/${culture}/slug/${slug}`, queryStringObj);
 	}
+
 	getTagTranslations(version: string, entityId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/entity/${entityId}`);
 	}
@@ -360,4 +366,9 @@ export class ForgeManagementApi {
 export interface ISlugificationResult {
 	OriginalValue: string;
 	SlugifiedValue: string;
+}
+
+export enum AssemblerMode {
+	Full = 0,
+	Compact = 1
 }
