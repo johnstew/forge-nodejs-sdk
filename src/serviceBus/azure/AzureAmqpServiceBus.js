@@ -11,8 +11,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Debug = require("debug");
 const debug = Debug("forgesdk.AzureAmqpSubscription");
 const events_1 = require("events");
+// https://github.com/Azure/azure-sdk-for-node/tree/master/lib/services/serviceBus
 // see: http://azure.github.io/azure-sdk-for-node/azure-sb/latest/servicebusservice.js.html
-const azure = require("azure");
+const azureSb = require("azure-sb");
+// https://github.com/Azure/azure-sdk-for-node/tree/master/lib/common
+const azureCommon = require("azure-common");
 const amqp10 = require("amqp10");
 const AMQPClient = amqp10.Client;
 const Policy = amqp10.Policy;
@@ -20,11 +23,11 @@ class AzureAmqpSubscription extends events_1.EventEmitter {
     constructor(azureBusUrl, topic, subscription, subscriptionOptions) {
         super();
         this.receiveWithPeekLock = false;
-        const retryOperations = new azure.ExponentialRetryPolicyFilter();
+        const retryOperations = new azureCommon.ExponentialRetryPolicyFilter();
         this.topic = topic;
         this.subscription = subscription;
         this.subscriptionOptions = subscriptionOptions || {};
-        const serviceBus = azure
+        const serviceBus = azureSb
             .createServiceBusService(azureBusUrl);
         this.serviceBusService = serviceBus
             .withFilter(retryOperations);
