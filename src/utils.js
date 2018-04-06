@@ -79,6 +79,18 @@ function handleJsonResponse(response) {
     });
 }
 exports.handleJsonResponse = handleJsonResponse;
+function handleTextResponse(response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!response) {
+            throw new Error("Invalid response");
+        }
+        if (response.ok) {
+            return response.text();
+        }
+        yield handleErrorResponse(response);
+    });
+}
+exports.handleTextResponse = handleTextResponse;
 function handleErrorResponse(response) {
     return __awaiter(this, void 0, void 0, function* () {
         let error = new Error(`${response.status} ${response.statusText || "Unknown error"}`);

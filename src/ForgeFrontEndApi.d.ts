@@ -6,9 +6,9 @@ export declare class ForgeFrontEndApi {
     URL: string;
     KEY: string;
     constructor(options: IForgeFrontEndApiOptions);
-    get(path: string, questyStringObject?: any): Promise<{}>;
-    getApi(path: string, questyStringObject?: any): Promise<{}>;
-    getData(dataPath: string): Promise<{}>;
-    getDataStories(): Promise<{}>;
-    getDataStory(slug: string): Promise<{}>;
+    get(path: string, queryStringObject?: any): Promise<string | undefined>;
+    getApi(path: string, queryStringObject?: any): Promise<any>;
+    getData(dataPath: string): Promise<any>;
+    getDataStories(): Promise<any>;
+    getDataStory(slug: string): Promise<any>;
 }

@@ -1,6 +1,11 @@
-const debug = require("debug")("ForgeFrontEndApi");
-const request = require("request");
-const urlJoin = require("url-join");
+import fetch, {Response, RequestInit} from "node-fetch";
+import * as urlJoin from "url-join";
+import * as uuid from "uuid";
+import * as querystring from "querystring";
+import * as Debug from "debug";
+const debug = Debug("forgesdk.ForgeFrontEndApi");
+
+import { handleEmptyResponse, handleTextResponse, handleJsonResponse } from "./utils";
 
 export interface IForgeFrontEndApiOptions {
 	url: string;
@@ -16,54 +21,35 @@ export class ForgeFrontEndApi {
 		this.KEY = options.authKey;
 	}
 
-	get(path: string, questyStringObject?: any) {
-		const options = {
-			url: urlJoin(this.URL, path),
-			qs: questyStringObject
-		};
+	get(path: string, queryStringObject?: any) {
+		let requestUrl = urlJoin(this.URL, path);
+		if (queryStringObject) {
+			requestUrl += "?" + querystring.stringify(queryStringObject);
+		}
+		const options: RequestInit = {};
 
-		debug("Requesting " + options.url);
+		debug("Requesting " + requestUrl);
 
-		const promise = new Promise((resolve, reject) => {
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				if (response.statusCode !== 200) {
-					return reject(new Error(response.statusCode));
-				}
-
-				resolve(body);
-			});
-		});
-		return promise;
+		return fetch(requestUrl, options)
+		.then(handleTextResponse);
 	}
 
-	getApi(path: string, questyStringObject?: any) {
-		const options = {
-			url: urlJoin(this.URL, path),
-			qs: questyStringObject,
+	getApi(path: string, queryStringObject?: any) {
+		let requestUrl = urlJoin(this.URL, path);
+		if (queryStringObject) {
+			requestUrl += "?" + querystring.stringify(queryStringObject);
+		}
+		const options: RequestInit = {
 			headers: {
 				Authorization: "CMS key=" + this.KEY,
 				Accept: "application/json"
 			}
 		};
 
-		debug("Requesting " + options.url);
+		debug("Requesting " + requestUrl);
 
-		const promise = new Promise((resolve, reject) => {
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				if (response.statusCode !== 200) {
-					return reject(new Error(response.statusCode));
-				}
-
-				resolve(JSON.parse(body));
-			});
-		});
-		return promise;
+		return fetch(requestUrl, options)
+		.then(handleJsonResponse);
 	}
 
 	getData(dataPath: string) {

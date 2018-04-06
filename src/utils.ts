@@ -76,6 +76,18 @@ export async function handleJsonResponse(response: Response) {
 	await handleErrorResponse(response);
 }
 
+export async function handleTextResponse(response: Response) {
+	if (!response) {
+		throw new Error("Invalid response");
+	}
+
+	if (response.ok) {
+		return response.text();
+	}
+
+	await handleErrorResponse(response);
+}
+
 async function handleErrorResponse(response: Response) {
 	let error = new Error(`${response.status} ${response.statusText || "Unknown error"}`);
 	try {
