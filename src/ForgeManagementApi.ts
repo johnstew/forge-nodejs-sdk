@@ -3,6 +3,7 @@ import * as urlJoin from "url-join";
 import * as uuid from "uuid";
 import * as querystring from "querystring";
 
+import { handleEmptyResponse, handleJsonResponse } from "./utils";
 import { ForgeNotificationBus } from "./ForgeNotificationBus";
 import * as ForgeCommands from "./ForgeCommands";
 import * as Debug from "debug";
@@ -58,14 +59,14 @@ export class ForgeManagementApi {
 		const options = this.createCmdPostOptions(cmd);
 
 		const postPromise = fetch(requestUrl, options)
+		.then(handleEmptyResponse)
 		.then(() => cmd.bodyObject);
 
 		return Promise.all([postPromise, waiterPromise])
 			.then((values) => values[0]);
 	}
 
-	// returns a notification
-	postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
+	postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<CommandNotificationAcknowledgement> {
 		if (Array.isArray(cmd)) {
 			return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
 		}
@@ -79,7 +80,6 @@ export class ForgeManagementApi {
 		const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
 		const options = this.createCmdPostOptions(cmd);
 
-		// the response will contains the notification obj
 		return fetch(requestUrl, options)
 		.then(handleJsonResponse);
 	}
@@ -343,15 +343,7 @@ export enum AssemblerMode {
 	Compact = 1
 }
 
-async function handleJsonResponse(response: Response) {
-	if (response.ok) {
-		return response.json();
-	}
-
-	try {
-		const jsonResult = await response.json();
-		throw new Error(`${response.status} ${jsonResult.Message || response.statusText || "Unknown error"}`);
-	} catch (_) {
-		throw new Error(`${response.status} ${response.statusText || "Unknown error"}`);
-	}
+export interface CommandNotificationAcknowledgement {
+	Success: boolean;
+	Message?: string;
 }

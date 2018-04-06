@@ -14,7 +14,7 @@ export declare class ForgeManagementApi {
     };
     constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
-    postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
+    postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<CommandNotificationAcknowledgement>;
     autoWaitCommandNotification(notificationBus: ForgeNotificationBus): void;
     get(path: string, queryStringObject?: any): Promise<any>;
     getEvents(bucketId: string, options: {
@@ -67,4 +67,8 @@ export interface ISlugificationResult {
 export declare enum AssemblerMode {
     Full = 0,
     Compact = 1,
+}
+export interface CommandNotificationAcknowledgement {
+    Success: boolean;
+    Message?: string;
 }
