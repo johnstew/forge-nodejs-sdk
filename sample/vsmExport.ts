@@ -11,18 +11,19 @@ async function run() {
 	try {
 
 		const exportId = api.uuid();
-		await api.post(new ForgeCommands.ExportNode( { path: "~/_libraries/", exportId: exportId } ));
+		await api.post(new ForgeCommands.ExportNode({ path: "~/_libraries/", exportId}));
 
 		const packageResponse = await api.get(`deltatre.forge.vsm/api/exports/node/${exportId}`);
 
+		// tslint:disable-next-line:no-console
 		console.log(packageResponse);
-	}
-	finally {
+	}	finally {
 		await notificationBus.stopReceiving();
 	}
 }
 
 run()
 .catch((error) => {  // just catch everything here
+	// tslint:disable-next-line:no-console
 	console.log(error);
 });

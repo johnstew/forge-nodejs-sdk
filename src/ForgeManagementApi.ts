@@ -1,13 +1,13 @@
+import fetch, {Response, RequestInit} from "node-fetch";
+import * as urlJoin from "url-join";
+import * as uuid from "uuid";
+import * as querystring from "querystring";
+
 import { ForgeNotificationBus } from "./ForgeNotificationBus";
 import * as ForgeCommands from "./ForgeCommands";
-
 import * as Debug from "debug";
 const debug = Debug("forgesdk.ForgeManagementApi");
-const debugTracking = require("debug")("forgesdk.ForgeManagementApi.tracking");
 
-const request = require("request");
-const uuid = require("uuid");
-const urlJoin = require("url-join");
 const packageJson = require("../package.json");
 
 export interface IForgeManagementApiOptions {
@@ -38,6 +38,7 @@ export class ForgeManagementApi {
 		}
 	}
 
+	// returns the command filled with any default values
 	post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
 		if (Array.isArray(cmd)) {
 			return this.post(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
@@ -47,41 +48,23 @@ export class ForgeManagementApi {
 			throw new Error("cmd.bodyObject not defined");
 		}
 
-		const options = {
-			method: "POST",
-			url: urlJoin(this.FORGE_URL, "api/command"),
-			headers: {
-				...this.defaultHeaders,
-				"Content-Type": "application/json"
-			},
-			body: cmd,
-			json: true
-		};
-
 		const waiterPromise = this.notificationBus
 			? this.notificationBus.waitCommand(cmd.bodyObject.commandId, undefined, undefined, waitTimeout)
 			: Promise.resolve(true);
 
 		debug("Sending command...", cmd);
-		debugTracking(`${cmd.name} ${cmd.bodyObject.commandId} ...`);
 
-		const postPromise = new Promise((resolve, reject) => {
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				if (response.statusCode !== 204) {
-					return reject(new Error(response.statusCode + ":" + body));
-				}
+		const requestUrl = urlJoin(this.FORGE_URL, "api/command");
+		const options = this.createCmdPostOptions(cmd);
 
-				return resolve(cmd.bodyObject);
-			});
-		});
+		const postPromise = fetch(requestUrl, options)
+		.then(() => cmd.bodyObject);
 
 		return Promise.all([postPromise, waiterPromise])
 			.then((values) => values[0]);
 	}
 
+	// returns a notification
 	postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any> {
 		if (Array.isArray(cmd)) {
 			return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
@@ -91,36 +74,14 @@ export class ForgeManagementApi {
 			throw new Error("cmd.bodyObject not defined");
 		}
 
-		const options = {
-			method: "POST",
-			url: urlJoin(this.FORGE_URL, "api/command/ack"),
-			headers: {
-				...this.defaultHeaders,
-				"Content-Type": "application/json"
-			},
-			body: cmd,
-			json: true
-		};
-
 		debug("Sending command and waiting ack...", cmd);
 
-		const promise = new Promise((resolve, reject) => {
+		const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
+		const options = this.createCmdPostOptions(cmd);
 
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				debug("Response status " + response.statusCode);
-				if (response.statusCode !== 200) {
-					return reject(new Error(response.statusCode));
-				}
-				if (!body.Success) {
-					return reject(new Error(body.Message));
-				}
-				resolve(cmd.bodyObject);
-			});
-		});
-		return promise;
+		// the response will contains the notification obj
+		return fetch(requestUrl, options)
+		.then(handleJsonResponse);
 	}
 
 	autoWaitCommandNotification(notificationBus: ForgeNotificationBus) {
@@ -128,32 +89,20 @@ export class ForgeManagementApi {
 	}
 
 	get(path: string, queryStringObject?: any): Promise<any> {
-		const options = {
-			url: urlJoin(this.FORGE_URL, path),
-			qs: queryStringObject,
+		let requestUrl = urlJoin(this.FORGE_URL, path);
+		if (queryStringObject) {
+			requestUrl += "?" + querystring.stringify(queryStringObject);
+		}
+		const options: RequestInit = {
 			headers: {
 				...this.defaultHeaders
 			}
 		};
 
-		debug("Requesting " + options.url);
+		debug("Requesting " + requestUrl);
 
-		const promise = new Promise((resolve, reject) => {
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				debug("Response status " + response.statusCode);
-				if (response.statusCode !== 200) {
-					const rejectError = new Error(response.statusCode);
-					(rejectError as any).statusCode = response.statusCode;
-					return reject(rejectError);
-				}
-
-				resolve(JSON.parse(body));
-			});
-		});
-		return promise;
+		return fetch(requestUrl, options)
+		.then(handleJsonResponse);
 	}
 
 	// DEPRECATED use getCommits
@@ -242,7 +191,7 @@ export class ForgeManagementApi {
 	getTag(version: string, translationId: string) {
 		return this.get(`deltatre.forge.wcm/api/tags/${version}/${translationId}`);
 	}
-	
+
 	getTagByCultureSlug(version: string, culture: string, slug: string, mode: AssemblerMode = AssemblerMode.Full) {
 		const queryStringObj = {
 			mode
@@ -371,6 +320,17 @@ export class ForgeManagementApi {
 
 		return this.get(path, queryStringObject);
 	}
+
+	private createCmdPostOptions(cmd: ForgeCommands.CommandBase): RequestInit {
+		return {
+			method: "POST",
+			headers: {
+				...this.defaultHeaders,
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(cmd)
+		};
+	}
 }
 
 export interface ISlugificationResult {
@@ -381,4 +341,17 @@ export interface ISlugificationResult {
 export enum AssemblerMode {
 	Full = 0,
 	Compact = 1
+}
+
+async function handleJsonResponse(response: Response) {
+	if (response.ok) {
+		return response.json();
+	}
+
+	try {
+		const jsonResult = await response.json();
+		throw new Error(`${response.status} ${jsonResult.Message || response.statusText || "Unknown error"}`);
+	} catch (_) {
+		throw new Error(`${response.status} ${response.statusText || "Unknown error"}`);
+	}
 }

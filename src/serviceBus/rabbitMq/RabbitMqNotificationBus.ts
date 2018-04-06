@@ -34,7 +34,7 @@ export class RabbitMqNotificationBus extends EventEmitter implements INotificati
 			autoDelete: true
 		};
 
-		this.options.queueOptions = Object.assign({}, defaultQueueOptions, this.options.queueOptions);
+		this.options.queueOptions = {...defaultQueueOptions, ...this.options.queueOptions};
 
 		for (const connectionString of allConnectionStrings) {
 			this.rabbitMqChannels.push(this.createChannel(connectionString));

@@ -54,10 +54,11 @@ export declare class ForgeManagementApi {
     getCustomEntities(entityCode: string, version: string, options: any): Promise<any>;
     getCheckpoints(bucketId: string): Promise<any>;
     getPage(pageId: string): Promise<any>;
-    uuid(): any;
-    randomSlug(): any;
+    uuid(): string;
+    randomSlug(): string;
     getAlbumContextualFieldsForElement(entityId: string, elementId: string): Promise<any>;
     slugify(values: string[]): Promise<ISlugificationResult[]>;
+    private createCmdPostOptions(cmd);
 }
 export interface ISlugificationResult {
     OriginalValue: string;
