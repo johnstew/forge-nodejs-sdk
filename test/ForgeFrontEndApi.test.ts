@@ -9,7 +9,6 @@ describe("ForgeFrontEndApi", function() {
 	let server: JsonApiServerStub;
 	let api: ForgeFrontEndApi;
 	const authKey = "xyz";
-	const sdkVersion = require("../package.json").version;
 	const frontEndApiUrl = "http://127.0.0.1:8989/";
 
 	before(async function() {

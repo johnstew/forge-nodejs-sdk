@@ -1,8 +1,13 @@
+import fetch, {Response, RequestInit} from "node-fetch";
+import * as urlJoin from "url-join";
+import * as uuid from "uuid";
+import * as querystring from "querystring";
+
 import * as Debug from "debug";
 const debug = Debug("forgesdk.ForgeDistributionApi");
 
-const request = require("request");
-const urlJoin = require("url-join");
+import { handleEmptyResponse, handleJsonResponse } from "./utils";
+
 
 export enum ReadSource {
 	Default = "Default",
@@ -27,31 +32,21 @@ export class ForgeDistributionApi {
 	}
 
 	get(path: string, queryStringObject?: any): Promise<any> {
-		const options = {
-			url: urlJoin(this.URL, path),
+		let requestUrl = urlJoin(this.URL, path);
+		if (queryStringObject) {
+			requestUrl += "?" + querystring.stringify(queryStringObject);
+		}
+		const options: RequestInit = {
 			headers: {
 				"Accept": "application/json",
 				"X-Read-Source": this.readSource
-			},
-			qs: queryStringObject || null,
-			useQuerystring: true
+			}
 		};
 
-		debug("Requesting " + options.url);
+		debug("Requesting " + requestUrl);
 
-		const promise = new Promise((resolve, reject) => {
-			request(options, (error: any, response: any, body: any) => {
-				if (error) {
-					return reject(error);
-				}
-				if (response.statusCode !== 200) {
-					return reject(new Error(`${response.statusCode}: ${response.statusMessage}`));
-				}
-
-				resolve(JSON.parse(body));
-			});
-		});
-		return promise;
+		return fetch(requestUrl, options)
+		.then(handleJsonResponse);
 	}
 
 	getStories(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>> {

@@ -5,7 +5,7 @@ import * as querystring from "querystring";
 import * as Debug from "debug";
 const debug = Debug("forgesdk.ForgeFrontEndApi");
 
-import { handleEmptyResponse, handleTextResponse, handleJsonResponse } from "./utils";
+import { handleTextResponse, handleJsonResponse } from "./utils";
 
 export interface IForgeFrontEndApiOptions {
 	url: string;

@@ -18,7 +18,7 @@ function run() {
         yield notificationBus.startReceiving();
         try {
             const exportId = api.uuid();
-            yield api.post(new index_1.ForgeCommands.ExportNode({ path: "~/_libraries/", exportId }));
+            yield api.post(new index_1.ForgeCommands.ExportNode({ path: "~/photos/", exportId }));
             const packageResponse = yield api.get(`deltatre.forge.vsm/api/exports/node/${exportId}`);
             // tslint:disable-next-line:no-console
             console.log(packageResponse);

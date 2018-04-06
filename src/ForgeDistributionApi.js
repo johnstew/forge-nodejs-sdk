@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_fetch_1 = require("node-fetch");
+const urlJoin = require("url-join");
+const querystring = require("querystring");
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeDistributionApi");
-const request = require("request");
-const urlJoin = require("url-join");
+const utils_1 = require("./utils");
 var ReadSource;
 (function (ReadSource) {
     ReadSource["Default"] = "Default";
@@ -16,28 +18,19 @@ class ForgeDistributionApi {
         this.readSource = options.readSource || ReadSource.Default;
     }
     get(path, queryStringObject) {
+        let requestUrl = urlJoin(this.URL, path);
+        if (queryStringObject) {
+            requestUrl += "?" + querystring.stringify(queryStringObject);
+        }
         const options = {
-            url: urlJoin(this.URL, path),
             headers: {
                 "Accept": "application/json",
                 "X-Read-Source": this.readSource
-            },
-            qs: queryStringObject || null,
-            useQuerystring: true
+            }
         };
-        debug("Requesting " + options.url);
-        const promise = new Promise((resolve, reject) => {
-            request(options, (error, response, body) => {
-                if (error) {
-                    return reject(error);
-                }
-                if (response.statusCode !== 200) {
-                    return reject(new Error(`${response.statusCode}: ${response.statusMessage}`));
-                }
-                resolve(JSON.parse(body));
-            });
-        });
-        return promise;
+        debug("Requesting " + requestUrl);
+        return node_fetch_1.default(requestUrl, options)
+            .then(utils_1.handleJsonResponse);
     }
     getStories(culture, queryStringObject) {
         return this.get(`${this.version}/content/${culture}/stories`, queryStringObject);

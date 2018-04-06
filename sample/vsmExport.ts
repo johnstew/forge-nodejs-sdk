@@ -11,7 +11,7 @@ async function run() {
 	try {
 
 		const exportId = api.uuid();
-		await api.post(new ForgeCommands.ExportNode({ path: "~/_libraries/", exportId}));
+		await api.post(new ForgeCommands.ExportNode({ path: "~/photos/", exportId}));
 
 		const packageResponse = await api.get(`deltatre.forge.vsm/api/exports/node/${exportId}`);
 
