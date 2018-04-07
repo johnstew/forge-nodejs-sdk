@@ -5,7 +5,7 @@ const urlJoin = require("url-join");
 const querystring = require("querystring");
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeDistributionApi");
-const utils_1 = require("./utils");
+const httpUtils_1 = require("./httpUtils");
 var ReadSource;
 (function (ReadSource) {
     ReadSource["Default"] = "Default";
@@ -14,6 +14,7 @@ var ReadSource;
 class ForgeDistributionApi {
     constructor(options) {
         this.URL = options.url;
+        this.httpAgent = httpUtils_1.createAgent(this.URL);
         this.version = options.version || "v2";
         this.readSource = options.readSource || ReadSource.Default;
     }
@@ -26,11 +27,12 @@ class ForgeDistributionApi {
             headers: {
                 "Accept": "application/json",
                 "X-Read-Source": this.readSource
-            }
+            },
+            agent: this.httpAgent
         };
         debug("Requesting " + requestUrl);
         return node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleJsonResponse);
+            .then(httpUtils_1.handleJsonResponse);
     }
     getStories(culture, queryStringObject) {
         return this.get(`${this.version}/content/${culture}/stories`, queryStringObject);

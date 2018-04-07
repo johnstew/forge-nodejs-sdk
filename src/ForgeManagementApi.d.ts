@@ -12,6 +12,7 @@ export declare class ForgeManagementApi {
     defaultHeaders: {
         [name: string]: string;
     };
+    private httpAgent?;
     constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
     postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<CommandNotificationAcknowledgement>;

@@ -4,7 +4,7 @@ const node_fetch_1 = require("node-fetch");
 const urlJoin = require("url-join");
 const uuid = require("uuid");
 const querystring = require("querystring");
-const utils_1 = require("./utils");
+const httpUtils_1 = require("./httpUtils");
 const ForgeCommands = require("./ForgeCommands");
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeManagementApi");
@@ -13,6 +13,7 @@ class ForgeManagementApi {
     constructor(options) {
         this.KEY = options.authKey;
         this.FORGE_URL = options.url;
+        this.httpAgent = httpUtils_1.createAgent(this.FORGE_URL);
         this.notificationBus = undefined;
         this.defaultHeaders = {
             "Authorization": `GUIShellApp key=${this.KEY}`,
@@ -38,7 +39,7 @@ class ForgeManagementApi {
         const requestUrl = urlJoin(this.FORGE_URL, "api/command");
         const options = this.createCmdPostOptions(cmd);
         const postPromise = node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleEmptyResponse)
+            .then(httpUtils_1.handleEmptyResponse)
             .then(() => cmd.bodyObject);
         return Promise.all([postPromise, waiterPromise])
             .then((values) => values[0]);
@@ -54,7 +55,7 @@ class ForgeManagementApi {
         const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
         const options = this.createCmdPostOptions(cmd);
         return node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleJsonResponse);
+            .then(httpUtils_1.handleJsonResponse);
     }
     autoWaitCommandNotification(notificationBus) {
         this.notificationBus = notificationBus;
@@ -65,11 +66,12 @@ class ForgeManagementApi {
             requestUrl += "?" + querystring.stringify(queryStringObject);
         }
         const options = {
-            headers: Object.assign({}, this.defaultHeaders)
+            headers: Object.assign({}, this.defaultHeaders),
+            agent: this.httpAgent
         };
         debug("Requesting " + requestUrl);
         return node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleJsonResponse);
+            .then(httpUtils_1.handleJsonResponse);
     }
     // DEPRECATED use getCommits
     // get all events inside a bucket (vsm, wcm)
@@ -252,7 +254,8 @@ class ForgeManagementApi {
         return {
             method: "POST",
             headers: Object.assign({}, this.defaultHeaders, { "Content-Type": "application/json" }),
-            body: JSON.stringify(cmd)
+            body: JSON.stringify(cmd),
+            agent: this.httpAgent
         };
     }
 }

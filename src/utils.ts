@@ -1,5 +1,3 @@
-import {Response} from "node-fetch";
-
 export function toCamel(o: any) {
 	let build: any;
 
@@ -50,54 +48,4 @@ export function withTimeout(p: Promise<any>, ms: number) {
 	});
 
 	return Promise.race([p, timeout]);
-}
-
-export async function handleEmptyResponse(response: Response) {
-	if (!response) {
-		throw new Error("Invalid response");
-	}
-
-	if (response.ok) {
-		return;
-	}
-
-	await handleErrorResponse(response);
-}
-
-export async function handleJsonResponse(response: Response) {
-	if (!response) {
-		throw new Error("Invalid response");
-	}
-
-	if (response.ok) {
-		return response.json();
-	}
-
-	await handleErrorResponse(response);
-}
-
-export async function handleTextResponse(response: Response) {
-	if (!response) {
-		throw new Error("Invalid response");
-	}
-
-	if (response.ok) {
-		return response.text();
-	}
-
-	await handleErrorResponse(response);
-}
-
-async function handleErrorResponse(response: Response) {
-	let error = new Error(`${response.status} ${response.statusText || "Unknown error"}`);
-	try {
-		const responseCt = response.headers.get("content-type");
-		if (responseCt.includes("json")) {
-			const jsonResult = await response.json();
-			error = new Error(`${response.status} ${jsonResult.Message || response.statusText || "Unknown error"}`);
-		}
-	}	catch (_) {
-		// ignore
-	}
-	throw error;
 }

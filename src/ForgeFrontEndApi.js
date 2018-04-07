@@ -5,10 +5,11 @@ const urlJoin = require("url-join");
 const querystring = require("querystring");
 const Debug = require("debug");
 const debug = Debug("forgesdk.ForgeFrontEndApi");
-const utils_1 = require("./utils");
+const httpUtils_1 = require("./httpUtils");
 class ForgeFrontEndApi {
     constructor(options) {
         this.URL = options.url;
+        this.httpAgent = httpUtils_1.createAgent(this.URL);
         this.KEY = options.authKey;
     }
     get(path, queryStringObject) {
@@ -16,10 +17,12 @@ class ForgeFrontEndApi {
         if (queryStringObject) {
             requestUrl += "?" + querystring.stringify(queryStringObject);
         }
-        const options = {};
+        const options = {
+            agent: this.httpAgent
+        };
         debug("Requesting " + requestUrl);
         return node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleTextResponse);
+            .then(httpUtils_1.handleTextResponse);
     }
     getApi(path, queryStringObject) {
         let requestUrl = urlJoin(this.URL, path);
@@ -30,11 +33,12 @@ class ForgeFrontEndApi {
             headers: {
                 Authorization: "CMS key=" + this.KEY,
                 Accept: "application/json"
-            }
+            },
+            agent: this.httpAgent
         };
         debug("Requesting " + requestUrl);
         return node_fetch_1.default(requestUrl, options)
-            .then(utils_1.handleJsonResponse);
+            .then(httpUtils_1.handleJsonResponse);
     }
     getData(dataPath) {
         return this.getApi("/cms/api/data/getallraw", {

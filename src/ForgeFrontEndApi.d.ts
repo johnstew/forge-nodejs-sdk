@@ -5,6 +5,7 @@ export interface IForgeFrontEndApiOptions {
 export declare class ForgeFrontEndApi {
     URL: string;
     KEY: string;
+    private httpAgent?;
     constructor(options: IForgeFrontEndApiOptions);
     get(path: string, queryStringObject?: any): Promise<string | undefined>;
     getApi(path: string, queryStringObject?: any): Promise<any>;

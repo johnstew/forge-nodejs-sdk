@@ -2,8 +2,9 @@ import fetch, {Response, RequestInit} from "node-fetch";
 import * as urlJoin from "url-join";
 import * as uuid from "uuid";
 import * as querystring from "querystring";
+import * as http from "http";
 
-import { handleEmptyResponse, handleJsonResponse } from "./utils";
+import { createAgent, handleEmptyResponse, handleJsonResponse } from "./httpUtils";
 import { ForgeNotificationBus } from "./ForgeNotificationBus";
 import * as ForgeCommands from "./ForgeCommands";
 import * as Debug from "debug";
@@ -22,10 +23,12 @@ export class ForgeManagementApi {
 	FORGE_URL: string;
 	notificationBus: ForgeNotificationBus | undefined;
 	defaultHeaders: { [name: string]: string };
+	private httpAgent?: http.Agent;
 
 	constructor(options: IForgeManagementApiOptions) {
 		this.KEY = options.authKey;
 		this.FORGE_URL = options.url;
+		this.httpAgent = createAgent(this.FORGE_URL);
 		this.notificationBus = undefined;
 
 		this.defaultHeaders = {
@@ -96,7 +99,8 @@ export class ForgeManagementApi {
 		const options: RequestInit = {
 			headers: {
 				...this.defaultHeaders
-			}
+			},
+			agent: this.httpAgent
 		};
 
 		debug("Requesting " + requestUrl);
@@ -328,7 +332,8 @@ export class ForgeManagementApi {
 				...this.defaultHeaders,
 				"Content-Type": "application/json"
 			},
-			body: JSON.stringify(cmd)
+			body: JSON.stringify(cmd),
+			agent: this.httpAgent
 		};
 	}
 }

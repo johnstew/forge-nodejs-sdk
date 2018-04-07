@@ -2,12 +2,12 @@ import fetch, {Response, RequestInit} from "node-fetch";
 import * as urlJoin from "url-join";
 import * as uuid from "uuid";
 import * as querystring from "querystring";
+import * as http from "http";
 
 import * as Debug from "debug";
 const debug = Debug("forgesdk.ForgeDistributionApi");
 
-import { handleEmptyResponse, handleJsonResponse } from "./utils";
-
+import { handleEmptyResponse, handleJsonResponse, createAgent } from "./httpUtils";
 
 export enum ReadSource {
 	Default = "Default",
@@ -24,9 +24,11 @@ export class ForgeDistributionApi {
 	URL: string;
 	version: string;
 	readSource: ReadSource;
+	private httpAgent?: http.Agent;
 
 	constructor(options: IForgeDistributionApiOptions) {
 		this.URL = options.url;
+		this.httpAgent = createAgent(this.URL);
 		this.version = options.version || "v2";
 		this.readSource = options.readSource || ReadSource.Default;
 	}
@@ -40,7 +42,8 @@ export class ForgeDistributionApi {
 			headers: {
 				"Accept": "application/json",
 				"X-Read-Source": this.readSource
-			}
+			},
+			agent: this.httpAgent
 		};
 
 		debug("Requesting " + requestUrl);

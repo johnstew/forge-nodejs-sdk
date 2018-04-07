@@ -11,6 +11,7 @@ export declare class ForgeDistributionApi {
     URL: string;
     version: string;
     readSource: ReadSource;
+    private httpAgent?;
     constructor(options: IForgeDistributionApiOptions);
     get(path: string, queryStringObject?: any): Promise<any>;
     getStories(culture: string, queryStringObject?: DistributionQueryString): Promise<DistributionList<DistributionEntity>>;
