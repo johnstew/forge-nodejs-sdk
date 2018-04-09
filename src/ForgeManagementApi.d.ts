@@ -62,7 +62,7 @@ export declare class ForgeManagementApi {
     private createCmdPostOptions(cmd);
 }
 export interface ISlugificationResult {
-    OriginalValue: string;
+    OriginalValue: string | null;
     SlugifiedValue: string | null;
 }
 export declare enum AssemblerMode {

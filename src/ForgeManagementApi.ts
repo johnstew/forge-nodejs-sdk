@@ -339,7 +339,7 @@ export class ForgeManagementApi {
 }
 
 export interface ISlugificationResult {
-	OriginalValue: string;
+	OriginalValue: string | null;
 	SlugifiedValue: string | null;
 }
 
