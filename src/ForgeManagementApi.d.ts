@@ -63,7 +63,7 @@ export declare class ForgeManagementApi {
 }
 export interface ISlugificationResult {
     OriginalValue: string;
-    SlugifiedValue: string;
+    SlugifiedValue: string | null;
 }
 export declare enum AssemblerMode {
     Full = 0,
