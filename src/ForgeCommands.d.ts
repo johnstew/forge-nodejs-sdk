@@ -338,3 +338,11 @@ export declare class EnsureTag extends CommandBase {
         slug: string;
     });
 }
+export declare class RollbackWcmEntity extends CommandBase {
+    constructor(command: {
+        aggregateId: string;
+        aggregateType: string;
+        translationId: string;
+        targetRevision: number;
+    });
+}

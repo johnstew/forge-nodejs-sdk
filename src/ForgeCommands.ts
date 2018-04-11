@@ -689,3 +689,10 @@ export class EnsureTag extends CommandBase {
 		super("EnsureTagCommand", cmd);
 	}
 }
+
+export class RollbackWcmEntity extends CommandBase {
+	// command: { aggregateId, aggregateType, translationId, targetRevision }
+	constructor(command: { aggregateId: string, aggregateType: string, translationId: string, targetRevision: number }) {
+		super("RollbackWcmEntityCommand", command);
+	}
+}

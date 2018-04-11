@@ -665,4 +665,11 @@ class EnsureTag extends CommandBase {
     }
 }
 exports.EnsureTag = EnsureTag;
+class RollbackWcmEntity extends CommandBase {
+    // command: { aggregateId, aggregateType, translationId, targetRevision }
+    constructor(command) {
+        super("RollbackWcmEntityCommand", command);
+    }
+}
+exports.RollbackWcmEntity = RollbackWcmEntity;
 //# sourceMappingURL=ForgeCommands.js.map
