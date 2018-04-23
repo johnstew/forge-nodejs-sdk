@@ -1,4 +1,4 @@
-import fetch, {Response, RequestInit} from "node-fetch";
+import fetch, { Response, RequestInit } from "node-fetch";
 import * as urlJoin from "url-join";
 import * as uuid from "uuid";
 import * as querystring from "querystring";
@@ -62,16 +62,16 @@ export class ForgeManagementApi {
 		const options = this.createCmdPostOptions(cmd);
 
 		const postPromise = fetch(requestUrl, options)
-		.then(handleEmptyResponse)
-		.then(() => cmd.bodyObject);
+			.then(handleEmptyResponse)
+			.then(() => cmd.bodyObject);
 
 		return Promise.all([postPromise, waiterPromise])
 			.then((values) => values[0]);
 	}
 
-	postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<CommandNotificationAcknowledgement> {
+	async postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[]): Promise<any> {
 		if (Array.isArray(cmd)) {
-			return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
+			return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }));
 		}
 
 		if (!cmd.bodyObject) {
@@ -83,8 +83,14 @@ export class ForgeManagementApi {
 		const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
 		const options = this.createCmdPostOptions(cmd);
 
-		return fetch(requestUrl, options)
-		.then(handleJsonResponse);
+		const apiRawResponse = await fetch(requestUrl, options);
+		const commandNotificationAcknowledgement = await handleJsonResponse(apiRawResponse) as CommandNotificationAcknowledgement;
+
+		if (!commandNotificationAcknowledgement.Success) {
+			throw new Error(commandNotificationAcknowledgement.Message || "An error occurred while processing command");
+		}
+
+		return cmd.bodyObject;
 	}
 
 	autoWaitCommandNotification(notificationBus: ForgeNotificationBus) {
@@ -106,7 +112,7 @@ export class ForgeManagementApi {
 		debug("Requesting " + requestUrl);
 
 		return fetch(requestUrl, options)
-		.then(handleJsonResponse);
+			.then(handleJsonResponse);
 	}
 
 	// DEPRECATED use getCommits

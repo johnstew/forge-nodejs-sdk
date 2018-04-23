@@ -15,7 +15,7 @@ export declare class ForgeManagementApi {
     private httpAgent?;
     constructor(options: IForgeManagementApiOptions);
     post(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<any>;
-    postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[], waitTimeout?: number): Promise<CommandNotificationAcknowledgement>;
+    postAndWaitAck(cmd: ForgeCommands.CommandBase | ForgeCommands.CommandBase[]): Promise<any>;
     autoWaitCommandNotification(notificationBus: ForgeNotificationBus): void;
     get(path: string, queryStringObject?: any): Promise<any>;
     getEvents(bucketId: string, options: {

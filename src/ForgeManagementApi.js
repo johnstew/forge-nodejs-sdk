@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 const urlJoin = require("url-join");
@@ -44,18 +52,24 @@ class ForgeManagementApi {
         return Promise.all([postPromise, waiterPromise])
             .then((values) => values[0]);
     }
-    postAndWaitAck(cmd, waitTimeout) {
-        if (Array.isArray(cmd)) {
-            return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }), waitTimeout);
-        }
-        if (!cmd.bodyObject) {
-            throw new Error("cmd.bodyObject not defined");
-        }
-        debug("Sending command and waiting ack...", cmd);
-        const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
-        const options = this.createCmdPostOptions(cmd);
-        return node_fetch_1.default(requestUrl, options)
-            .then(httpUtils_1.handleJsonResponse);
+    postAndWaitAck(cmd) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Array.isArray(cmd)) {
+                return this.postAndWaitAck(new ForgeCommands.Batch({ commands: cmd }));
+            }
+            if (!cmd.bodyObject) {
+                throw new Error("cmd.bodyObject not defined");
+            }
+            debug("Sending command and waiting ack...", cmd);
+            const requestUrl = urlJoin(this.FORGE_URL, "api/command/ack");
+            const options = this.createCmdPostOptions(cmd);
+            const apiRawResponse = yield node_fetch_1.default(requestUrl, options);
+            const commandNotificationAcknowledgement = yield httpUtils_1.handleJsonResponse(apiRawResponse);
+            if (!commandNotificationAcknowledgement.Success) {
+                throw new Error(commandNotificationAcknowledgement.Message || "An error occurred while processing command");
+            }
+            return cmd.bodyObject;
+        });
     }
     autoWaitCommandNotification(notificationBus) {
         this.notificationBus = notificationBus;
