@@ -80,7 +80,7 @@ describe("ForgeManagementApi", function() {
 
 	it("post command fail if status code is not 200 and error response is not a json content", async function() {
 		server.responseStatusCode = 500;
-		server.responseHeaders = {"Content-Type": "text"};
+		server.responseHeaders = { "Content-Type": "text" };
 
 		try {
 			await api.post(new ForgeCommands.EnsureTag({ slug: "my-slug-1" }));
@@ -118,16 +118,39 @@ describe("ForgeManagementApi", function() {
 	});
 
 	it("post ack command calls server and parse the result", async function() {
+		const command = new ForgeCommands.EnsureTag({ slug: "my-slug-1" });
+
 		server.response = { Success: true, Message: "my msg" };
 
-		const cmdResult = await api.postAndWaitAck(new ForgeCommands.EnsureTag({ slug: "my-slug-1" }));
+		const cmdResult = await api.postAndWaitAck(command);
 
 		assert.isDefined(server.lastCall);
 		if (!server.lastCall) {
 			throw new Error("No calls performed");
 		}
 
-		assert.deepEqual(cmdResult, server.response);
+		assert.deepEqual(cmdResult, command.bodyObject);
+	});
+
+	it("post ack command throws when server response has succes equal to false", async function() {
+		const command = new ForgeCommands.EnsureTag({ slug: "my-slug-1" });
+
+		server.response = { Success: false, Message: "my error message" };
+
+		try {
+			await api.postAndWaitAck(command);
+		} catch (e) {
+
+			assert.isDefined(server.lastCall);
+			if (!server.lastCall) {
+				throw new Error("No calls performed");
+			}
+
+			assert.strictEqual(e.message, "my error message");
+			return;
+		}
+
+		throw new Error("Exception was expected.");
 	});
 
 	it("get api calls server", async function() {
@@ -169,7 +192,7 @@ describe("ForgeManagementApi", function() {
 
 	it("get api fail if status code is not 200 and error response is not a json content", async function() {
 		server.responseStatusCode = 500;
-		server.responseHeaders = {"Content-Type": "text"};
+		server.responseHeaders = { "Content-Type": "text" };
 
 		try {
 			await api.get("/");
@@ -196,7 +219,7 @@ describe("ForgeManagementApi", function() {
 	});
 
 	it("get api calls server with query string", async function() {
-		await api.get("/test", { q1: "x"});
+		await api.get("/test", { q1: "x" });
 
 		assert.isDefined(server.lastCall);
 		if (!server.lastCall) {
@@ -207,7 +230,7 @@ describe("ForgeManagementApi", function() {
 	});
 
 	it("get api calls server with headers", async function() {
-		await api.get("/test", { q1: "x"});
+		await api.get("/test", { q1: "x" });
 
 		assert.isDefined(server.lastCall);
 		if (!server.lastCall) {
@@ -221,7 +244,7 @@ describe("ForgeManagementApi", function() {
 	it("get api parse server response as json", async function() {
 		server.response = { myResult: "value1" };
 
-		const result = await api.get("/test", { q1: "x"});
+		const result = await api.get("/test", { q1: "x" });
 
 		assert.deepEqual(result, server.response);
 	});
@@ -233,7 +256,7 @@ describe("ForgeManagementApi", function() {
 			userAgent: "MyApp/1.4"
 		});
 
-		await api.get("/test", { q1: "x"});
+		await api.get("/test", { q1: "x" });
 
 		assert.isDefined(server.lastCall);
 		if (!server.lastCall) {

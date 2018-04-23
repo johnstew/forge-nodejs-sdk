@@ -127,13 +127,32 @@ describe("ForgeManagementApi", function () {
     });
     it("post ack command calls server and parse the result", function () {
         return __awaiter(this, void 0, void 0, function* () {
+            const command = new ForgeCommands.EnsureTag({ slug: "my-slug-1" });
             server.response = { Success: true, Message: "my msg" };
-            const cmdResult = yield api.postAndWaitAck(new ForgeCommands.EnsureTag({ slug: "my-slug-1" }));
+            const cmdResult = yield api.postAndWaitAck(command);
             chai_1.assert.isDefined(server.lastCall);
             if (!server.lastCall) {
                 throw new Error("No calls performed");
             }
-            chai_1.assert.deepEqual(cmdResult, server.response);
+            chai_1.assert.deepEqual(cmdResult, command.bodyObject);
+        });
+    });
+    it("post ack command throws when server response has succes equal to false", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const command = new ForgeCommands.EnsureTag({ slug: "my-slug-1" });
+            server.response = { Success: false, Message: "my error message" };
+            try {
+                yield api.postAndWaitAck(command);
+            }
+            catch (e) {
+                chai_1.assert.isDefined(server.lastCall);
+                if (!server.lastCall) {
+                    throw new Error("No calls performed");
+                }
+                chai_1.assert.strictEqual(e.message, "my error message");
+                return;
+            }
+            throw new Error("Exception was expected.");
         });
     });
     it("get api calls server", function () {
