@@ -23,3 +23,7 @@ export interface ConnectionStatus {
     name: string;
     connected: boolean;
 }
+export interface IHeartbeatBus {
+}
+export interface IHeartbeatBusOptions extends INotificationBusOptions {
+}
