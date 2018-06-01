@@ -2,21 +2,23 @@ import * as shortid from "shortid";
 
 import {RabbitMqNotificationBus, IRabbitMqNotificationBusOptions} from "./serviceBus/rabbitMq/RabbitMqNotificationBus";
 import {AzureNotificationBus, IAzureNotificationBusOptions} from "./serviceBus/azure/AzureNotificationBus";
-import {INotificationBus, EventPredicate, INotificationBusOptions} from "./serviceBus/notificationBusTypes";
+import {IHeartbeatBus, EventPredicate, IHeartbeatBusOptions} from "./serviceBus/notificationBusTypes";
 
 import {withTimeout} from "./utils";
+import { RabbitMqHeartbeatBus } from "./serviceBus/rabbitMq/RabbitMqHeartbeatBus";
+import { AzureHeartbeatBus } from "./serviceBus/azure/AzureHeartbeatBus";
 
-export interface IDistributionNotificationBusOptions
-	extends INotificationBusOptions, IRabbitMqNotificationBusOptions, IAzureNotificationBusOptions {
+export interface IForgeHeartbeatBus
+	extends IHeartbeatBusOptions, IRabbitMqNotificationBusOptions, IAzureNotificationBusOptions {
 
 	defaultWaitOnceTimeout?: number;
 }
 
 export class HeartbeatBus {
-	readonly _options: IDistributionNotificationBusOptions;
-	readonly bus: INotificationBus;
+	readonly _options: IForgeHeartbeatBus;
+	readonly bus: IHeartbeatBus;
 
-	constructor(options: IDistributionNotificationBusOptions) {
+	constructor(options: IForgeHeartbeatBus) {
 		options = {...options};
 		options.notificationBusName = options.notificationBusName || "dist-ntf";
 
@@ -32,11 +34,11 @@ export class HeartbeatBus {
 		this._options = options;
 
 		if (options.connectionString.startsWith("amqp")) {
-			options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
-			this.bus = new RabbitMqNotificationBus(options);
+			options.queueName = options.queueName || "forge-heartbeats-sdk-" + shortid.generate();
+			this.bus = new RabbitMqHeartbeatBus(options);
 		} else {
-			options.subscriptionName = options.subscriptionName	|| "sdk-" + shortid.generate();
-			this.bus = new AzureNotificationBus(options);
+			options.subscriptionName = options.subscriptionName	|| "forge-heartbeats-sdk-" + shortid.generate();
+			this.bus = new AzureHeartbeatBus(options);
 		}
 	}
 }

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const shortid = require("shortid");
-const RabbitMqNotificationBus_1 = require("./serviceBus/rabbitMq/RabbitMqNotificationBus");
-const AzureNotificationBus_1 = require("./serviceBus/azure/AzureNotificationBus");
+const RabbitMqHeartbeatBus_1 = require("./serviceBus/rabbitMq/RabbitMqHeartbeatBus");
+const AzureHeartbeatBus_1 = require("./serviceBus/azure/AzureHeartbeatBus");
 class HeartbeatBus {
     constructor(options) {
         options = Object.assign({}, options);
@@ -16,12 +16,12 @@ class HeartbeatBus {
         }
         this._options = options;
         if (options.connectionString.startsWith("amqp")) {
-            options.queueName = options.queueName || "dist-ntf-sdk-" + shortid.generate();
-            this.bus = new RabbitMqNotificationBus_1.RabbitMqNotificationBus(options);
+            options.queueName = options.queueName || "forge-heartbeats-sdk-" + shortid.generate();
+            this.bus = new RabbitMqHeartbeatBus_1.RabbitMqHeartbeatBus(options);
         }
         else {
-            options.subscriptionName = options.subscriptionName || "sdk-" + shortid.generate();
-            this.bus = new AzureNotificationBus_1.AzureNotificationBus(options);
+            options.subscriptionName = options.subscriptionName || "forge-heartbeats-sdk-" + shortid.generate();
+            this.bus = new AzureHeartbeatBus_1.AzureHeartbeatBus(options);
         }
     }
 }
