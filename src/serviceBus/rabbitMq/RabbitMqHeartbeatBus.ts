@@ -21,11 +21,15 @@ const QueueForgeHeartbeatPrefix = "forge-hbt";
 
 export class RabbitMqHeartbeatBus extends EventEmitter
   implements IHeartbeatBus {
+  start(): void {
+    for (const channel of this.rabbitMqChannels) {
+      channel.publishHeartbeat();
+    }
+  }
   readonly rabbitMqChannels = new Array<RabbitMqChannel>();
   private _started = false;
   constructor(readonly options: IRabbitMqNotificationBusOptions) {
     super();
-    //const HeartbeatQueueName = `${QueueForgeHeartbeatPrefix}-sdk-${shortid.generate()}`;
     const secondaryConnections = this.options.secondaryConnectionStrings || [];
     const allConnectionStrings = [
       this.options.connectionString,

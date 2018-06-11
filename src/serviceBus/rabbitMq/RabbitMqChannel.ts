@@ -2,130 +2,152 @@ import * as Debug from "debug";
 const debug = Debug("forgesdk.RabbitMqChannel.RabbitMq");
 
 import * as amqp from "amqplib";
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 // Code based on:
 // https://www.rabbitmq.com/tutorials/tutorial-three-javascript.html
 // https://github.com/squaremo/amqp.node/blob/master/examples/tutorials/receive_logs.js
 
 export class RabbitMqQueueBinding {
-	constructor(
-		readonly exchange: string,
-		readonly routingKey: string) {
-	}
+  constructor(readonly exchange: string, readonly routingKey: string) {}
 }
 
 export class RabbitMqQueue {
-	constructor(
-		readonly queueName: string,
-		readonly queueOptions: amqp.Options.AssertQueue,
-		readonly bindings: RabbitMqQueueBinding[]) {
-	}
+  constructor(
+    readonly queueName: string,
+    readonly queueOptions: amqp.Options.AssertQueue,
+    readonly bindings: RabbitMqQueueBinding[]
+  ) {}
 }
 
 export class RabbitMqChannel extends EventEmitter {
-	readonly URL: string;
-	private consumers = new Array<RabbitMqQueue>();
+  async publishHeartbeat(): Promise<void> {
+    if (!this.channel) {
+      return;
+    }
+    const heartbeatMessage = {
+      // (NodeId = _nodeConfiguration.Id),
+      //   (NodeRole = _nodeConfiguration.Role),
+      //   (MachineName = _nodeConfiguration.MachineName),
+      //   (Timestamp = DateTimeOffset.UtcNow),
+      //   (Properties = _nodeConfiguration.Properties)
+    };
+    for (const q of this.consumers) {
+      debug("Asserting queue ", q.queueName, q.queueOptions);
+      const qok = await this.channel.assertQueue(q.queueName, q.queueOptions);
 
-	private connection: amqp.Connection | undefined;
-	private channel: amqp.Channel | undefined;
+      for (const b of q.bindings) {
+        await this.channel.publish(
+          b.exchange,
+          b.routingKey,
+          new Buffer(JSON.stringify(heartbeatMessage))
+        );
+      }
+    }
+  }
+  readonly URL: string;
+  private consumers = new Array<RabbitMqQueue>();
 
-	private _connectingTimer: NodeJS.Timer | undefined;
+  private connection: amqp.Connection | undefined;
+  private channel: amqp.Channel | undefined;
 
-	constructor(url: string) {
-		super();
+  private _connectingTimer: NodeJS.Timer | undefined;
 
-		this.URL = url;
-	}
+  constructor(url: string) {
+    super();
 
-	defineConsumer(consumer: RabbitMqQueue) {
-		this.consumers.push(consumer);
-	}
+    this.URL = url;
+  }
 
-	async connect(): Promise<void> {
-		debug("Connecting...");
+  defineConsumer(consumer: RabbitMqQueue) {
+    this.consumers.push(consumer);
+  }
 
-		try {
-			this.close().catch(() => {});
+  async connect(): Promise<void> {
+    debug("Connecting...");
 
-			this.connection = await amqp.connect(this.URL);
-			this.connection.on("error", (e: any) => this.emitConnectionError(e));
-			this.channel = await this.connection.createChannel();
-			this.channel.on("error", (e: any) => this.emitConnectionError(e));
+    try {
+      this.close().catch(() => {});
 
-			for (const q of this.consumers) {
-				debug("Asserting queue ", q.queueName, q.queueOptions);
-				const qok = await this.channel
-					.assertQueue(q.queueName, q.queueOptions);
+      this.connection = await amqp.connect(this.URL);
+      this.connection.on("error", (e: any) => this.emitConnectionError(e));
+      this.channel = await this.connection.createChannel();
+      this.channel.on("error", (e: any) => this.emitConnectionError(e));
 
-				for (const b of q.bindings) {
-					await this.channel.bindQueue(qok.queue, b.exchange, b.routingKey);
-				}
+      for (const q of this.consumers) {
+        debug("Asserting queue ", q.queueName, q.queueOptions);
+        const qok = await this.channel.assertQueue(q.queueName, q.queueOptions);
 
-				await this.channel.consume(qok.queue,
-					(m) => {
-						if (m) {
-							this.emitMessage(m);
-						}
-					},
-					{ noAck: true });
-			}
+        for (const b of q.bindings) {
+          await this.channel.bindQueue(qok.queue, b.exchange, b.routingKey);
+        }
 
-			this.emitConnectionSuccess();
-		} catch (err) {
-			this.emitConnectionError(err);
-		}
-	}
+        await this.channel.consume(
+          qok.queue,
+          m => {
+            if (m) {
+              this.emitMessage(m);
+            }
+          },
+          { noAck: true }
+        );
+      }
 
-	async close(): Promise<void> {
-		const ch = this.channel;
-		const cn = this.connection;
+      this.emitConnectionSuccess();
+    } catch (err) {
+      this.emitConnectionError(err);
+    }
+  }
 
-		this.channel = undefined;
-		this.connection = undefined;
+  async close(): Promise<void> {
+    const ch = this.channel;
+    const cn = this.connection;
 
-		this.stopReconnecting();
+    this.channel = undefined;
+    this.connection = undefined;
 
-		if (ch) {
-			await ch.close();
-		}
-		if (cn) {
-			await cn.close();
-		}
-	}
+    this.stopReconnecting();
 
-	retryReconnecting() {
-		if (this._connectingTimer) {
-			return;
-		}
+    if (ch) {
+      await ch.close();
+    }
+    if (cn) {
+      await cn.close();
+    }
+  }
 
-		this._connectingTimer = setTimeout(async () => {
-			this.stopReconnecting();
+  retryReconnecting() {
+    if (this._connectingTimer) {
+      return;
+    }
 
-			await this.connect();
-		}, 10000);
-	}
+    this._connectingTimer = setTimeout(async () => {
+      this.stopReconnecting();
 
-	private stopReconnecting() {
-		if (this._connectingTimer) {
-			clearTimeout(this._connectingTimer);
-			this._connectingTimer = undefined;
-		}
-	}
+      await this.connect();
+    }, 10000);
+  }
 
-	private emitMessage(msg: amqp.Message): void {
-		this.emit("message", msg);
-	}
+  private stopReconnecting() {
+    if (this._connectingTimer) {
+      clearTimeout(this._connectingTimer);
+      this._connectingTimer = undefined;
+    }
+  }
 
-	// private emitError(msg: Error): void {
-	// 	this.emit("error", msg);
-	// }
+  private emitMessage(msg: amqp.Message): void {
+    this.emit("message", msg);
+  }
 
-	private emitConnectionError(msg: Error): void {
-		this.emit("connectionError", msg);
-	}
+  // private emitError(msg: Error): void {
+  // 	this.emit("error", msg);
+  // }
 
-	private emitConnectionSuccess(): void {
-		this.emit("connectionSuccess");
-	}
+  private emitConnectionError(msg: Error): void {
+    this.emit("connectionError", msg);
+  }
+
+  private emitConnectionSuccess(): void {
+    this.emit("connectionSuccess");
+  }
 }

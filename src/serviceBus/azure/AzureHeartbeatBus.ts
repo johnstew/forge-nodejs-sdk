@@ -17,6 +17,11 @@ import { EventEmitter } from "events";
 import { IAzureNotificationBusOptions } from "./AzureNotificationBus.js";
 
 export class AzureHeartbeatBus extends EventEmitter implements IHeartbeatBus {
+  start(): void {
+    for (const subscription of this.azureSubscriptions) {
+      subscription.publishHeartbeat();
+    }
+  }
   private azureSubscriptions = new Array<AzureAmqpSubscription>();
 
   private _started = false;

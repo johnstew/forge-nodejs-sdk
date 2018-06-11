@@ -42,6 +42,8 @@ export interface ConnectionStatus {
   connected: boolean;
 }
 
-export interface IHeartbeatBus {}
+export interface IHeartbeatBus {
+  start(): void;
+}
 
 export interface IHeartbeatBusOptions extends INotificationBusOptions {}
