@@ -75,7 +75,7 @@ async function handleErrorResponse(response: Response) {
 	let error = new Error(`${response.status} ${response.statusText || "Unknown error"}`);
 	try {
 		const responseCt = response.headers.get("content-type");
-		if (responseCt.includes("json")) {
+		if (responseCt && responseCt.includes("json")) {
 			const jsonResult = await response.json();
 			error = new Error(`${response.status} ${jsonResult.Message || response.statusText || "Unknown error"}`);
 		}
