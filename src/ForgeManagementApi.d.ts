@@ -52,6 +52,7 @@ export declare class ForgeManagementApi {
     getCustomEntity(entityCode: string, version: string, translationId: string): Promise<any>;
     getCustomEntityTranslations(entityCode: string, version: string, entityId: string): Promise<any>;
     getCustomEntityBySlug(entityCode: string, version: string, culture: string, slug: string): Promise<any>;
+    getCustomEntityByEntityId(entityCode: string, version: string, culture: string, entityId: string): Promise<any>;
     getCustomEntities(entityCode: string, version: string, options: any): Promise<any>;
     getCheckpoints(bucketId: string): Promise<any>;
     getPage(pageId: string): Promise<any>;

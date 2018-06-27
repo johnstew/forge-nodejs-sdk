@@ -288,6 +288,9 @@ export class ForgeManagementApi {
 	getCustomEntityBySlug(entityCode: string, version: string, culture: string, slug: string) {
 		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/culture/${culture}/slug/${slug}`);
 	}
+	getCustomEntityByEntityId(entityCode: string, version: string, culture: string, entityId: string) {
+		return this.get(`deltatre.forge.wcm/api/customentities/${entityCode}/${version}/culture/${culture}/entityid/${entityId}`);
+	}
 	getCustomEntities(entityCode: string, version: string, options: any) {
 		// for compatibility with old version
 		if (typeof options === "string") {

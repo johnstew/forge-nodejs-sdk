@@ -7,9 +7,9 @@ export declare class ForgeFrontEndApi {
     KEY: string;
     private httpAgent?;
     constructor(options: IForgeFrontEndApiOptions);
-    get(path: string, queryStringObject?: any): Promise<string | undefined>;
-    getApi(path: string, queryStringObject?: any): Promise<any>;
-    getData(dataPath: string): Promise<any>;
-    getDataStories(): Promise<any>;
-    getDataStory(slug: string): Promise<any>;
+    get(path: string, queryStringObject?: any): any;
+    getApi(path: string, queryStringObject?: any): any;
+    getData(dataPath: string): any;
+    getDataStories(): any;
+    getDataStory(slug: string): any;
 }
